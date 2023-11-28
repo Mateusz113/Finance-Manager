@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FinanceManager</string>
+    //Web client reference for sing in method
+    <string name="web_client_id">424578956737-i79r01mig9g2h1grp498auhbm59brdb1.apps.googleusercontent.com</string>
+
+    //Content descriptions
+    <string name="profile_pic_content_desc">Profile picture</string>
+
+    //Button labels
+    <string name="sign_out">Sign out</string>
+    <string name="sign_in">Sign in</string>
 </resources>
