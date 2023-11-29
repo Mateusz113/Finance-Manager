@@ -24,6 +24,7 @@ import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.destinations.ProfileScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
+import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.sign_in.SignInScreen
 import com.mateusz113.financemanager.presentation.sign_in.SignInViewModel
 import com.mateusz113.financemanager.presentation.profile.ProfileScreen
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
                             //Navigates to signed in screen if sign in was successful
                             LaunchedEffect(key1 = Unit){
                                 if (googleAuthUiClient.getSignedInUser() != null){
-                                    destinationsNavigator.navigate(ProfileScreenDestination)
+                                    destinationsNavigator.navigate(PaymentListingsScreenDestination)
                                 }
                             }
 
@@ -88,7 +89,7 @@ class MainActivity : ComponentActivity() {
                                         "Sign in successful",
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    destinationsNavigator.navigate(ProfileScreenDestination)
+                                    destinationsNavigator.navigate(PaymentListingsScreenDestination)
                                     viewModel.resetState()
 
                                 }
