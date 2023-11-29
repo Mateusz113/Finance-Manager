@@ -29,7 +29,7 @@ fun PaymentDetailsDto.toPaymentDetails(): PaymentDetails {
         title = title ?: "",
         description = description ?: "",
         amount = amount ?: 0.00f,
-        photoUrl = photoUrl ?: "",
+        photoUrls = photoUrls ?: emptyList(),
         date = date ?: LocalDate.now(),
         category = categoryToAssign ?: Category.Housing
     )
@@ -40,17 +40,8 @@ fun PaymentDetails.toPaymentDetailsDto(): PaymentDetailsDto {
         title = title,
         description = description,
         amount = amount,
-        photoUrl = photoUrl,
+        photoUrls = photoUrls,
         timestamp = convertLocalDateIntoTimestamp(date),
         category = category.name
-    )
-}
-
-fun PaymentDetails.toPaymentListingDto(): PaymentListingDto {
-    return PaymentListingDto(
-        id = null,
-        title = title,
-        amount = amount,
-        timestamp = convertLocalDateIntoTimestamp(date)
     )
 }
