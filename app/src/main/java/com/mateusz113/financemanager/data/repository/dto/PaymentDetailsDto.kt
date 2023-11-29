@@ -1,12 +1,26 @@
 package com.mateusz113.financemanager.data.repository.dto
 
-import com.mateusz113.financemanager.util.Category
+class PaymentDetailsDto() {
+    var title: String? = null
+    var description: String? = null
+    var amount: Float? = null
+    var photoUrls: List<String>? = null
+    var timestamp: Long? = null
+    var category: String? = null
 
-data class PaymentDetailsDto(
-    val title: String?,
-    val description: String?,
-    val amount: Float?,
-    val photoUrls: List<String>?,
-    val timestamp: Long?,
-    val category: String?
-)
+    constructor(
+        title: String?,
+        description: String?,
+        amount: Float?,
+        photoUrls: List<String>?,
+        timestamp: Long?,
+        category: String?
+    ) : this() {
+        this.title = title
+        this.description = description
+        this.amount = amount
+        this.photoUrls = photoUrls
+        this.timestamp = timestamp
+        this.category = category
+    }
+}
