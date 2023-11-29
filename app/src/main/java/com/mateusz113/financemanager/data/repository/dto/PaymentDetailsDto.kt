@@ -6,7 +6,7 @@ data class PaymentDetailsDto(
     val title: String?,
     val description: String?,
     val amount: Float?,
-    val photoUrl: String?,
+    val photoUrls: List<String>?,
     val timestamp: Long?,
     val category: String?
 )

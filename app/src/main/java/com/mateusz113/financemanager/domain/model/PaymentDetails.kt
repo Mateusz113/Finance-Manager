@@ -7,7 +7,7 @@ data class PaymentDetails(
     val title: String,
     val description: String,
     val amount: Float,
-    val photoUrl: String,
+    val photoUrls: List<String>,
     val date: LocalDate,
     val category: Category
 )
