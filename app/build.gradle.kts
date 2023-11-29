@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mateusz113.financemanager"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -76,6 +76,8 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-storage")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     //Dagger - Hilt
