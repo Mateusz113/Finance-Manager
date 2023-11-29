@@ -1,9 +1,6 @@
 package com.mateusz113.financemanager.data.repository
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,84 +18,83 @@ import com.mateusz113.financemanager.domain.model.PaymentDetails
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Resource
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
-val LISTINGS_GET_TAG = "LISTINGS_GET"
-val DETAILS_GET_TAG = "DETAILS_GET"
-val PAYMENT_ADD_TAG = "PAYMENT_ADD"
-val PAYMENT_REMOVE_TAG = "PAYMENT_REMOVE"
+const val PAYMENT_ADD_TAG = "PAYMENT_ADD"
+const val PAYMENT_REMOVE_TAG = "PAYMENT_REMOVE"
 
 class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
-    private val firebaseDatabase = FirebaseDatabase.getInstance()
+    private val firebaseDatabase =
+        FirebaseDatabase.getInstance("https://financemanager-aa563-default-rtdb.europe-west1.firebasedatabase.app")
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
     private val firebaseStorage = FirebaseStorage.getInstance()
 
     override suspend fun getPaymentListings(): Flow<Resource<List<PaymentListing>>> {
-        return flow {
-            emit(Resource.Loading(true))
-
-            var result: Resource<List<PaymentListing>> = Resource.Error(message = "Error occurred")
+        return callbackFlow {
             val paymentListingsRef =
                 firebaseDatabase.getReference("users/$currentUserId/paymentsListings")
 
-            paymentListingsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val paymentListings = mutableListOf<PaymentListing>()
-                    snapshot.children.forEach { listingSnapshot ->
-                        val paymentListingDto =
-                            listingSnapshot.getValue(PaymentListingDto::class.java)
-                        paymentListingDto?.let { listing ->
-                            paymentListings.add(
-                                listing.copy(id = listingSnapshot.key).toPaymentListing()
-                            )
-                            //Log the information about the listing retrieved
-                            Log.d(LISTINGS_GET_TAG, "Listing retrieved: $listing")
+            val valueEventListener = paymentListingsRef.addValueEventListener(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val paymentListings = mutableListOf<PaymentListing>()
+                        snapshot.children.forEach { listingSnapshot ->
+                            val paymentListingDto =
+                                listingSnapshot.getValue(PaymentListingDto::class.java)
+                            paymentListingDto?.let { listing ->
+                                listing.id = listingSnapshot.key
+                                paymentListings.add(
+                                    listing.toPaymentListing()
+                                )
+                            }
                         }
+                        trySend(Resource.Success(data = paymentListings.toList()))
                     }
 
-                    result = Resource.Success(data = paymentListings)
+                    override fun onCancelled(error: DatabaseError) {
+                        trySend(Resource.Error(message = error.message))
+                    }
                 }
+            )
 
-                override fun onCancelled(error: DatabaseError) {
-                    result = Resource.Error(message = error.message)
-                }
-            })
-
-            emit(result)
-            emit(Resource.Loading(false))
-            return@flow
+            // Cancel the listener when the flow is closed
+            awaitClose { paymentListingsRef.removeEventListener(valueEventListener) }
         }
+            .onStart { emit(Resource.Loading(true)) }
+            .onCompletion { emit(Resource.Loading(false)) }
     }
 
     override suspend fun getPaymentDetails(id: String): Flow<Resource<PaymentDetails>> {
-        return flow {
-            emit(Resource.Loading(true))
-
-            var result: Resource<PaymentDetails> = Resource.Error(message = "Error occurred")
+        return callbackFlow {
             val paymentsDetailsRef =
                 firebaseDatabase.getReference("users/$currentUserId/paymentsDetails/$id")
 
-            paymentsDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val paymentDetailsDto = snapshot.getValue(PaymentDetailsDto::class.java)
-                    //Log the data about the payment details retrieved
-                    Log.d(DETAILS_GET_TAG, "Details retrieved: $paymentDetailsDto")
-                    result = Resource.Success(
-                        data = paymentDetailsDto?.toPaymentDetails()
-                    )
-                }
+            val valueEventListener =
+                paymentsDetailsRef.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val paymentDetailsDto = snapshot.getValue(PaymentDetailsDto::class.java)
+                        trySend(
+                            Resource.Success(
+                                data = paymentDetailsDto?.toPaymentDetails()
+                            )
+                        )
+                    }
 
-                override fun onCancelled(error: DatabaseError) {
-                    result = Resource.Error(message = error.message)
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        trySend(Resource.Error(message = error.message))
+                    }
+                })
 
-            emit(result)
-            emit(Resource.Loading(false))
-            return@flow
+            //Cancel the listener when the flow is closed
+            awaitClose { paymentsDetailsRef.removeEventListener(valueEventListener) }
         }
+            .onStart { emit(Resource.Loading(true)) }
+            .onCompletion { emit(Resource.Loading(false)) }
     }
 
     override suspend fun addPayment(payment: NewPaymentDetails) {
@@ -108,43 +104,65 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
             firebaseDatabase.getReference("users/$currentUserId/paymentsDetails")
                 .child(newPaymentId!!)
         val paymentListingsRef =
-            firebaseDatabase.getReference("users/$currentUserId/paymentListings")
+            firebaseDatabase.getReference("users/$currentUserId/paymentsListings")
                 .child(newPaymentId)
         val storageReference =
             firebaseStorage.getReference("users/$currentUserId/payments/$newPaymentId/images/")
 
         val imageUrls = mutableListOf<String>()
 
-        payment.photoUris.forEachIndexed { i, uri ->
-            val imageStorageReference = storageReference.child("image_$i.jpg")
-            val uploadTask = imageStorageReference.putFile(uri)
-            uploadTask.continueWithTask { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
-                }
-                // Continue with the task to get the download URL
-                imageStorageReference.downloadUrl
-            }.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val downloadUrl = task.result.toString()
-                    imageUrls.add(downloadUrl)
-                    //Proceed only if all the images were uploaded
-                    if (imageUrls.size == payment.photoUris.size) {
-                        var paymentDetailsDto = payment.toPaymentDetailsDto()
-                        val paymentListingDto = payment.toPaymentListingDto()
-                        paymentDetailsDto = paymentDetailsDto.copy(photoUrls = imageUrls)
-
-                        paymentDetailsRef.setValue(paymentDetailsDto).addOnFailureListener { e ->
-                            e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
-                        }
-                        paymentListingsRef.setValue(paymentListingDto).addOnFailureListener { e ->
-                            e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
+        if (payment.photoUris.isNotEmpty()) {
+            payment.photoUris.forEachIndexed { i, uri ->
+                val imageStorageReference = storageReference.child("image_$i.jpg")
+                val uploadTask = imageStorageReference.putFile(uri)
+                uploadTask.continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.message?.let {
+                            Log.d(PAYMENT_ADD_TAG, it)
                         }
                     }
-                } else {
-                    task.exception?.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
+                    // Continue with the task to get the download URL
+                    imageStorageReference.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUrl = task.result.toString()
+                        imageUrls.add(downloadUrl)
+
+                        //Proceed only if all the images were uploaded
+                        if (imageUrls.size == payment.photoUris.size) {
+                            val paymentDetailsDto = payment.toPaymentDetailsDto()
+                            val paymentListingDto = payment.toPaymentListingDto()
+                            paymentDetailsDto.photoUrls = imageUrls
+
+                            paymentDetailsRef.setValue(paymentDetailsDto)
+                                .addOnFailureListener { e ->
+                                    e.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
+                                }
+                            paymentListingsRef.setValue(paymentListingDto)
+                                .addOnFailureListener { e ->
+                                    e.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
+                                }
+                        }
+                    } else {
+                        task.exception?.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
+                    }
+                }.addOnFailureListener { e ->
+                    e.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
                 }
             }
+        } else {
+            val paymentDetailsDto = payment.toPaymentDetailsDto()
+            val paymentListingDto = payment.toPaymentListingDto()
+            paymentDetailsDto.photoUrls = imageUrls
+
+            paymentDetailsRef.setValue(paymentDetailsDto)
+                .addOnFailureListener { e ->
+                    e.message?.let { Log.d(PAYMENT_ADD_TAG, "Details: $it") }
+                }
+            paymentListingsRef.setValue(paymentListingDto)
+                .addOnFailureListener { e ->
+                    e.message?.let { Log.d(PAYMENT_ADD_TAG, "Listings: $it") }
+                }
         }
     }
 
