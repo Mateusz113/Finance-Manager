@@ -3,7 +3,6 @@ package com.mateusz113.financemanager.data.mapper
 import com.mateusz113.financemanager.data.repository.dto.PaymentDetailsDto
 import com.mateusz113.financemanager.data.repository.dto.PaymentListingDto
 import com.mateusz113.financemanager.domain.model.NewPaymentDetails
-import com.mateusz113.financemanager.domain.model.PaymentDetails
 import com.mateusz113.financemanager.util.convertLocalDateIntoTimestamp
 
 fun NewPaymentDetails.toPaymentListingDto(): PaymentListingDto {
