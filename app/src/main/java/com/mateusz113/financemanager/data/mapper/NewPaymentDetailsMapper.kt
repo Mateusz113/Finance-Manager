@@ -10,7 +10,8 @@ fun NewPaymentDetails.toPaymentListingDto(): PaymentListingDto {
         id = null,
         title = title,
         amount = amount,
-        timestamp = convertLocalDateIntoTimestamp(date)
+        timestamp = convertLocalDateIntoTimestamp(date),
+        category = category.name
     )
 }
 
