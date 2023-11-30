@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,6 +20,10 @@ class PaymentDetailsViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
+        getPaymentDetails()
+    }
+
+    private fun getPaymentDetails() {
         viewModelScope.launch {
             val id = savedStateHandle.get<String>("id") ?: return@launch
             repository.getPaymentDetails(id).collect { result ->
