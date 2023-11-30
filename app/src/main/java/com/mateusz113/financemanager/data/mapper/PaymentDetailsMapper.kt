@@ -6,20 +6,12 @@ import com.mateusz113.financemanager.domain.model.PaymentDetails
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.util.Category
 import com.mateusz113.financemanager.util.convertLocalDateIntoTimestamp
+import com.mateusz113.financemanager.util.convertStringToCategory
 import com.mateusz113.financemanager.util.convertTimestampIntoLocalDate
 import java.time.LocalDate
 
 
 fun PaymentDetailsDto.toPaymentDetails(): PaymentDetails {
-    //Convert category string into enum
-    val categoryToAssign = category?.let {
-        try {
-            Category.valueOf(it)
-        } catch (e: IllegalArgumentException) {
-            Category.Housing
-        }
-    }
-
     //Convert timestamp into LocalDate
     val date = timestamp?.let {
         convertTimestampIntoLocalDate(it)
@@ -31,17 +23,6 @@ fun PaymentDetailsDto.toPaymentDetails(): PaymentDetails {
         amount = amount ?: 0.00f,
         photoUrls = photoUrls ?: emptyList(),
         date = date ?: LocalDate.now(),
-        category = categoryToAssign ?: Category.Housing
-    )
-}
-
-fun PaymentDetails.toPaymentDetailsDto(): PaymentDetailsDto {
-    return PaymentDetailsDto(
-        title = title,
-        description = description,
-        amount = amount,
-        photoUrls = photoUrls,
-        timestamp = convertLocalDateIntoTimestamp(date),
-        category = category.name
+        category = convertStringToCategory(category)
     )
 }
