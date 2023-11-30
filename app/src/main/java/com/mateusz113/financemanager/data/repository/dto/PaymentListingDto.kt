@@ -5,16 +5,19 @@ class PaymentListingDto() {
     var title: String? = null
     var amount: Float? = null
     var timestamp: Long? = null
+    var category: String? = null
 
     constructor(
         id: String?,
         title: String?,
         amount: Float?,
-        timestamp: Long?
+        timestamp: Long?,
+        category: String?
     ) : this() {
         this.id = id
         this.title = title
         this.amount = amount
         this.timestamp = timestamp
+        this.category = category
     }
 }
