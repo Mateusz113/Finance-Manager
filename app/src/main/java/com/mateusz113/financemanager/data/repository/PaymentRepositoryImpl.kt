@@ -18,11 +18,13 @@ import com.mateusz113.financemanager.domain.model.PaymentDetails
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Resource
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 const val PAYMENT_ADD_TAG = "PAYMENT_ADD"
@@ -38,8 +40,7 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
         return callbackFlow {
             val paymentListingsRef =
                 firebaseDatabase.getReference("users/$currentUserId/paymentsListings")
-
-            val valueEventListener = paymentListingsRef.addValueEventListener(
+            val paymentsListingsEventListener = paymentListingsRef.addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val paymentListings = mutableListOf<PaymentListing>()
@@ -61,40 +62,58 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
                     }
                 }
             )
-
             // Cancel the listener when the flow is closed
-            awaitClose { paymentListingsRef.removeEventListener(valueEventListener) }
+            awaitClose { paymentListingsRef.removeEventListener(paymentsListingsEventListener) }
         }
             .onStart { emit(Resource.Loading(true)) }
-            .onCompletion { emit(Resource.Loading(false)) }
+            .onCompletion { throwable ->
+                if (throwable == null) {
+                    emit(Resource.Loading(false))
+                } else {
+                    Log.d("GET_DETAILS", throwable.toString())
+                }
+            }
     }
 
     override suspend fun getPaymentDetails(id: String): Flow<Resource<PaymentDetails>> {
         return callbackFlow {
             val paymentsDetailsRef =
                 firebaseDatabase.getReference("users/$currentUserId/paymentsDetails/$id")
-
-            val valueEventListener =
+            val paymentDetailsEventListener =
                 paymentsDetailsRef.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val paymentDetailsDto = snapshot.getValue(PaymentDetailsDto::class.java)
-                        trySend(
-                            Resource.Success(
-                                data = paymentDetailsDto?.toPaymentDetails()
-                            )
-                        )
+                        trySend(Resource.Success(data = paymentDetailsDto?.toPaymentDetails()))
+                        //Close the scope after sending the result
+                        if (isActive) {
+                            close()
+                        }
                     }
 
                     override fun onCancelled(error: DatabaseError) {
                         trySend(Resource.Error(message = error.message))
+                        //Close the scope after sending the result
+                        if (isActive) {
+                            close()
+                        }
                     }
                 })
 
             //Cancel the listener when the flow is closed
-            awaitClose { paymentsDetailsRef.removeEventListener(valueEventListener) }
+            awaitClose {
+                paymentsDetailsRef.removeEventListener(paymentDetailsEventListener)
+            }
         }
-            .onStart { emit(Resource.Loading(true)) }
-            .onCompletion { emit(Resource.Loading(false)) }
+            .onStart {
+                emit(Resource.Loading(true))
+            }
+            .onCompletion { throwable ->
+                if (throwable == null) {
+                    emit(Resource.Loading(false))
+                } else {
+                    Log.d("GET_DETAILS", throwable.toString())
+                }
+            }
     }
 
     override suspend fun addPayment(payment: NewPaymentDetails) {
