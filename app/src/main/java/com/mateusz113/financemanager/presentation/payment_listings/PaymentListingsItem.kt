@@ -33,6 +33,15 @@ fun PaymentListingsItem(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
+            text = paymentListing.category.name,
+            style = TextStyle(
+                fontWeight = FontWeight.SemiBold,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize
+            )
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
             text = paymentListing.title,
             style = TextStyle(
                 fontWeight = FontWeight.Normal,
