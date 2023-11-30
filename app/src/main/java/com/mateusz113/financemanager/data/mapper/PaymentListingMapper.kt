@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.mateusz113.financemanager.data.repository.dto.PaymentListingDto
 import com.mateusz113.financemanager.domain.model.PaymentListing
+import com.mateusz113.financemanager.util.convertStringToCategory
 import com.mateusz113.financemanager.util.convertTimestampIntoLocalDate
 import java.time.Instant
 import java.time.LocalDate
@@ -17,6 +18,7 @@ fun PaymentListingDto.toPaymentListing(): PaymentListing {
         id = id ?: "",
         title = title ?: "",
         amount = amount ?: 0.00f,
-        date = date ?: LocalDate.now()
+        date = date ?: LocalDate.now(),
+        category = convertStringToCategory(category)
     )
 }
