@@ -1,6 +1,5 @@
 package com.mateusz113.financemanager.presentation.payment_listings
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mateusz113.financemanager.domain.model.NewPaymentDetails
@@ -55,10 +54,6 @@ class PaymentListingsViewModel @Inject constructor(
                 .collect { result ->
                     when (result) {
                         is Resource.Success -> {
-                            Log.d("LISTINGS_GET", "ViewModel: List of results received")
-                            result.data?.forEach {
-                                Log.d("LISTINGS_GET", it.toString())
-                            }
                             result.data?.let { listings ->
                                 _state.value = _state.value.copy(
                                     payments = listings
