@@ -13,12 +13,12 @@ import com.mateusz113.financemanager.data.mapper.toPaymentListing
 import com.mateusz113.financemanager.data.mapper.toPaymentListingDto
 import com.mateusz113.financemanager.data.repository.dto.PaymentDetailsDto
 import com.mateusz113.financemanager.data.repository.dto.PaymentListingDto
+import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.NewPaymentDetails
 import com.mateusz113.financemanager.domain.model.PaymentDetails
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Resource
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -33,11 +33,11 @@ const val PAYMENT_REMOVE_TAG = "PAYMENT_REMOVE"
 class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
     private val firebaseDatabase =
         FirebaseDatabase.getInstance("https://financemanager-aa563-default-rtdb.europe-west1.firebasedatabase.app")
-    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
     private val firebaseStorage = FirebaseStorage.getInstance()
 
     override suspend fun getPaymentListings(): Flow<Resource<List<PaymentListing>>> {
         return callbackFlow {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
             val paymentListingsRef =
                 firebaseDatabase.getReference("users/$currentUserId/paymentsListings")
             val paymentsListingsEventListener = paymentListingsRef.addValueEventListener(
@@ -75,8 +75,68 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
             }
     }
 
+    override suspend fun getPaymentListingsWithFilter(filterSettings: FilterSettings): Flow<Resource<List<PaymentListing>>> {
+        return callbackFlow {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
+            val paymentListingsRef =
+                firebaseDatabase.getReference("users/$currentUserId/paymentsListings")
+            val paymentsListingsEventListener = paymentListingsRef.addValueEventListener(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        var paymentListings = mutableListOf<PaymentListing>()
+                        snapshot.children.forEach { listingSnapshot ->
+                            val paymentListingDto =
+                                listingSnapshot.getValue(PaymentListingDto::class.java)
+                            paymentListingDto?.let { listing ->
+                                listing.id = listingSnapshot.key
+                                paymentListings.add(
+                                    listing.toPaymentListing()
+                                )
+                            }
+                        }
+                        trySend(
+                            Resource.Success(
+                                data = paymentListings.filter {
+                                    it.title.lowercase().contains(filterSettings.query.lowercase())
+                                            && (filterSettings.categories.isEmpty() ||
+                                            filterSettings.categories.contains(it.category))
+                                            && (filterSettings.minValue.isBlank() ||
+                                            filterSettings.minValue.toFloat() <= it.amount)
+                                            && (filterSettings.maxValue.isBlank() ||
+                                            filterSettings.maxValue.toFloat() >= it.amount)
+                                            && filterSettings.startDate <= it.date
+                                            && filterSettings.endDate >= it.date
+                                })
+                        )
+                        if (isActive) {
+                            close()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        trySend(Resource.Error(message = error.message))
+                        if (isActive) {
+                            close()
+                        }
+                    }
+                }
+            )
+            // Cancel the listener when the flow is closed
+            awaitClose { paymentListingsRef.removeEventListener(paymentsListingsEventListener) }
+        }
+            .onStart { emit(Resource.Loading(true)) }
+            .onCompletion { throwable ->
+                if (throwable == null) {
+                    emit(Resource.Loading(false))
+                } else {
+                    Log.d("GET_DETAILS", throwable.toString())
+                }
+            }
+    }
+
     override suspend fun getPaymentDetails(id: String): Flow<Resource<PaymentDetails>> {
         return callbackFlow {
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
             val paymentsDetailsRef =
                 firebaseDatabase.getReference("users/$currentUserId/paymentsDetails/$id")
             val paymentDetailsEventListener =
@@ -117,6 +177,7 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
     }
 
     override suspend fun addPayment(payment: NewPaymentDetails) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
         val newPaymentId = firebaseDatabase.getReference("paymentDetails").push().key
 
         val paymentDetailsRef =
@@ -186,6 +247,7 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
     }
 
     override suspend fun removePayment(id: String) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
         val paymentDetailRef =
             firebaseDatabase.getReference("users/$currentUserId/paymentsDetails/$id")
         val paymentListingRef =
