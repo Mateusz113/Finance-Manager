@@ -1,12 +1,37 @@
 <resources>
     <string name="app_name">FinanceManager</string>
+
     //Web client reference for sing in method
     <string name="web_client_id">424578956737-i79r01mig9g2h1grp498auhbm59brdb1.apps.googleusercontent.com</string>
 
     //Content descriptions
     <string name="profile_pic_content_desc">Profile picture</string>
+    <string name="category_selection_filter">Category selection filter button</string>
+    <string name="start_date_picker">Start date dialog picker open</string>
+    <string name="end_date_picker">End date dialog picker open</string>
+    <string name="remove_payment">Remove payment</string>
+    <string name="add_new_payment">Add new payment</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
     <string name="sign_in">Sign in</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="reset_filter">Reset filter</string>
+    <string name="payments">Payments</string>
+    <string name="spendings">Spendings</string>
+    <string name="profile">Profile</string>
+
+    //Placeholders
+    <string name="min_payment_value">Min value</string>
+    <string name="max_payment_value">Max value</string>
+
+    //On screen text
+    <string name="filter_settings">Filter settings</string>
+    <string name="pick_start_date">Pick start date</string>
+    <string name="pick_end_date">Pick end date</string>
+    <string name="deletion_text">Are you sure you want to delete the payment with title \"%1$s\"?</string>
+    <string name="deletion">Deletion</string>
 </resources>
