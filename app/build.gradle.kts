@@ -60,11 +60,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -93,8 +94,11 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-swiperefresh:0.24.2-alpha")
 
     // Compose Nav Destinations
-    implementation ("io.github.raamcosta.compose-destinations:core:1.8.42-beta")
-    ksp ("io.github.raamcosta.compose-destinations:ksp:1.8.42-beta")
+    implementation ("io.github.raamcosta.compose-destinations:core:1.9.55")
+    ksp ("io.github.raamcosta.compose-destinations:ksp:1.9.55")
+
+    // Date picker library
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
     // Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
