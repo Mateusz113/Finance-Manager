@@ -1,7 +1,6 @@
 package com.mateusz113.financemanager.domain.model
 
 import android.net.Uri
-import com.mateusz113.financemanager.util.Category
 import java.time.LocalDate
 
 data class NewPaymentDetails(
@@ -9,6 +8,8 @@ data class NewPaymentDetails(
     val description: String,
     val amount: Float,
     val photoUris: List<Uri>,
+    val photoUrls: List<String> = emptyList(),
+    val deletedPhotos: List<String> = emptyList(),
     val date: LocalDate,
     val category: Category
 )
