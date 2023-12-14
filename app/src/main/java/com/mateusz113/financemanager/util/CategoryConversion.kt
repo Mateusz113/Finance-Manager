@@ -1,5 +1,7 @@
 package com.mateusz113.financemanager.util
 
+import com.mateusz113.financemanager.domain.model.Category
+
 fun convertStringToCategory(
     s: String?,
     defaultReturnValue: Category = Category.Housing
