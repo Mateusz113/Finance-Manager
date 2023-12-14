@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material3.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -26,10 +28,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.presentation.common.MultipleOptionsButtonSpinner
-import com.mateusz113.financemanager.util.Category
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.mateusz113.financemanager.domain.model.Category
+import com.mateusz113.financemanager.presentation.common.DatePicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -189,6 +189,7 @@ fun PaymentListingsFilterDialog(
                                 shape = RoundedCornerShape(5.dp),
                                 value = filterSettings.minValue,
                                 isError = !minValueInputIsValid,
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                                 onValueChange = { minValue ->
                                     filterSettings =
                                         filterSettings.copy(minValue = minValue)
@@ -207,6 +208,7 @@ fun PaymentListingsFilterDialog(
                                     .padding(start = 2.dp),
                                 value = filterSettings.maxValue,
                                 isError = !maxValueInputIsValid,
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                                 onValueChange = { maxValue ->
                                     filterSettings =
                                         filterSettings.copy(maxValue = maxValue)
@@ -369,89 +371,29 @@ fun PaymentListingsFilterDialog(
                 }
             }
         }
-        MaterialDialog(
-            dialogState = startDateDialogState,
-            backgroundColor = MaterialTheme.colorScheme.background,
-            shape = RoundedCornerShape(5.dp),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant),
-            buttons = {
-                positiveButton(
-                    text = stringResource(id = R.string.apply),
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
-                negativeButton(
-                    text = stringResource(id = R.string.cancel),
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
+        DatePicker(
+            datePickerState = startDateDialogState,
+            date = filterSettings.startDate,
+            dateValidator = {date ->
+                date > minStartDate
+                        && date < filterSettings.endDate
+            },
+            onDateChange = { date ->
+                filterSettings = filterSettings.copy(startDate = date)
             }
-        ) {
-            this.datepicker(
-                initialDate = filterSettings.startDate,
-                title = stringResource(id = R.string.pick_start_date),
-                colors = DatePickerDefaults.colors(
-                    headerBackgroundColor = MaterialTheme.colorScheme.secondary,
-                    headerTextColor = MaterialTheme.colorScheme.onSecondary,
-                    calendarHeaderTextColor = MaterialTheme.colorScheme.onBackground,
-                    dateActiveBackgroundColor = MaterialTheme.colorScheme.secondary,
-                    dateActiveTextColor = MaterialTheme.colorScheme.onSecondary,
-                    dateInactiveBackgroundColor = MaterialTheme.colorScheme.background,
-                    dateInactiveTextColor = MaterialTheme.colorScheme.onBackground
-                ),
-                allowedDateValidator = { date ->
-                    date > minStartDate
-                            && date < filterSettings.endDate
-                },
-                onDateChange = { selectedDate ->
-                    filterSettings = filterSettings.copy(startDate = selectedDate)
-                }
-            )
-        }
+        )
 
-        MaterialDialog(
-            dialogState = endDateDialogState,
-            backgroundColor = MaterialTheme.colorScheme.background,
-            shape = RoundedCornerShape(5.dp),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant),
-            buttons = {
-                positiveButton(
-                    text = stringResource(id = R.string.apply),
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
-                negativeButton(
-                    text = stringResource(id = R.string.cancel),
-                    textStyle = TextStyle(
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
+        DatePicker(
+            datePickerState = endDateDialogState,
+            date = filterSettings.endDate,
+            dateValidator = {date ->
+                date > filterSettings.startDate
+                        && date <= LocalDate.now()
+            },
+            onDateChange = { date ->
+                filterSettings = filterSettings.copy(endDate = date)
             }
-        ) {
-            this.datepicker(
-                initialDate = filterSettings.endDate,
-                title = stringResource(id = R.string.pick_end_date),
-                colors = DatePickerDefaults.colors(
-                    headerBackgroundColor = MaterialTheme.colorScheme.secondary,
-                    headerTextColor = MaterialTheme.colorScheme.onSecondary,
-                    calendarHeaderTextColor = MaterialTheme.colorScheme.onBackground,
-                    dateActiveBackgroundColor = MaterialTheme.colorScheme.secondary,
-                    dateActiveTextColor = MaterialTheme.colorScheme.onSecondary,
-                    dateInactiveBackgroundColor = MaterialTheme.colorScheme.background,
-                    dateInactiveTextColor = MaterialTheme.colorScheme.onBackground
-                ),
-                allowedDateValidator = { date ->
-                    date > filterSettings.startDate
-                            && date <= LocalDate.now()
-                },
-                onDateChange = { selectedDate ->
-                    filterSettings = filterSettings.copy(endDate = selectedDate)
-                }
-            )
-        }
+        )
     }
 }
 
