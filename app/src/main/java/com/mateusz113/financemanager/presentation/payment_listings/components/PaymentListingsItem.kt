@@ -29,12 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
-import com.mateusz113.financemanager.util.Category
-import java.time.LocalDate
 
 @Composable
 fun PaymentListingsItem(
