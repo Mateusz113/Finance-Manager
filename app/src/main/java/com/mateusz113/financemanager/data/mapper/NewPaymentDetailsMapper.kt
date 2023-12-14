@@ -20,7 +20,7 @@ fun NewPaymentDetails.toPaymentDetailsDto(): PaymentDetailsDto {
         title = title,
         description = description,
         amount = amount,
-        photoUrls = emptyList(),
+        photoUrls = photoUrls,
         timestamp = convertLocalDateIntoTimestamp(date),
         category = category.name
     )
