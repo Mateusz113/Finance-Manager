@@ -12,5 +12,6 @@ interface PaymentRepository {
     suspend fun getPaymentListingsWithFilter(filterSettings: FilterSettings): Flow<Resource<List<PaymentListing>>>
     suspend fun getPaymentDetails(id: String): Flow<Resource<PaymentDetails>>
     suspend fun addPayment(payment: NewPaymentDetails)
+    suspend fun editPayment(id: String, newPaymentDetails: NewPaymentDetails)
     suspend fun removePayment(id: String)
 }
