@@ -16,8 +16,7 @@ import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavController,
-    startRoute: Route
+    navController: NavController
 ) {
     NavigationBar {
         BottomBarDestination.values().forEach { destination ->
