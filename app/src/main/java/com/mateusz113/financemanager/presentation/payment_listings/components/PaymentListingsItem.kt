@@ -46,7 +46,7 @@ fun PaymentListingsItem(
     Row(
         modifier = modifier
             .border(
-                2.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(5.dp)
+                1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(5.dp)
             )
             .padding(start = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
