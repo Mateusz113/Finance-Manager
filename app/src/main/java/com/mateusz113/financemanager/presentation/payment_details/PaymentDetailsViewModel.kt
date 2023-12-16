@@ -51,4 +51,8 @@ class PaymentDetailsViewModel @Inject constructor(
             }
         }
     }
+
+    fun refresh() {
+        getPaymentDetails()
+    }
 }
