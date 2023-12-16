@@ -11,6 +11,9 @@
     <string name="end_date_picker">End date dialog picker open</string>
     <string name="remove_payment">Remove payment</string>
     <string name="add_new_payment">Add new payment</string>
+    <string name="go_back">Go back from current screen</string>
+    <string name="add_new_photo">Add new photo to payment</string>
+    <string name="date_picker">Open date picker for payment</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
@@ -23,6 +26,8 @@
     <string name="payments">Payments</string>
     <string name="spendings">Spendings</string>
     <string name="profile">Profile</string>
+    <string name="confirm">Confirm</string>
+    <string name="undo">Undo</string>
 
     //Placeholders
     <string name="min_payment_value">Min value</string>
@@ -34,4 +39,15 @@
     <string name="pick_end_date">Pick end date</string>
     <string name="deletion_text">Are you sure you want to delete the payment with title \"%1$s\"?</string>
     <string name="deletion">Deletion</string>
+    <string name="payment_picture">Picture related to payment</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="amount">Amount</string>
+    <string name="category">Category</string>
+    <string name="date">Date</string>
+    <string name="photos">Photos</string>
+    <string name="edit_payment">Edit payment</string>
+    <string name="deleted_picture">Deleted picture</string>
+    <string name="payment_details">Payment details</string>
+    <string name="new_payment">New payment</string>
 </resources>
