@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
@@ -190,6 +191,8 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
             firebaseStorage.getReference("users/$currentUserId/payments/$newPaymentId/images/")
 
         val imageUrls = mutableListOf<String>()
+        val paymentDetailsDto = payment.toPaymentDetailsDto()
+        val paymentListingDto = payment.toPaymentListingDto()
 
         if (payment.photoUris.isNotEmpty()) {
             payment.photoUris.forEachIndexed { i, uri ->
@@ -210,18 +213,13 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
 
                         //Proceed only if all the images were uploaded
                         if (imageUrls.size == payment.photoUris.size) {
-                            val paymentDetailsDto = payment.toPaymentDetailsDto()
-                            val paymentListingDto = payment.toPaymentListingDto()
                             paymentDetailsDto.photoUrls = imageUrls
-
-                            paymentDetailsRef.setValue(paymentDetailsDto)
-                                .addOnFailureListener { e ->
-                                    e.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
-                                }
-                            paymentListingsRef.setValue(paymentListingDto)
-                                .addOnFailureListener { e ->
-                                    e.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
-                                }
+                            uploadPaymentInformation(
+                                paymentDetailsRef,
+                                paymentListingsRef,
+                                paymentDetailsDto,
+                                paymentListingDto
+                            )
                         }
                     } else {
                         task.exception?.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
@@ -231,18 +229,71 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
                 }
             }
         } else {
-            val paymentDetailsDto = payment.toPaymentDetailsDto()
-            val paymentListingDto = payment.toPaymentListingDto()
-            paymentDetailsDto.photoUrls = imageUrls
+            uploadPaymentInformation(
+                paymentDetailsRef,
+                paymentListingsRef,
+                paymentDetailsDto,
+                paymentListingDto
+            )
+        }
+    }
 
-            paymentDetailsRef.setValue(paymentDetailsDto)
-                .addOnFailureListener { e ->
-                    e.message?.let { Log.d(PAYMENT_ADD_TAG, "Details: $it") }
+    override suspend fun editPayment(id: String, newPaymentDetails: NewPaymentDetails) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid!!
+        val paymentDetailsRef =
+            firebaseDatabase.getReference("users/$currentUserId/paymentsDetails/$id")
+        val paymentListingsRef =
+            firebaseDatabase.getReference("users/$currentUserId/paymentsListings/$id")
+        val storageReference =
+            firebaseStorage.getReference("users/$currentUserId/payments/$id/images/")
+
+        val imageUrls = mutableListOf<String>()
+        val paymentDetailsDto = newPaymentDetails.toPaymentDetailsDto()
+        val paymentListingDto = newPaymentDetails.toPaymentListingDto()
+
+        if (newPaymentDetails.photoUris.isNotEmpty()) {
+            newPaymentDetails.photoUris.forEachIndexed { i, uri ->
+                val imageStorageReference = storageReference.child("image_$i.jpg")
+                val uploadTask = imageStorageReference.putFile(uri)
+                uploadTask.continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.message?.let {
+                            Log.d(PAYMENT_ADD_TAG, it)
+                        }
+                    }
+                    // Continue with the task to get the download URL
+                    imageStorageReference.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val downloadUrl = task.result.toString()
+                        imageUrls.add(downloadUrl)
+
+                        //Proceed only if all the images were uploaded
+                        if (imageUrls.size == newPaymentDetails.photoUris.size) {
+                            paymentDetailsDto.photoUrls?.let { imageUrls.addAll(it) }
+                            paymentDetailsDto.photoUrls = imageUrls
+                            deletePhotos(newPaymentDetails)
+                            uploadPaymentInformation(
+                                paymentDetailsRef,
+                                paymentListingsRef,
+                                paymentDetailsDto,
+                                paymentListingDto
+                            )
+                        }
+                    } else {
+                        task.exception?.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
+                    }
+                }.addOnFailureListener { e ->
+                    e.message?.let { Log.d(PAYMENT_ADD_TAG, it) }
                 }
-            paymentListingsRef.setValue(paymentListingDto)
-                .addOnFailureListener { e ->
-                    e.message?.let { Log.d(PAYMENT_ADD_TAG, "Listings: $it") }
-                }
+            }
+        } else {
+            uploadPaymentInformation(
+                paymentDetailsRef,
+                paymentListingsRef,
+                paymentDetailsDto,
+                paymentListingDto
+            )
         }
     }
 
@@ -263,5 +314,43 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
         paymentListingRef.removeValue().addOnFailureListener { e ->
             e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
         }
+    }
+
+    private fun deletePhotos(
+        payment: NewPaymentDetails,
+    ) {
+        if (payment.deletedPhotos.isNotEmpty()) {
+            payment.deletedPhotos.forEach { photoUrl ->
+                firebaseStorage.getReferenceFromUrl(photoUrl).delete()
+                    .addOnSuccessListener {
+                        Log.d("PAYMENT_EDIT", "Deleted payment: $photoUrl")
+                    }
+                    .addOnFailureListener {
+                        Log.d("PAYMENT_EDIT", "Failed to delete the picture: ${it.message}")
+                    }
+            }
+        }
+    }
+
+    private fun uploadPaymentInformation(
+        paymentDetailsRef: DatabaseReference,
+        paymentListingsRef: DatabaseReference,
+        paymentDetailsDto: PaymentDetailsDto,
+        paymentListingDto: PaymentListingDto
+    ) {
+        paymentDetailsRef.setValue(paymentDetailsDto)
+            .addOnSuccessListener {
+                Log.d("PAYMENT_EDIT", "Added details: $paymentDetailsDto")
+            }
+            .addOnFailureListener { e ->
+                e.message?.let { Log.d(PAYMENT_ADD_TAG, "Details: $it") }
+            }
+        paymentListingsRef.setValue(paymentListingDto)
+            .addOnSuccessListener {
+                Log.d("PAYMENT_EDIT", "Added listing: $paymentListingDto")
+            }
+            .addOnFailureListener { e ->
+                e.message?.let { Log.d(PAYMENT_ADD_TAG, "Listings: $it") }
+            }
     }
 }
