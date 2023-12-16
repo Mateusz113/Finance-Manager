@@ -29,6 +29,7 @@ import com.mateusz113.financemanager.presentation.destinations.SignInScreenDesti
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
 import com.mateusz113.financemanager.presentation.common.BottomNavigationBar
 import com.mateusz113.financemanager.presentation.destinations.Destination
+import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.sign_in.SignInScreen
@@ -57,7 +58,8 @@ class MainActivity : ComponentActivity() {
                 val screensWithoutBottomNav = remember {
                     mutableListOf<Destination>(
                         PaymentDetailsScreenDestination,
-                        SignInScreenDestination
+                        PaymentAdditionScreenDestination,
+                        SignInScreenDestination,
                     )
                 }
                 // A surface container using the 'background' color from the theme
