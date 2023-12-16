@@ -2,10 +2,10 @@ package com.mateusz113.financemanager.presentation.payment_listings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.NewPaymentDetails
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
-import com.mateusz113.financemanager.util.Category
 import com.mateusz113.financemanager.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -77,6 +77,7 @@ class PaymentListingsViewModel @Inject constructor(
         viewModelScope.launch {
             id?.let { idToRemove ->
                 repository.removePayment(idToRemove)
+                getPaymentListings()
             }
         }
     }
