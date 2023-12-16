@@ -5,5 +5,6 @@ import com.mateusz113.financemanager.domain.model.PaymentDetails
 data class PaymentDetailsState(
     var paymentDetails: PaymentDetails? = null,
     var error: String? = null,
-    var isLoading: Boolean = false
+    var isLoading: Boolean = false,
+    var isRefreshing: Boolean = false
 )
