@@ -27,6 +27,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.common.ScaffoldWrapper
+import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
 import com.mateusz113.financemanager.presentation.payment_listings.components.PaymentListingsFilterDialog
 import com.mateusz113.financemanager.presentation.payment_listings.components.PaymentListingsItem
@@ -50,7 +51,9 @@ fun PaymentListingsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    viewModel.onEvent(PaymentListingsEvent.AddPayment)
+                    navigator.navigate(PaymentAdditionScreenDestination(
+                        topBarLabel = R.string.new_payment
+                    ))
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
