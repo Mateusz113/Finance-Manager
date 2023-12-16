@@ -76,8 +76,7 @@ class MainActivity : ComponentActivity() {
                         bottomBar = {
                             if (!screensWithoutBottomNav.contains(currentDestination)) {
                                 BottomNavigationBar(
-                                    navController = navController,
-                                    startRoute = startRoute
+                                    navController = navController
                                 )
                             }
                         }
