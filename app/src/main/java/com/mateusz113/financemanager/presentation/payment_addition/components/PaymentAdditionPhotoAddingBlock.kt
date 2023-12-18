@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +15,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.common.PhotoContainer
 
 @Composable
 fun PaymentAdditionPhotoAddingBlock(
@@ -25,15 +25,14 @@ fun PaymentAdditionPhotoAddingBlock(
     newPhotos: List<Uri>,
     onNewPhotoDelete: (Uri) -> Unit,
     photoCount: Int,
-    onPhotoAddClick: () -> Unit
+    onPhotoAddClick: () -> Unit,
+    onPhotoClick: (Any) -> Unit
 ) {
     Column(
         modifier = modifier
-            .padding(horizontal = 5.dp)
     ) {
         Text(
-            modifier = Modifier
-                .padding(start = 5.dp),
+            modifier = Modifier,
             text = stringResource(id = R.string.photos),
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
@@ -41,29 +40,36 @@ fun PaymentAdditionPhotoAddingBlock(
                 color = MaterialTheme.colorScheme.onBackground
             )
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        LazyHorizontalGrid(
-            modifier = modifier
-                .height(180.dp),
-            rows = GridCells.Fixed(1),
+        LazyRow(
+            modifier = Modifier
+                .height(150.dp)
         ) {
             uploadedPhotos.forEach { photoUrl ->
                 item {
-                    PaymentAdditionPhotoContainer(
+                    PhotoContainer(
                         photo = photoUrl,
-                        deleteClicked = { photo ->
+                        deleteEnabled = true,
+                        onDeleteClick = { photo ->
                             onUploadedPhotoDelete(photo)
+                        },
+                        onPhotoClick = { photo ->
+                            onPhotoClick(photo)
                         }
                     )
                 }
             }
             newPhotos.forEach { photoUri ->
                 item {
-                    PaymentAdditionPhotoContainer(
+                    PhotoContainer(
                         photo = photoUri,
-                        deleteClicked = { photo ->
+                        deleteEnabled = true,
+                        onDeleteClick = { photo ->
                             onNewPhotoDelete(photo)
+                        },
+                        onPhotoClick = { photo ->
+                            onPhotoClick(photo)
                         }
                     )
                 }
@@ -78,6 +84,5 @@ fun PaymentAdditionPhotoAddingBlock(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
     }
 }
