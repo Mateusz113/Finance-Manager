@@ -2,6 +2,7 @@ package com.mateusz113.financemanager.presentation.payment_addition
 
 import android.net.Uri
 import com.mateusz113.financemanager.domain.model.Category
+import com.mateusz113.financemanager.presentation.payment_details.PaymentDetailsEvent
 import java.time.LocalDate
 
 sealed class PaymentAdditionEvent {
@@ -14,5 +15,7 @@ sealed class PaymentAdditionEvent {
     data class RemovePhoto(val photoUri: Uri) : PaymentAdditionEvent()
     data class RemoveUploadedPhoto(val photoUrl: String) : PaymentAdditionEvent()
     data class RestoreDeletedPhoto<T>(val photo: T) : PaymentAdditionEvent()
+    data class UpdateDialogState(val isOpen: Boolean): PaymentAdditionEvent()
+    data class UpdateDialogPhoto(val photo: Any): PaymentAdditionEvent()
     object AdditionConfirm : PaymentAdditionEvent()
 }
