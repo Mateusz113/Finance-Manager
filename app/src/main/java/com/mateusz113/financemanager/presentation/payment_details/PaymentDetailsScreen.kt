@@ -1,12 +1,17 @@
 package com.mateusz113.financemanager.presentation.payment_details
 
+import android.widget.Space
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -17,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,9 +33,12 @@ import coil.compose.SubcomposeAsyncImage
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.common.PhotoDisplayDialog
 import com.mateusz113.financemanager.presentation.common.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.common.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
+import com.mateusz113.financemanager.presentation.payment_details.components.PaymentDetailsInfoBlock
+import com.mateusz113.financemanager.presentation.payment_details.components.PaymentDetailsPhotosRow
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -58,91 +67,63 @@ fun PaymentDetailsScreen(
         ) {
             SwipeRefresh(
                 state = swipeRefreshState,
-                onRefresh = { viewModel.refresh() }
+                onRefresh = {
+                    viewModel.onEvent(PaymentDetailsEvent.Refresh)
+                }
             ) {
                 state.paymentDetails?.let { details ->
                     Column(
                         modifier = Modifier
                             .padding(it)
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(rememberScrollState()),
                     ) {
-                        Text(
-                            text = details.title,
-                            style = TextStyle(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
+                        PaymentDetailsInfoBlock(
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            paymentDetails = details
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = id,
-                            style = TextStyle(
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        if (details.photoUrls.isNotEmpty()) {
+                            PaymentDetailsPhotosRow(
+                                modifier = Modifier.padding(horizontal = 10.dp),
+                                photos = details.photoUrls,
+                                onPhotoClick = { photo ->
+                                    viewModel.onEvent(PaymentDetailsEvent.UpdateDialogPhoto(photo))
+                                    viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(true))
+                                }
                             )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = details.description,
-                            style = TextStyle(
-                                fontWeight = FontWeight.Normal,
-                                fontSize = MaterialTheme.typography.titleMedium.fontSize
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = details.amount.toString(),
-                            style = TextStyle(
-                                fontWeight = FontWeight.Normal,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = details.date.toString(),
-                            style = TextStyle(
-                                fontWeight = FontWeight.Normal,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = details.category.name,
-                            style = TextStyle(
-                                fontWeight = FontWeight.Normal,
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize
-                            )
-                        )
-
-                        Button(onClick = {
-                            navigator.navigate(
-                                PaymentAdditionScreenDestination(
-                                    topBarLabel = R.string.edit_payment,
-                                    paymentId = id
-                                )
-                            )
-                        }) {
-                            Text(text = "Change payment")
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
-                        details.photoUrls.forEach {
-                            SubcomposeAsyncImage(
-                                model = it,
-                                loading = {
-                                    CircularProgressIndicator()
-                                },
-                                contentDescription = ""
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Button(
+                                modifier = Modifier.fillMaxWidth(0.5f),
+                                onClick = {
+                                    navigator.navigate(
+                                        PaymentAdditionScreenDestination(
+                                            topBarLabel = R.string.edit_payment,
+                                            paymentId = id
+                                        )
+                                    )
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.edit_payment))
+                            }
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }
         }
+        PhotoDisplayDialog(
+            photo = state.dialogPhoto,
+            isDialogOpen = state.isPhotoDialogOpen,
+            dialogOpen = { isOpen ->
+                viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(isOpen))
+            }
+        )
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Center

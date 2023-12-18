@@ -16,11 +16,31 @@ class PaymentDetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val repository: PaymentRepository
 ) : ViewModel() {
-    private var _state = MutableStateFlow(PaymentDetailsState())
+    private var _state = MutableStateFlow(PaymentDetailsState<Any>())
     val state = _state.asStateFlow()
 
     init {
         getPaymentDetails()
+    }
+
+    fun onEvent(event: PaymentDetailsEvent) {
+        when (event) {
+            is PaymentDetailsEvent.Refresh -> {
+                getPaymentDetails()
+            }
+
+            is PaymentDetailsEvent.UpdateDialogState -> {
+                _state.value = _state.value.copy(
+                    isPhotoDialogOpen = event.isOpen
+                )
+            }
+
+            is PaymentDetailsEvent.UpdateDialogPhoto -> {
+                _state.value = _state.value.copy(
+                    dialogPhoto = event.photo
+                )
+            }
+        }
     }
 
     private fun getPaymentDetails() {
@@ -50,9 +70,5 @@ class PaymentDetailsViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    fun refresh() {
-        getPaymentDetails()
     }
 }

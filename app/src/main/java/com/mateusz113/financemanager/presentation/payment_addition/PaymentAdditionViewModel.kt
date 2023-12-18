@@ -89,6 +89,18 @@ class PaymentAdditionViewModel @Inject constructor(
                     else -> {}
                 }
             }
+
+            is PaymentAdditionEvent.UpdateDialogState -> {
+                _state.value = _state.value.copy(
+                    isPhotoDialogOpen = event.isOpen
+                )
+            }
+
+            is PaymentAdditionEvent.UpdateDialogPhoto -> {
+                _state.value = _state.value.copy(
+                    dialogPhoto = event.photo
+                )
+            }
         }
     }
 

@@ -16,5 +16,7 @@ data class PaymentAdditionState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val lastDeletedUriPhoto: Uri? = null,
-    val lastDeletedUrlPhoto: String? = null
+    val lastDeletedUrlPhoto: String? = null,
+    val isPhotoDialogOpen: Boolean = false,
+    val dialogPhoto: Any? = null
 )

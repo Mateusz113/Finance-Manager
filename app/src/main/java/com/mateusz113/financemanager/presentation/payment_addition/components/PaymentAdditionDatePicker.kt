@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
@@ -44,10 +46,12 @@ fun PaymentAdditionDatePicker(
                 color = MaterialTheme.colorScheme.onBackground
             )
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(0.4f),
+            modifier = Modifier
+                .width(160.dp)
+                .padding(start = 10.dp),
             shape = RoundedCornerShape(5.dp),
             readOnly = true,
             value = dateText,
@@ -66,7 +70,6 @@ fun PaymentAdditionDatePicker(
                 )
             }
         )
-        Spacer(modifier = Modifier.height(20.dp))
     }
     DatePicker(
         datePickerState = datePickerState,

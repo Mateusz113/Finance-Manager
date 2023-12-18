@@ -31,8 +31,7 @@ fun PaymentAdditionDataInsertField(
         modifier = modifier
     ) {
         Text(
-            modifier = Modifier
-                .padding(start = 10.dp),
+            modifier = Modifier,
             text = stringResource(id = label),
             style = TextStyle(
                 fontWeight = FontWeight.Bold,
@@ -40,12 +39,16 @@ fun PaymentAdditionDataInsertField(
                 color = MaterialTheme.colorScheme.onBackground
             )
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp),
+            textStyle = TextStyle(
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Normal
+            ),
             value = value,
             isError = !valueValidator(value),
             keyboardOptions = keyboardOptions,
@@ -54,6 +57,5 @@ fun PaymentAdditionDataInsertField(
             },
             singleLine = isSingleLine
         )
-        Spacer(modifier = Modifier.height(20.dp))
     }
 }

@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.NavGraphs
+import com.mateusz113.financemanager.presentation.common.PhotoDisplayDialog
 import com.mateusz113.financemanager.presentation.common.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.common.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
@@ -101,6 +102,7 @@ fun PaymentAdditionScreen(
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
+                    .padding(horizontal = 10.dp)
                     .verticalScroll(rememberScrollState())
             ) {
                 PaymentAdditionDataInsertField(
@@ -116,6 +118,8 @@ fun PaymentAdditionScreen(
                     }
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 PaymentAdditionDataInsertField(
                     modifier = Modifier,
                     label = R.string.description,
@@ -127,6 +131,8 @@ fun PaymentAdditionScreen(
                         viewModel.onEvent(PaymentAdditionEvent.ChangeDescription(description))
                     }
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 PaymentAdditionDataInsertField(
                     modifier = Modifier,
@@ -146,17 +152,20 @@ fun PaymentAdditionScreen(
                     }
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 PaymentAdditionCategoryPicker(
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp),
+                    modifier = Modifier,
                     category = state.category,
                     categoryChange = { category ->
                         viewModel.onEvent(PaymentAdditionEvent.ChangeCategory(category))
                     }
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 PaymentAdditionDatePicker(
-                    modifier = Modifier.padding(horizontal = 10.dp),
+                    modifier = Modifier,
                     date = state.date,
                     dateText = formattedDate,
                     dateChange = { date ->
@@ -164,7 +173,10 @@ fun PaymentAdditionScreen(
                     }
                 )
 
+                Spacer(modifier = Modifier.height(16.dp))
+
                 PaymentAdditionPhotoAddingBlock(
+                    modifier = Modifier,
                     uploadedPhotos = state.uploadedPhotos,
                     onUploadedPhotoDelete = { photoUrl ->
                         viewModel.onEvent(PaymentAdditionEvent.RemoveUploadedPhoto(photoUrl))
@@ -216,8 +228,14 @@ fun PaymentAdditionScreen(
                         photoPicker.launch(
                             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                         )
+                    },
+                    onPhotoClick = { photo ->
+                        viewModel.onEvent(PaymentAdditionEvent.UpdateDialogPhoto(photo))
+                        viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(true))
                     }
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -261,6 +279,12 @@ fun PaymentAdditionScreen(
             )
         }
     }
+    PhotoDisplayDialog(
+        photo = state.dialogPhoto,
+        isDialogOpen = state.isPhotoDialogOpen,
+        dialogOpen = { isOpen ->
+            viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(isOpen))
+        })
 }
 
 private fun isInputValid(
