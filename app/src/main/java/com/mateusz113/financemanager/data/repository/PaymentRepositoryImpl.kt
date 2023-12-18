@@ -1,6 +1,7 @@
 package com.mateusz113.financemanager.data.repository
 
 import android.util.Log
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.isActive
+import java.util.UUID
 import javax.inject.Inject
 
 const val PAYMENT_ADD_TAG = "PAYMENT_ADD"
@@ -195,8 +197,9 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
         val paymentListingDto = payment.toPaymentListingDto()
 
         if (payment.photoUris.isNotEmpty()) {
-            payment.photoUris.forEachIndexed { i, uri ->
-                val imageStorageReference = storageReference.child("image_$i.jpg")
+            payment.photoUris.forEach { uri ->
+                val newImageId = UUID.randomUUID().toString()
+                val imageStorageReference = storageReference.child("image_$newImageId.jpg")
                 val uploadTask = imageStorageReference.putFile(uri)
                 uploadTask.continueWithTask { task ->
                     if (!task.isSuccessful) {
@@ -252,8 +255,9 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
         val paymentListingDto = newPaymentDetails.toPaymentListingDto()
 
         if (newPaymentDetails.photoUris.isNotEmpty()) {
-            newPaymentDetails.photoUris.forEachIndexed { i, uri ->
-                val imageStorageReference = storageReference.child("image_$i.jpg")
+            newPaymentDetails.photoUris.forEach { uri ->
+                val newImageId = UUID.randomUUID().toString()
+                val imageStorageReference = storageReference.child("image_$newImageId.jpg")
                 val uploadTask = imageStorageReference.putFile(uri)
                 uploadTask.continueWithTask { task ->
                     if (!task.isSuccessful) {
@@ -288,6 +292,7 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
                 }
             }
         } else {
+            deletePhotos(newPaymentDetails)
             uploadPaymentInformation(
                 paymentDetailsRef,
                 paymentListingsRef,
@@ -304,16 +309,46 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
         val paymentListingRef =
             firebaseDatabase.getReference("users/$currentUserId/paymentsListings/$id")
         val storageReference =
-            firebaseStorage.getReference("users/$currentUserId/payments/$id")
-        storageReference.delete().addOnFailureListener { e ->
-            e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
-        }
-        paymentDetailRef.removeValue().addOnFailureListener { e ->
-            e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
-        }
-        paymentListingRef.removeValue().addOnFailureListener { e ->
-            e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
-        }
+            firebaseStorage.getReference("users/$currentUserId/payments/$id/images")
+        storageReference.delete()
+            .addOnFailureListener { e ->
+                e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
+            }
+            .addOnSuccessListener {
+                Log.d(PAYMENT_REMOVE_TAG, "Successful removal of the storage stuff")
+            }
+
+        storageReference.listAll()
+            .addOnSuccessListener { result ->
+                result.items.forEach {
+                    Log.d(PAYMENT_REMOVE_TAG, it.name)
+                }
+                val deleteTasks = result.items.map { it.delete() }
+                Tasks.whenAll(deleteTasks)
+                    .addOnSuccessListener {
+                        Log.d(PAYMENT_REMOVE_TAG, "Items deleted")
+                    }
+                    .addOnFailureListener { e ->
+                        e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
+                    }
+            }
+            .addOnFailureListener { e ->
+                e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
+            }
+        paymentDetailRef.removeValue()
+            .addOnFailureListener { e ->
+                e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
+            }
+            .addOnSuccessListener {
+                Log.d(PAYMENT_REMOVE_TAG, "Successful removal of the details")
+            }
+        paymentListingRef.removeValue()
+            .addOnFailureListener { e ->
+                e.message?.let { Log.d(PAYMENT_REMOVE_TAG, it) }
+            }
+            .addOnSuccessListener {
+                Log.d(PAYMENT_REMOVE_TAG, "Successful removal of the listing")
+            }
     }
 
     private fun deletePhotos(
