@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.payments.payment_listings.components
+package com.mateusz113.financemanager.presentation.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -27,9 +27,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.FilterSettings
-import com.mateusz113.financemanager.presentation.common.MultipleOptionsButtonSpinner
 import com.mateusz113.financemanager.domain.model.Category
-import com.mateusz113.financemanager.presentation.common.DatePicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -39,7 +37,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun PaymentListingsFilterDialog(
+fun PaymentFilterDialog(
     currentFilterSettings: FilterSettings,
     isDialogOpen: Boolean,
     dialogOpen: (Boolean) -> Unit,
