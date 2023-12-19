@@ -84,33 +84,35 @@ dependencies {
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
-    kapt ("androidx.hilt:hilt-compiler:1.0.0")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // Compose dependencies
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
-    implementation ("androidx.compose.material:material-icons-extended:1.1.0")
-    implementation ("androidx.activity:activity-compose:1.6.0-alpha01")
-    implementation ("com.google.accompanist:accompanist-swiperefresh:0.24.2-alpha")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    implementation("androidx.compose.material:material-icons-extended:1.1.0")
+    implementation("androidx.activity:activity-compose:1.6.0-alpha01")
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.24.2-alpha")
 
     // Compose Nav Destinations
-    implementation ("io.github.raamcosta.compose-destinations:core:1.9.55")
-    ksp ("io.github.raamcosta.compose-destinations:ksp:1.9.55")
+    implementation("io.github.raamcosta.compose-destinations:core:1.9.55")
+    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.55")
 
     // Date picker library
-    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
 
     // Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation ("com.squareup.okhttp3:okhttp:5.0.0-alpha.3")
-    implementation ("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
 
     // Room
-    implementation ("androidx.room:room-runtime:2.4.2")
-    kapt ("androidx.room:room-compiler:2.4.2")
+    implementation("androidx.room:room-runtime:2.4.2")
+    kapt("androidx.room:room-compiler:2.4.2")
 
     //Coil
-    implementation ("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
+    //YCharts
+    implementation("co.yml:ycharts:2.1.0")
 }
