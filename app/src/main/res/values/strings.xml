@@ -51,4 +51,15 @@
     <string name="deleted_picture">Deleted picture</string>
     <string name="payment_details">Payment details</string>
     <string name="new_payment">New payment</string>
+
+    //Chart labels
+    <string name="housing">Housing</string>
+    <string name="transportation">Transportation</string>
+    <string name="groceries">Groceries</string>
+    <string name="health">Health</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="utility">Utility</string>
+    <string name="personal">Personal</string>
+    <string name="savings">Savings</string>
+    <string name="education">Education</string>
 </resources>
