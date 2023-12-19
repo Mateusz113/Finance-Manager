@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,9 +31,9 @@ import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.common.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
-import com.mateusz113.financemanager.presentation.payments.payment_listings.components.PaymentListingsFilterDialog
+import com.mateusz113.financemanager.presentation.common.PaymentFilterDialog
 import com.mateusz113.financemanager.presentation.payments.payment_listings.components.PaymentListingsItem
-import com.mateusz113.financemanager.presentation.payments.payment_listings.components.PaymentListingsSearchBar
+import com.mateusz113.financemanager.presentation.common.PaymentSearchBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -45,7 +47,7 @@ fun PaymentListingsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.isRefreshing
+        isRefreshing = state.isLoading
     )
     ScaffoldWrapper(
         floatingActionButton = {
@@ -79,7 +81,7 @@ fun PaymentListingsScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     item {
-                        PaymentListingsSearchBar(
+                        PaymentSearchBar(
                             modifier = Modifier
                                 .height(80.dp)
                                 .fillMaxSize()
@@ -123,7 +125,7 @@ fun PaymentListingsScreen(
             }
         }
 
-        PaymentListingsFilterDialog(
+        PaymentFilterDialog(
             currentFilterSettings = state.filterSettings,
             isDialogOpen = state.isFilterDialogOpen,
             dialogOpen = { isOpen ->
@@ -133,15 +135,6 @@ fun PaymentListingsScreen(
                 viewModel.onEvent(PaymentListingsEvent.UpdateFilterSettings(filterSettings))
             }
         )
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        if (state.isLoading) {
-            CircularProgressIndicator()
-        }
     }
 }
 
