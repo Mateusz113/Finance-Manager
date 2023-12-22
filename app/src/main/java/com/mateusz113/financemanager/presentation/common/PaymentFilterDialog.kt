@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.payments.payment_listings.components
+package com.mateusz113.financemanager.presentation.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -27,9 +27,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.FilterSettings
-import com.mateusz113.financemanager.presentation.common.MultipleOptionsButtonSpinner
 import com.mateusz113.financemanager.domain.model.Category
-import com.mateusz113.financemanager.presentation.common.DatePicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -39,7 +37,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun PaymentListingsFilterDialog(
+fun PaymentFilterDialog(
     currentFilterSettings: FilterSettings,
     isDialogOpen: Boolean,
     dialogOpen: (Boolean) -> Unit,
@@ -100,8 +98,8 @@ fun PaymentListingsFilterDialog(
         val settingsInnerRowModifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 10.dp)
-            .height(50.dp)
+            .padding(top = 8.dp)
+            .height(55.dp)
 
         Dialog(
             onDismissRequest = {
@@ -179,7 +177,7 @@ fun PaymentListingsFilterDialog(
                             modifier = settingsInnerRowModifier
                         ) {
                             OutlinedTextField(
-                                placeholder = {
+                                label = {
                                     Text(text = stringResource(id = R.string.min_payment_value))
                                 },
                                 modifier = Modifier
@@ -198,7 +196,7 @@ fun PaymentListingsFilterDialog(
                             )
 
                             OutlinedTextField(
-                                placeholder = {
+                                label = {
                                     Text(text = stringResource(id = R.string.max_payment_value))
                                 },
                                 shape = RoundedCornerShape(5.dp),
@@ -224,6 +222,9 @@ fun PaymentListingsFilterDialog(
                                     .weight(1f)
                                     .padding(end = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
+                                label = {
+                                        Text(text = "From")
+                                },
                                 readOnly = true,
                                 value = formattedStartDate,
                                 onValueChange = {},
@@ -246,6 +247,9 @@ fun PaymentListingsFilterDialog(
                                     .weight(1f)
                                     .padding(start = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
+                                label = {
+                                    Text(text = "To")
+                                },
                                 readOnly = true,
                                 value = formattedEndDate,
                                 onValueChange = {},

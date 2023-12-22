@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.payments.payment_listings.components
+package com.mateusz113.financemanager.presentation.common
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,7 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PaymentListingsSearchBar(
+fun PaymentSearchBar(
     modifier: Modifier,
     value: String,
     openFilterDialog: () -> Unit,
