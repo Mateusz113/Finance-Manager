@@ -2,6 +2,7 @@ package com.mateusz113.financemanager.presentation.spendings.spending_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +27,9 @@ class SpendingDetailsViewModel @Inject constructor(
 
     fun onEvent(event: SpendingDetailsEvent) {
         when (event) {
-            is SpendingDetailsEvent.UpdateDialogState -> {
+            is SpendingDetailsEvent.UpdateFilterDialogState -> {
                 _state.value = _state.value.copy(
-                    isDialogOpen = event.isOpen
+                    isFilterDialogOpen = event.isOpen
                 )
             }
 
@@ -37,6 +38,18 @@ class SpendingDetailsViewModel @Inject constructor(
                     filterSettings = event.filterSettings
                 )
                 getPaymentListings()
+            }
+
+            is SpendingDetailsEvent.UpdateSliceDialogState -> {
+                _state.value = _state.value.copy(
+                    isKeyDialogOpen = event.isOpen
+                )
+            }
+
+            is SpendingDetailsEvent.UpdateCurrentSlice -> {
+                _state.value = _state.value.copy(
+                    currentSlice = event.slice
+                )
             }
 
             is SpendingDetailsEvent.SearchForPayment -> {
@@ -66,6 +79,9 @@ class SpendingDetailsViewModel @Inject constructor(
                             result.data?.let { data ->
                                 _state.value = _state.value.copy(
                                     paymentListings = data,
+                                    listingsMap = Category.values().associateWith { category ->
+                                        data.filter { it.category == category }
+                                    },
                                     error = null
                                 )
                             }
