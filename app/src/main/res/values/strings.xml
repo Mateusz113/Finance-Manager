@@ -15,6 +15,7 @@
     <string name="add_new_photo">Add new photo to payment</string>
     <string name="date_picker">Open date picker for payment</string>
     <string name="photo">Clicked photo display</string>
+    <string name="arrow">Arrow indicating that the row is clickable</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
@@ -51,15 +52,6 @@
     <string name="deleted_picture">Deleted picture</string>
     <string name="payment_details">Payment details</string>
     <string name="new_payment">New payment</string>
-
-    //Chart labels
-    <string name="housing">Housing</string>
-    <string name="transportation">Transportation</string>
-    <string name="groceries">Groceries</string>
-    <string name="health">Health</string>
-    <string name="entertainment">Entertainment</string>
-    <string name="utility">Utility</string>
-    <string name="personal">Personal</string>
-    <string name="savings">Savings</string>
-    <string name="education">Education</string>
+    <string name="spendings_chart">Spending details breakdown</string>
+    <string name="expenses_list">Expenses list</string>
 </resources>
