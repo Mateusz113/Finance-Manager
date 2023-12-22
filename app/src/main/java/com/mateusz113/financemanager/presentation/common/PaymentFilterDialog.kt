@@ -98,8 +98,8 @@ fun PaymentFilterDialog(
         val settingsInnerRowModifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(top = 10.dp)
-            .height(50.dp)
+            .padding(top = 8.dp)
+            .height(55.dp)
 
         Dialog(
             onDismissRequest = {
@@ -177,7 +177,7 @@ fun PaymentFilterDialog(
                             modifier = settingsInnerRowModifier
                         ) {
                             OutlinedTextField(
-                                placeholder = {
+                                label = {
                                     Text(text = stringResource(id = R.string.min_payment_value))
                                 },
                                 modifier = Modifier
@@ -196,7 +196,7 @@ fun PaymentFilterDialog(
                             )
 
                             OutlinedTextField(
-                                placeholder = {
+                                label = {
                                     Text(text = stringResource(id = R.string.max_payment_value))
                                 },
                                 shape = RoundedCornerShape(5.dp),
@@ -222,6 +222,9 @@ fun PaymentFilterDialog(
                                     .weight(1f)
                                     .padding(end = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
+                                label = {
+                                        Text(text = "From")
+                                },
                                 readOnly = true,
                                 value = formattedStartDate,
                                 onValueChange = {},
@@ -244,6 +247,9 @@ fun PaymentFilterDialog(
                                     .weight(1f)
                                     .padding(start = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
+                                label = {
+                                    Text(text = "To")
+                                },
                                 readOnly = true,
                                 value = formattedEndDate,
                                 onValueChange = {},
