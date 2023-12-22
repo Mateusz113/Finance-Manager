@@ -7,7 +7,6 @@ import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.PaymentListing
 
 data class SpendingDetailsState(
-    val paymentListings: List<PaymentListing> = emptyList(),
     val listingsMap: Map<Category, List<PaymentListing>> = emptyMap(),
     val filterSettings: FilterSettings = FilterSettings(),
     val isLoading: Boolean = false,

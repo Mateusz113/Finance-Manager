@@ -78,7 +78,6 @@ class SpendingDetailsViewModel @Inject constructor(
                         is Resource.Success -> {
                             result.data?.let { data ->
                                 _state.value = _state.value.copy(
-                                    paymentListings = data,
                                     listingsMap = Category.values().associateWith { category ->
                                         data.filter { it.category == category }
                                     },
@@ -89,7 +88,7 @@ class SpendingDetailsViewModel @Inject constructor(
 
                         is Resource.Error -> {
                             _state.value = _state.value.copy(
-                                paymentListings = emptyList(),
+                                listingsMap = emptyMap(),
                                 error = result.message
                             )
                         }
