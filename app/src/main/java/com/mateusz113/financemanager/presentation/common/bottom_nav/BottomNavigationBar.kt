@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.common
+package com.mateusz113.financemanager.presentation.common.bottom_nav
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -11,7 +11,6 @@ import com.mateusz113.financemanager.presentation.NavGraphs
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popBackStack
 import com.ramcosta.composedestinations.navigation.popUpTo
-import com.ramcosta.composedestinations.spec.Route
 import com.ramcosta.composedestinations.utils.isRouteOnBackStack
 
 @Composable

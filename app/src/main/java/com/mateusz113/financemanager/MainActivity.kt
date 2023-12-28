@@ -27,7 +27,7 @@ import com.mateusz113.financemanager.presentation.appCurrentDestinationAsState
 import com.mateusz113.financemanager.presentation.destinations.ProfileScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
-import com.mateusz113.financemanager.presentation.common.BottomNavigationBar
+import com.mateusz113.financemanager.presentation.common.bottom_nav.BottomNavigationBar
 import com.mateusz113.financemanager.presentation.destinations.Destination
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination

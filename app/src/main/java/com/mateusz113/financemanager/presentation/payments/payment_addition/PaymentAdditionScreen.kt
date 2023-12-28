@@ -42,9 +42,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.NavGraphs
-import com.mateusz113.financemanager.presentation.common.PhotoDisplayDialog
-import com.mateusz113.financemanager.presentation.common.ScaffoldWrapper
-import com.mateusz113.financemanager.presentation.common.TopAppBarWithBack
+import com.mateusz113.financemanager.presentation.common.dialog.PhotoDisplayDialog
+import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
+import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.payments.payment_addition.components.PaymentAdditionCategoryPicker
 import com.mateusz113.financemanager.presentation.payments.payment_addition.components.PaymentAdditionDataInsertField

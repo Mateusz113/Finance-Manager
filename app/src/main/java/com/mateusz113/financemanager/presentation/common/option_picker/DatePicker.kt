@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.common
+package com.mateusz113.financemanager.presentation.common.option_picker
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape

@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.common
+package com.mateusz113.financemanager.presentation.common.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -28,6 +28,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.Category
+import com.mateusz113.financemanager.presentation.common.option_picker.MultipleOptionsButtonSpinner
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -375,10 +376,10 @@ fun PaymentFilterDialog(
                 }
             }
         }
-        DatePicker(
+        com.mateusz113.financemanager.presentation.common.option_picker.DatePicker(
             datePickerState = startDateDialogState,
             date = filterSettings.startDate,
-            dateValidator = {date ->
+            dateValidator = { date ->
                 date > minStartDate
                         && date < filterSettings.endDate
             },
@@ -387,10 +388,10 @@ fun PaymentFilterDialog(
             }
         )
 
-        DatePicker(
+        com.mateusz113.financemanager.presentation.common.option_picker.DatePicker(
             datePickerState = endDateDialogState,
             date = filterSettings.endDate,
-            dateValidator = {date ->
+            dateValidator = { date ->
                 date > filterSettings.startDate
                         && date <= LocalDate.now()
             },

@@ -1,11 +1,10 @@
-package com.mateusz113.financemanager.presentation.common
+package com.mateusz113.financemanager.presentation.common.option_picker
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -19,18 +18,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 
 @Composable
-fun <T> MultipleOptionsButtonSpinner(
+fun <T> SingleOptionButtonSpinner(
     options: List<T>,
-    selectedItems: List<T>,
+    selectedItem: T,
     modifier: Modifier,
     selectedOption: (T) -> Unit,
-    menuOffset: DpOffset
+    menuOffset: DpOffset = DpOffset(0.dp, 0.dp)
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -43,13 +41,7 @@ fun <T> MultipleOptionsButtonSpinner(
     ) {
         Text(
             modifier = Modifier.weight(3f),
-            text = if (selectedItems.isNotEmpty()) {
-                selectedItems.joinToString { it.toString() }
-            } else {
-                "Select categories"
-            },
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            text = selectedItem.toString(),
             textAlign = TextAlign.Center
         )
         Icon(
@@ -65,16 +57,11 @@ fun <T> MultipleOptionsButtonSpinner(
         ) {
             options.forEach { option ->
                 Row {
-                    Checkbox(
-                        checked = selectedItems.contains(option),
-                        onCheckedChange = {
-                            selectedOption(option)
-                        }
-                    )
                     DropdownMenuItem(
                         text = { Text(text = option.toString()) },
                         onClick = {
                             selectedOption(option)
+                            expanded = false
                         })
                 }
             }

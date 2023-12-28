@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.Category
-import com.mateusz113.financemanager.presentation.common.SingleOptionButtonSpinner
+import com.mateusz113.financemanager.presentation.common.option_picker.SingleOptionButtonSpinner
 
 @Composable
 fun PaymentAdditionCategoryPicker(

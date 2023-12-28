@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,7 +14,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.presentation.common.PhotoContainer
+import com.mateusz113.financemanager.presentation.common.components.PhotoContainer
 
 @Composable
 fun PaymentAdditionPhotoAddingBlock(

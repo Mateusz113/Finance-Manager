@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.common
+package com.mateusz113.financemanager.presentation.common.bottom_nav
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
