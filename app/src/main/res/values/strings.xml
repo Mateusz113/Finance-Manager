@@ -30,6 +30,7 @@
     <string name="profile">Profile</string>
     <string name="confirm">Confirm</string>
     <string name="undo">Undo</string>
+    <string name="delete_account">Delete account</string>
 
     //Placeholders
     <string name="min_payment_value">Min value</string>
@@ -54,4 +55,15 @@
     <string name="new_payment">New payment</string>
     <string name="spendings_chart">Spending details breakdown</string>
     <string name="expenses_list">Expenses list</string>
+    <string name="settings">Settings</string>
+    <string name="join_date">Join date: %1$s</string>
+    <string name="payments_number">Payments number: %1$s</string>
+    <string name="email">Email: %1$s</string>
+    <string name="acc_deletion_confirmation_text">This operation is very sensitive. All the data will be deleted and lost forever. Are you sure you want to continue?</string>
+    <string name="sign_out_text">Are you sure you want to sign out?</string>
+    <string name="account_deletion">Account deletion</string>
+    
+    //Toast text
+    <string name="delete_unsuccessful">This operation is sensitive.\nLog in again before retrying.</string>
+    <string name="delete_successful">Account delete successful</string>
 </resources>
