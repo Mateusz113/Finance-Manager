@@ -1,9 +1,11 @@
 package com.mateusz113.financemanager.presentation.payments.payment_addition
 
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.mateusz113.financemanager.domain.model.NewPaymentDetails
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Resource
@@ -19,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PaymentAdditionViewModel @Inject constructor(
     private val repository: PaymentRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
     private var _state = MutableStateFlow(PaymentAdditionState())
     val state = _state.asStateFlow()
@@ -193,6 +196,17 @@ class PaymentAdditionViewModel @Inject constructor(
         )
     }
 
+    private fun updatePaymentsNumberInSharedPrefs() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        userId?.let { id ->
+            var currentPaymentsNum = sharedPreferences.getInt("${id}PaymentsNum", 0)
+            currentPaymentsNum++
+            sharedPreferences.edit().apply {
+                this.putInt("${id}PaymentsNum", currentPaymentsNum)
+            }.apply()
+        }
+    }
+
     private fun paymentAddition() {
         viewModelScope.launch {
             formatAmount()
@@ -211,6 +225,7 @@ class PaymentAdditionViewModel @Inject constructor(
                 repository.editPayment(paymentId, paymentDetails)
                 return@launch
             }
+            updatePaymentsNumberInSharedPrefs()
             repository.addPayment(paymentDetails)
         }
     }
