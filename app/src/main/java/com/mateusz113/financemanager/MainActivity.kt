@@ -24,17 +24,18 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.appCurrentDestinationAsState
-import com.mateusz113.financemanager.presentation.destinations.ProfileScreenDestination
-import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
 import com.mateusz113.financemanager.presentation.common.bottom_nav.BottomNavigationBar
 import com.mateusz113.financemanager.presentation.destinations.Destination
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
+import com.mateusz113.financemanager.presentation.destinations.ProfileScreenDestination
+import com.mateusz113.financemanager.presentation.destinations.SettingsScreenDestination
+import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
+import com.mateusz113.financemanager.presentation.profile.ProfileScreen
 import com.mateusz113.financemanager.presentation.sign_in.SignInScreen
 import com.mateusz113.financemanager.presentation.sign_in.SignInViewModel
-import com.mateusz113.financemanager.presentation.profile.ProfileScreen
 import com.mateusz113.financemanager.ui.theme.FinanceManagerTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
                         PaymentDetailsScreenDestination,
                         PaymentAdditionScreenDestination,
                         SignInScreenDestination,
+                        SettingsScreenDestination
                     )
                 }
                 // A surface container using the 'background' color from the theme
@@ -155,18 +157,9 @@ class MainActivity : ComponentActivity() {
                                 }
                                 composable(ProfileScreenDestination) {
                                     ProfileScreen(
-                                        userData = googleAuthUiClient.getSignedInUser(),
-                                        onSignOutClick = {
-                                            lifecycleScope.launch {
-                                                googleAuthUiClient.signOut()
-                                                Toast.makeText(
-                                                    applicationContext,
-                                                    "Signed out",
-                                                    Toast.LENGTH_LONG
-                                                ).show()
-                                                destinationsNavigator.navigate(SignInScreenDestination)
-                                            }
-                                        })
+                                        navigator = destinationsNavigator,
+                                        googleAuthUiClient = googleAuthUiClient
+                                    )
                                 }
                             }
                         }

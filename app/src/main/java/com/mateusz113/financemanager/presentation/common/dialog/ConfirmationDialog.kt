@@ -1,14 +1,10 @@
-package com.mateusz113.financemanager.presentation.payments.payment_listings.components
+package com.mateusz113.financemanager.presentation.common.dialog
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -27,15 +23,16 @@ import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
 
 @Composable
-fun PaymentListingDeletionConfirmation(
-    paymentListing: PaymentListing,
+fun ConfirmationDialog(
+    dialogTitle: String,
+    dialogText: String,
     isDialogOpen: Boolean,
-    closeDialog: () -> Unit,
-    deletePayment: () -> Unit
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
 ) {
     if (isDialogOpen) {
         Dialog(
-            onDismissRequest = closeDialog,
+            onDismissRequest = onDismiss,
         ) {
             Card(
                 modifier = Modifier.sizeIn(
@@ -53,14 +50,14 @@ fun PaymentListingDeletionConfirmation(
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 5.dp)
                 ) {
-                    val (title, titleDivider, text, textDivider, yesButton, noButton) = createRefs()
+                    val (title, titleDivider, text, textDivider, confirm, cancel) = createRefs()
                     Text(
                         modifier = Modifier
                             .constrainAs(title) {
                                 top.linkTo(parent.top)
                                 centerHorizontallyTo(parent)
                             },
-                        text = stringResource(id = R.string.deletion),
+                        text = dialogTitle,
                         style = TextStyle(
                             fontSize = MaterialTheme.typography.titleMedium.fontSize,
                             fontWeight = FontWeight.SemiBold
@@ -86,10 +83,7 @@ fun PaymentListingDeletionConfirmation(
                             }
                             .padding(top = 15.dp)
                             .padding(horizontal = 16.dp),
-                        text = stringResource(
-                            id = R.string.deletion_text,
-                            paymentListing.title
-                        ),
+                        text = dialogText,
                         style = TextStyle(
                             fontWeight = FontWeight.Medium,
                             fontSize = MaterialTheme.typography.titleSmall.fontSize
@@ -107,33 +101,28 @@ fun PaymentListingDeletionConfirmation(
                     )
 
                     TextButton(
-                        onClick = {
-                            deletePayment()
-                            closeDialog()
-                        },
+                        onClick = onConfirm,
                         modifier = Modifier
-                            .constrainAs(yesButton) {
+                            .constrainAs(confirm) {
                                 bottom.linkTo(parent.bottom)
                                 end.linkTo(parent.end)
                                 top.linkTo(textDivider.bottom)
                             }
                     ) {
-                        Text(text = stringResource(id = R.string.yes))
+                        Text(text = stringResource(id = R.string.confirm))
                     }
 
                     TextButton(
-                        onClick = {
-                            closeDialog()
-                        },
+                        onClick = onDismiss,
                         modifier = Modifier
-                            .constrainAs(noButton) {
+                            .constrainAs(cancel) {
                                 bottom.linkTo(parent.bottom)
-                                end.linkTo(yesButton.start)
+                                end.linkTo(confirm.start)
                                 top.linkTo(textDivider.bottom)
                             }
                             .padding(end = 15.dp)
                     ) {
-                        Text(text = stringResource(id = R.string.no))
+                        Text(text = stringResource(id = R.string.cancel))
                     }
                 }
             }
