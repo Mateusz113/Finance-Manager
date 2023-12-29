@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
+import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
 
 @Composable
 fun PaymentListingsItem(
@@ -139,13 +140,15 @@ fun PaymentListingsItem(
             }
         }
     }
-    PaymentListingDeletionConfirmation(
-        paymentListing = paymentListing,
+    ConfirmationDialog(
+        dialogTitle = stringResource(id = R.string.deletion),
+        dialogText = stringResource(id = R.string.deletion_text, paymentListing.title),
         isDialogOpen = isDialogOpen,
-        closeDialog = {
+        onDismiss = {
             isDialogOpen = false
         },
-        deletePayment = {
+        onConfirm = {
+            isDialogOpen = false
             deletePayment()
         }
     )
