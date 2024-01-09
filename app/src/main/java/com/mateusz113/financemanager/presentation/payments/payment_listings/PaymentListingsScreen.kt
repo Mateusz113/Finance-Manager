@@ -23,12 +23,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.common.components.PaymentListingsInfo
+import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
+import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
-import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
-import com.mateusz113.financemanager.presentation.payments.payment_listings.components.PaymentListingsItem
-import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -48,9 +48,11 @@ fun PaymentListingsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navigator.navigate(PaymentAdditionScreenDestination(
-                        topBarLabel = R.string.new_payment
-                    ))
+                    navigator.navigate(
+                        PaymentAdditionScreenDestination(
+                            topBarLabel = R.string.new_payment
+                        )
+                    )
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
@@ -78,7 +80,6 @@ fun PaymentListingsScreen(
                     item {
                         PaymentSearchBar(
                             modifier = Modifier
-                                .height(80.dp)
                                 .fillMaxSize()
                                 .padding(16.dp),
                             value = state.filterSettings.query,
@@ -95,8 +96,16 @@ fun PaymentListingsScreen(
                         )
                     }
                     items(state.payments.size) { i ->
-                        PaymentListingsItem(
-                            paymentListing = state.payments[i],
+                        val amount = buildString {
+                            if (state.isCurrencyPrefix == true || (state.isCurrencyPrefix == null && state.currency.isPrefix)) {
+                                append("${state.currency.symbol ?: state.currency.name} ")
+                            }
+                            append(state.payments[i].amount)
+                            if (state.isCurrencyPrefix == false || (state.isCurrencyPrefix == null && !state.currency.isPrefix)) {
+                                append(" ${state.currency.symbol ?: state.currency.name}")
+                            }
+                        }
+                        PaymentListingsInfo(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp)
@@ -104,7 +113,11 @@ fun PaymentListingsScreen(
                                 .clickable {
                                     navigator.navigate(PaymentDetailsScreenDestination(id = state.payments[i].id))
                                 },
-                            deletePayment = {
+                            paymentListing = state.payments[i],
+                            currency = state.currency,
+                            isCurrencyPrefix = state.isCurrencyPrefix,
+                            isDeletable = true,
+                            onPaymentDelete = {
                                 viewModel.onEvent(
                                     PaymentListingsEvent.DeletePayment(state.payments[i].id)
                                 )
