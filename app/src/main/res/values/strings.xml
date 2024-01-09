@@ -62,8 +62,32 @@
     <string name="acc_deletion_confirmation_text">This operation is very sensitive. All the data will be deleted and lost forever. Are you sure you want to continue?</string>
     <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="account_deletion">Account deletion</string>
+
+    //Settings
+    <string name="currency">Currency</string>
+    <string name="currency_option">Selected currency</string>
+    <string name="symbol_placement_option">Selected currency symbol placement</string>
+    <string name="symbol_placement">Symbol placement</string>
     
     //Toast text
     <string name="delete_unsuccessful">This operation is sensitive.\nLog in again before retrying.</string>
     <string name="delete_successful">Account delete successful</string>
+
+    //Symbol placement labels
+    <string name="sp_inappcontrol">In application control</string>
+    <string name="sp_prefix">Before number</string>
+    <string name="sp_suffix">After number</string>
+
+    //Currency labels
+    <string name="curr_pln">Polish złoty</string>
+    <string name="curr_usd">US Dollar</string>
+    <string name="curr_eur">Euro</string>
+    <string name="curr_jpy">Japanese Yen</string>
+    <string name="curr_gbp">Great British Pound</string>
+    <string name="curr_aud">Australian Dollar</string>
+    <string name="curr_cad">Canadian Dollar</string>
+    <string name="curr_chf">Swiss Franc</string>
+
+    //Placeholder label in case of error
+    <string name="unknown">Unknown</string>
 </resources>

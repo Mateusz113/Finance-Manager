@@ -24,11 +24,11 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.Category
-import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
 import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
+import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
+import com.mateusz113.financemanager.presentation.common.dialog.PaymentListingsCollectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
-import com.mateusz113.financemanager.presentation.spendings.spending_details.components.ChartKeyClickDialog
 import com.mateusz113.financemanager.presentation.spendings.spending_details.components.PaymentsChart
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -106,9 +106,11 @@ fun SpendingDetailsScreen(
                 viewModel.onEvent(SpendingDetailsEvent.UpdateFilterSettings(filterSettings))
             }
         )
-        ChartKeyClickDialog(
+        PaymentListingsCollectionDialog(
             paymentListings = state.listingsMap[Category.valueOf(state.currentSlice.label)]
                 ?: emptyList(),
+            currency = state.currency,
+            isCurrencyPrefix = state.isCurrencyPrefix,
             isDialogOpen = state.isKeyDialogOpen,
             isOpen = { isOpen ->
                 viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(isOpen))

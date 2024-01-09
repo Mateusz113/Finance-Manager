@@ -1,12 +1,16 @@
 package com.mateusz113.financemanager.presentation.payments.payment_listings
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.NewPaymentDetails
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
+import com.mateusz113.financemanager.util.Currency
 import com.mateusz113.financemanager.util.Resource
+import com.mateusz113.financemanager.util.SymbolPlacement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,14 +25,18 @@ import kotlin.random.Random
 
 @HiltViewModel
 class PaymentListingsViewModel @Inject constructor(
-    private val repository: PaymentRepository
-) : ViewModel() {
+    private val repository: PaymentRepository,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
     private var _state = MutableStateFlow(PaymentListingsState())
     val state = _state.asStateFlow()
     private var searchJob: Job? = null
 
     init {
         getPaymentListings()
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        updateCurrencyDetails()
+        updateSymbolPlacementDetails()
     }
 
     fun onEvent(event: PaymentListingsEvent) {
@@ -110,6 +118,60 @@ class PaymentListingsViewModel @Inject constructor(
         }
     }
 
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (key == "${FirebaseAuth.getInstance().currentUser?.uid}Currency") {
+            updateCurrencyDetails()
+        }
+        if (key == "${FirebaseAuth.getInstance().currentUser?.uid}SymbolPlacement") {
+            updateSymbolPlacementDetails()
+        }
+    }
+
+    private fun updateSymbolPlacementDetails() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val symbolPlacement =
+            if (uid != null) {
+                SymbolPlacement.valueOf(
+                    sharedPreferences.getString(
+                        "${uid}SymbolPlacement",
+                        SymbolPlacement.InAppControl.name
+                    )!!
+                )
+            } else {
+                SymbolPlacement.InAppControl
+            }
+        val isCurrencyPrefix =
+            when (symbolPlacement) {
+                SymbolPlacement.InAppControl -> {
+                    null
+                }
+
+                SymbolPlacement.Suffix -> {
+                    false
+                }
+
+                SymbolPlacement.Prefix -> {
+                    true
+                }
+            }
+        _state.value = _state.value.copy(
+            isCurrencyPrefix = isCurrencyPrefix
+        )
+    }
+
+    private fun updateCurrencyDetails() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val currentCurrency =
+            if (uid != null) {
+                Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
+            } else {
+                Currency.PLN
+            }
+        _state.value = _state.value.copy(
+            currency = currentCurrency,
+        )
+    }
+
     private fun addPayment() {
         viewModelScope.launch {
             val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -119,7 +181,9 @@ class PaymentListingsViewModel @Inject constructor(
             val description =
                 (1..Random.nextInt(20, 100)).map { charset[Random.nextInt(charset.lastIndex)] }
                     .joinToString("")
-            val amount = BigDecimal(Random.nextFloat().times(Random.nextInt(1, charset.lastIndex)).toString())
+            val amount = BigDecimal(
+                Random.nextFloat().times(Random.nextInt(1, charset.lastIndex)).toString()
+            )
                 .setScale(2, RoundingMode.DOWN).toFloat()
             val date = LocalDate.of(
                 Random.nextInt(2011, 2023),
@@ -138,5 +202,10 @@ class PaymentListingsViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    override fun onCleared() {
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        super.onCleared()
     }
 }

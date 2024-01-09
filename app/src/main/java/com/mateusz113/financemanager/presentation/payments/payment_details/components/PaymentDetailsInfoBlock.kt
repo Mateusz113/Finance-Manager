@@ -9,23 +9,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.PaymentDetails
-import com.mateusz113.financemanager.ui.theme.FinanceManagerTheme
-import java.time.LocalDate
+import com.mateusz113.financemanager.util.Currency
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun PaymentDetailsInfoBlock(
     paymentDetails: PaymentDetails,
+    currency: Currency,
+    isCurrencyPrefix: Boolean?,
     modifier: Modifier = Modifier
 ) {
     val formattedDate = remember {
@@ -34,6 +35,19 @@ fun PaymentDetailsInfoBlock(
                 .ofPattern("dd/MM/yyyy")
                 .format(paymentDetails.date)
         }
+    }
+
+    val amount by remember {
+        mutableStateOf(
+            buildString {
+                if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
+                    append("${currency.symbol ?: currency.name} ")
+                }
+                append(paymentDetails.amount)
+                if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
+                    append(" ${currency.symbol ?: currency.name}")
+                }
+            })
     }
     Column(
         modifier = modifier.fillMaxWidth()
@@ -83,7 +97,7 @@ fun PaymentDetailsInfoBlock(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = paymentDetails.amount.toString(),
+            text = amount,
             style = TextStyle(
                 fontWeight = FontWeight.Normal,
                 fontSize = MaterialTheme.typography.titleLarge.fontSize

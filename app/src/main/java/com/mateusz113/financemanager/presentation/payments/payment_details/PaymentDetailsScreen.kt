@@ -73,7 +73,9 @@ fun PaymentDetailsScreen(
                     ) {
                         PaymentDetailsInfoBlock(
                             modifier = Modifier.padding(horizontal = 10.dp),
-                            paymentDetails = details
+                            paymentDetails = details,
+                            currency = state.currency,
+                            isCurrencyPrefix = state.isCurrencyPrefix
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 

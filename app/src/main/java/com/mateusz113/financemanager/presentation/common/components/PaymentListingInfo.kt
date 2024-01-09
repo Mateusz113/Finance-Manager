@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.payments.payment_listings.components
+package com.mateusz113.financemanager.presentation.common.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,8 +19,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,15 +35,41 @@ import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
+import com.mateusz113.financemanager.util.Currency
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun PaymentListingsItem(
-    paymentListing: PaymentListing,
+fun PaymentListingsInfo(
     modifier: Modifier,
-    deletePayment: () -> Unit
+    paymentListing: PaymentListing,
+    currency: Currency,
+    isCurrencyPrefix: Boolean?,
+    isDeletable: Boolean = false,
+    onPaymentDelete: () -> Unit = {}
 ) {
     var isDialogOpen by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    val formattedDate by remember {
+        derivedStateOf {
+            DateTimeFormatter
+                .ofPattern("dd/MM/yyyy")
+                .format(paymentListing.date)
+        }
+    }
+
+    val amount by remember {
+        mutableStateOf(
+            buildString {
+                if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
+                    append("${currency.symbol ?: currency.name} ")
+                }
+                append(paymentListing.amount)
+                if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
+                    append(" ${currency.symbol ?: currency.name}")
+                }
+            })
     }
 
     Row(
@@ -80,7 +108,7 @@ fun PaymentListingsItem(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = paymentListing.date.toString(),
+                text = formattedDate,
                 style = TextStyle(
                     fontWeight = FontWeight.Normal,
                     fontSize = MaterialTheme.typography.titleMedium.fontSize
@@ -99,57 +127,61 @@ fun PaymentListingsItem(
 
         Column(
             modifier = Modifier
-                .weight(1.5f)
+                .weight(1.8f)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 modifier = Modifier,
-                text = paymentListing.amount.toString(),
+                text = amount,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = TextStyle(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
             )
         }
-
-        Divider(
-            modifier = Modifier
-                .fillMaxHeight(0.8f)
-                .width(1.dp)
-        )
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            IconButton(
+        if (isDeletable) {
+            Divider(
                 modifier = Modifier
-                    .size(80.dp),
-                onClick = {
-                    isDialogOpen = true
-                }
+                    .fillMaxHeight(0.8f)
+                    .width(1.dp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Delete,
-                    contentDescription = stringResource(id = R.string.remove_payment)
-                )
+                IconButton(
+                    modifier = Modifier
+                        .size(80.dp),
+                    onClick = {
+                        isDialogOpen = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = stringResource(id = R.string.remove_payment)
+                    )
+                }
             }
+
+            ConfirmationDialog(
+                dialogTitle = stringResource(id = R.string.deletion),
+                dialogText = stringResource(id = R.string.deletion_text, paymentListing.title),
+                isDialogOpen = isDialogOpen,
+                onDismiss = {
+                    isDialogOpen = false
+                },
+                onConfirm = {
+                    isDialogOpen = false
+                    onPaymentDelete()
+                }
+            )
         }
     }
-    ConfirmationDialog(
-        dialogTitle = stringResource(id = R.string.deletion),
-        dialogText = stringResource(id = R.string.deletion_text, paymentListing.title),
-        isDialogOpen = isDialogOpen,
-        onDismiss = {
-            isDialogOpen = false
-        },
-        onConfirm = {
-            isDialogOpen = false
-            deletePayment()
-        }
-    )
 }
