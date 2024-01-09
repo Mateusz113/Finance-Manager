@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.spendings.spending_details.components
+package com.mateusz113.financemanager.presentation.common.dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -25,10 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
+import com.mateusz113.financemanager.presentation.common.components.PaymentListingsInfo
+import com.mateusz113.financemanager.util.Currency
 
 @Composable
-fun ChartKeyClickDialog(
+fun PaymentListingsCollectionDialog(
     paymentListings: List<PaymentListing>,
+    currency: Currency,
+    isCurrencyPrefix: Boolean?,
     isDialogOpen: Boolean,
     isOpen: (Boolean) -> Unit,
     onPaymentClick: (PaymentListing) -> Unit
@@ -63,33 +67,44 @@ fun ChartKeyClickDialog(
                                 .padding(top = 15.dp),
                             text = stringResource(id = R.string.expenses_list),
                             style = TextStyle(
-                                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                fontSize = MaterialTheme.typography.titleMedium.fontSize,
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center
                             )
                         )
 
-                        Divider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 15.dp, bottom = 5.dp)
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Divider(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.9f)
+                                    .padding(top = 15.dp, bottom = 5.dp)
+                            )
+                        }
                     }
-                    paymentListings.forEach { listing ->
+                    paymentListings.forEachIndexed { index, listing ->
                         item {
-                            Row(
+                            PaymentListingsInfo(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(80.dp)
-                                    .padding(vertical = 5.dp),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                ChartKeyDialogItem(
-                                    modifier = Modifier
-                                        .clickable {
-                                            onPaymentClick(listing)
-                                        },
-                                    paymentListing = listing
+                                    .padding(
+                                        horizontal = 16.dp,
+                                        vertical = 10.dp
+                                    )
+                                    .height(85.dp)
+                                    .clickable {
+                                        onPaymentClick(listing)
+                                    },
+                                paymentListing = listing,
+                                currency = currency,
+                                isCurrencyPrefix = isCurrencyPrefix
+                            )
+
+                            if (index < paymentListings.lastIndex) {
+                                Divider(
+                                    modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
                         }
