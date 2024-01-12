@@ -1,5 +1,7 @@
 package com.mateusz113.financemanager.presentation.payments.payment_addition
 
+import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -56,6 +59,7 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.format.DateTimeFormatter
 
 @RootNavGraph
@@ -117,7 +121,7 @@ fun PaymentAdditionScreen(
                     isSingleLine = true,
                     value = state.title,
                     valueValidator = { title ->
-                        title.isNotBlank() && title.length < 50
+                        isTitleValid(title)
                     },
                     onValueChange = { title ->
                         viewModel.onEvent(PaymentAdditionEvent.ChangeTitle(title))
@@ -131,7 +135,7 @@ fun PaymentAdditionScreen(
                     label = R.string.description,
                     value = state.description,
                     valueValidator = { description ->
-                        description.isNotBlank() && description.length < 300
+                        isDescriptionValid(description)
                     },
                     onValueChange = { description ->
                         viewModel.onEvent(PaymentAdditionEvent.ChangeDescription(description))
@@ -145,12 +149,7 @@ fun PaymentAdditionScreen(
                     label = R.string.amount,
                     value = state.amount,
                     valueValidator = { amount ->
-                        try {
-                            amount.toFloat()
-                            true
-                        } catch (e: NumberFormatException) {
-                            false
-                        }
+                        isAmountValid(amount)
                     },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                     onValueChange = { amount ->
@@ -195,11 +194,25 @@ fun PaymentAdditionScreen(
                                 )
                             when (result) {
                                 SnackbarResult.ActionPerformed -> {
-                                    viewModel.onEvent(
-                                        PaymentAdditionEvent.RestoreDeletedPhoto(
-                                            photoUrl
+                                    if (isPhotoQuantityValid(
+                                            state.newPhotos.size,
+                                            state.uploadedPhotos.size + 1
                                         )
-                                    )
+                                    ) {
+                                        viewModel.onEvent(
+                                            PaymentAdditionEvent.RestoreDeletedPhoto(
+                                                photoUrl
+                                            )
+                                        )
+                                    } else {
+                                        coroutineScope.launch {
+                                            snackbarHostState
+                                                .showSnackbar(
+                                                    message = context.getString(R.string.too_many_pictures),
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                        }
+                                    }
                                 }
 
                                 SnackbarResult.Dismissed -> {}
@@ -218,11 +231,25 @@ fun PaymentAdditionScreen(
                                 )
                             when (result) {
                                 SnackbarResult.ActionPerformed -> {
-                                    viewModel.onEvent(
-                                        PaymentAdditionEvent.RestoreDeletedPhoto(
-                                            photoUri
+                                    if (isPhotoQuantityValid(
+                                            state.newPhotos.size + 1,
+                                            state.uploadedPhotos.size
                                         )
-                                    )
+                                    ) {
+                                        viewModel.onEvent(
+                                            PaymentAdditionEvent.RestoreDeletedPhoto(
+                                                photoUri
+                                            )
+                                        )
+                                    } else {
+                                        coroutineScope.launch {
+                                            snackbarHostState
+                                                .showSnackbar(
+                                                    message = context.getString(R.string.too_many_pictures),
+                                                    duration = SnackbarDuration.Short
+                                                )
+                                        }
+                                    }
                                 }
 
                                 SnackbarResult.Dismissed -> {}
@@ -249,12 +276,33 @@ fun PaymentAdditionScreen(
                 ) {
                     Button(
                         onClick = {
-                            if (isInputValid(state)) {
+                            if (isTitleValid(state.title) &&
+                                isDescriptionValid(state.description) &&
+                                isAmountValid(state.amount) &&
+                                isPhotoQuantityValid(
+                                    state.newPhotos.size,
+                                    state.uploadedPhotos.size
+                                )
+                            ) {
                                 viewModel.onEvent(PaymentAdditionEvent.AdditionConfirm)
                                 navController.navigate(PaymentListingsScreenDestination) {
                                     popUpTo(NavGraphs.root)
                                     launchSingleTop = true
                                     restoreState = true
+                                }
+                            } else {
+                                val errorMessage = constructErrorMessage(
+                                    context = context,
+                                    title = state.title,
+                                    description = state.description,
+                                    amount = state.amount
+                                )
+                                coroutineScope.launch {
+                                    snackbarHostState
+                                        .showSnackbar(
+                                            message = errorMessage,
+                                            duration = SnackbarDuration.Short
+                                        )
                                 }
                             }
                         },
@@ -293,18 +341,76 @@ fun PaymentAdditionScreen(
         })
 }
 
-private fun isInputValid(
-    state: PaymentAdditionState
+private fun isTitleValid(
+    title: String
 ): Boolean {
-    val isTitleValid = state.title.isNotBlank() && state.title.length < 50
-    val isDescriptionValid = state.description.isNotBlank() && state.description.length < 300
-    val isAmountValid = state.amount.isNotBlank() &&
+    return title.isNotBlank() && title.length < 50
+}
+
+private fun isDescriptionValid(
+    description: String
+): Boolean {
+    return description.isNotBlank() && description.length < 500
+}
+
+private fun isAmountValid(
+    amount: String
+): Boolean {
+    return amount.isNotBlank() &&
+            amount.split(".").first().length < 8 &&
             try {
-                state.amount.toFloat()
+                amount.toFloat()
                 true
             } catch (e: NumberFormatException) {
                 false
             }
-    val arePhotosValid = state.newPhotos.size + state.uploadedPhotos.size < 6
-    return isTitleValid && isDescriptionValid && isAmountValid && arePhotosValid
+}
+
+private fun isPhotoQuantityValid(
+    newPhotosAmount: Int,
+    uploadedPhotosAmount: Int
+): Boolean {
+    return newPhotosAmount + uploadedPhotosAmount <= 5
+}
+
+private fun constructErrorMessage(
+    context: Context,
+    title: String,
+    description: String,
+    amount: String
+): String {
+    val incorrectValues = mutableListOf<String>()
+    if (!isTitleValid(title)) {
+        incorrectValues.add("title")
+    }
+    if (!isDescriptionValid(description)) {
+        incorrectValues.add("description")
+    }
+    if (!isAmountValid(amount)) {
+        incorrectValues.add("amount")
+    }
+    if (incorrectValues.size > 1) {
+        return buildString {
+            incorrectValues.forEachIndexed { index, value ->
+                if (index == 0) {
+                    append(value.replaceFirstChar { it.uppercase() })
+                } else {
+                    append(value)
+                }
+                if (index != incorrectValues.lastIndex) {
+                    append(", ")
+                } else {
+                    append(" ")
+                }
+            }
+            append(context.getString(R.string.are_incorrect))
+        }
+    } else {
+        return buildString {
+            incorrectValues.forEach { value ->
+                append("${value.replaceFirstChar { it.uppercase() }} ")
+            }
+            append(context.getString(R.string.is_incorrect))
+        }
+    }
 }
