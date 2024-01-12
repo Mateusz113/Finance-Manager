@@ -90,4 +90,10 @@
 
     //Placeholder label in case of error
     <string name="unknown">Unknown</string>
+
+    //Error messages
+    <string name="too_many_pictures">Maxiumum amount of pictures for single payment is 5</string>
+    <string name="is_incorrect">is incorrect</string>
+    <string name="are_incorrect">are incorrect</string>
+
 </resources>
