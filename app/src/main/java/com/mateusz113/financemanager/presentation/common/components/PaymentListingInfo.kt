@@ -51,25 +51,19 @@ fun PaymentListingsInfo(
         mutableStateOf(false)
     }
 
-    val formattedDate by remember {
-        derivedStateOf {
-            DateTimeFormatter
-                .ofPattern("dd/MM/yyyy")
-                .format(paymentListing.date)
-        }
-    }
+    val formattedDate = DateTimeFormatter
+        .ofPattern("dd/MM/yyyy")
+        .format(paymentListing.date)
 
-    val amount by remember {
-        mutableStateOf(
-            buildString {
-                if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
-                    append("${currency.symbol ?: currency.name} ")
-                }
-                append(paymentListing.amount)
-                if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
-                    append(" ${currency.symbol ?: currency.name}")
-                }
-            })
+
+    val amount = buildString {
+        if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
+            append("${currency.symbol ?: currency.name} ")
+        }
+        append(paymentListing.amount)
+        if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
+            append(" ${currency.symbol ?: currency.name}")
+        }
     }
 
     Row(
