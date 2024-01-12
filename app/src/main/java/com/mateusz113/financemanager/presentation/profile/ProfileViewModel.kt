@@ -1,6 +1,11 @@
 package com.mateusz113.financemanager.presentation.profile
 
+import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -21,9 +26,13 @@ import kotlin.coroutines.suspendCoroutine
 class ProfileViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val repository: PaymentRepository
-) : ViewModel() {
+) : ViewModel(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
+
+    init {
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
 
     fun onEvent(event: ProfileEvent) {
         when (event) {
@@ -53,14 +62,25 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateAuthClient(googleAuthUiClient: GoogleAuthUiClient) {
-        _state.value = _state.value.copy(
-            googleAuthUiClient = googleAuthUiClient
-        )
-        updateUserInfo()
+    fun updateAuthClient(
+        googleAuthUiClient: GoogleAuthUiClient
+    ) {
+        if (_state.value.googleAuthUiClient == null) {
+            _state.value = _state.value.copy(
+                googleAuthUiClient = googleAuthUiClient
+            )
+            //After the auth client is inserted the user info can be updated
+            updateProfileInfo()
+        }
     }
 
-    private fun updateUserInfo() {
+    private fun updateProfileInfo() {
+        updateUserInfo()
+        updateJoinDate()
+        updatePaymentNumber()
+    }
+
+    private fun updateJoinDate() {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         _state.value.googleAuthUiClient?.getSignedInUser()?.let { userData ->
             if (!sharedPreferences.contains("${userData.userId}JoinDate")) {
@@ -69,23 +89,37 @@ class ProfileViewModel @Inject constructor(
                     defaultDate = formatter.format(LocalDate.now())
                 )
             }
+            val joinDate =
+                sharedPreferences.getString("${userData.userId}JoinDate", "22/07/2011")
+            _state.value = _state.value.copy(
+                joinDate = joinDate!!
+            )
+        }
+    }
+
+    private fun updatePaymentNumber() {
+        Log.d("PaymentNumber", "Function called")
+        _state.value.googleAuthUiClient?.getSignedInUser()?.let { userData ->
             if (!sharedPreferences.contains("${userData.userId}PaymentsNum")) {
                 updateNumOfPaymentsInSharedPrefs(userData.userId)
             }
             val paymentsNumber = sharedPreferences.getInt("${userData.userId}PaymentsNum", 0)
-            val joinDate =
-                sharedPreferences.getString("${userData.userId}JoinDate", "22/07/2011")
+            _state.value = _state.value.copy(
+                paymentsNumber = paymentsNumber
+            )
+        }
+    }
 
+
+    private fun updateUserInfo() {
+        _state.value.googleAuthUiClient?.getSignedInUser()?.let { userData ->
             _state.value = _state.value.copy(
                 userId = userData.userId,
                 username = userData.username,
                 email = userData.email,
-                profilePictureUrl = userData.profilePictureUrl,
-                joinDate = joinDate ?: formatter.format(LocalDate.now()),
-                paymentsNumber = paymentsNumber
+                profilePictureUrl = userData.profilePictureUrl
             )
         }
-
     }
 
     private fun updateNumOfPaymentsInSharedPrefs(userId: String) {
@@ -116,6 +150,7 @@ class ProfileViewModel @Inject constructor(
             )
         }.apply()
     }
+
     suspend fun signOut() {
         _state.value.googleAuthUiClient?.signOut()
     }
@@ -144,5 +179,16 @@ class ProfileViewModel @Inject constructor(
                 }
                 continuation.resume(false)
             }
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (key == "${_state.value.userId}PaymentsNum") {
+            updatePaymentNumber()
+        }
+    }
+
+    override fun onCleared() {
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        super.onCleared()
     }
 }
