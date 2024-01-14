@@ -19,10 +19,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
@@ -57,13 +56,9 @@ fun PaymentListingsInfo(
 
 
     val amount = buildString {
-        if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
-            append("${currency.symbol ?: currency.name} ")
-        }
+
         append(paymentListing.amount)
-        if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
-            append(" ${currency.symbol ?: currency.name}")
-        }
+
     }
 
     Row(
@@ -119,23 +114,52 @@ fun PaymentListingsInfo(
                 .width(1.dp)
         )
 
-        Column(
+        Row(
             modifier = Modifier
                 .weight(1.8f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxHeight()
+                .padding(horizontal = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Absolute.Center
         ) {
+            if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
+                Text(
+                    text = "${currency.symbol ?: currency.name} ",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
             Text(
-                modifier = Modifier,
+                modifier = Modifier
+                    .weight(1f),
                 text = amount,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                textAlign = if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
+                    TextAlign.Start
+                } else if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
+                    TextAlign.End
+                } else {
+                    TextAlign.Center
+                },
                 style = TextStyle(
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Medium,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
             )
+            if (isCurrencyPrefix == false || (isCurrencyPrefix == null && !currency.isPrefix)) {
+                Text(
+                    text = " ${currency.symbol ?: currency.name}",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        textAlign = TextAlign.Center
+                    )
+                )
+            }
         }
         if (isDeletable) {
             Divider(
