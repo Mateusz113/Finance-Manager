@@ -80,7 +80,8 @@ fun PaymentListingsScreen(
                     item {
                         PaymentSearchBar(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxWidth()
+                                .height(80.dp)
                                 .padding(16.dp),
                             value = state.filterSettings.query,
                             openFilterDialog = {
