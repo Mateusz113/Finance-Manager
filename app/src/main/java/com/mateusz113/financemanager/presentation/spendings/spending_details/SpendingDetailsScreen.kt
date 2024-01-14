@@ -89,6 +89,7 @@ fun SpendingDetailsScreen(
 
                 PaymentsChart(
                     listingsMap = state.listingsMap,
+                    currency = state.currency,
                     onKeyClick = { slice ->
                         viewModel.onEvent(SpendingDetailsEvent.UpdateCurrentSlice(slice))
                         viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(true))

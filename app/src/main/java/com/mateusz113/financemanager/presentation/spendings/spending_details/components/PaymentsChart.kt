@@ -12,6 +12,7 @@ import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.PaymentListing
+import com.mateusz113.financemanager.util.Currency
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -19,6 +20,7 @@ import java.util.Locale
 @Composable
 fun PaymentsChart(
     listingsMap: Map<Category, List<PaymentListing>>,
+    currency: Currency,
     onKeyClick: (PieChartData.Slice) -> Unit
 ) {
     val slicesList = mutableListOf<PieChartData.Slice>()
@@ -37,13 +39,14 @@ fun PaymentsChart(
     decimalFormat.decimalFormatSymbols =
         DecimalFormatSymbols.getInstance(Locale.ENGLISH)
     Category.values().forEach { category ->
+        val value = decimalFormat
+            .format(listingsMap[category]
+                ?.sumOf { it.amount }?: 0.0)
+            .toFloat()
         slicesList.add(
             PieChartData.Slice(
                 label = category.name,
-                value = decimalFormat
-                    .format(listingsMap[category]
-                        ?.sumOf { it.amount })
-                    .toFloat(),
+                value = value,
                 color = colorsMap[category] ?: Color.Transparent
             )
         )
@@ -61,7 +64,8 @@ fun PaymentsChart(
         labelFontSize = MaterialTheme.typography.headlineMedium.fontSize,
         labelColor = MaterialTheme.colorScheme.onBackground,
         chartPadding = 40,
-        backgroundColor = MaterialTheme.colorScheme.background
+        backgroundColor = MaterialTheme.colorScheme.background,
+        sumUnit = currency.symbol ?: currency.name
     )
     Column {
         DonutPieChart(
