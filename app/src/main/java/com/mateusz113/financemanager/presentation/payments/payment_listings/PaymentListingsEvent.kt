@@ -4,7 +4,6 @@ import com.mateusz113.financemanager.domain.model.FilterSettings
 
 sealed class PaymentListingsEvent {
     object Refresh : PaymentListingsEvent()
-    object AddPayment : PaymentListingsEvent()
     data class UpdateFilterDialogState(val isOpen: Boolean) : PaymentListingsEvent()
     data class UpdateFilterSettings(val filterSettings: FilterSettings) : PaymentListingsEvent()
     data class DeletePayment(val id: String) : PaymentListingsEvent()

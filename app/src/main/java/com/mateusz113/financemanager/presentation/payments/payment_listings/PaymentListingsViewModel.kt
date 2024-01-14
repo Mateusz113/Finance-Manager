@@ -46,10 +46,6 @@ class PaymentListingsViewModel @Inject constructor(
                 getPaymentListings()
             }
 
-            is PaymentListingsEvent.AddPayment -> {
-                addPayment()
-            }
-
             is PaymentListingsEvent.DeletePayment -> {
                 deletePayment(event.id)
             }
@@ -176,38 +172,6 @@ class PaymentListingsViewModel @Inject constructor(
         _state.value = _state.value.copy(
             currency = currentCurrency,
         )
-    }
-
-    private fun addPayment() {
-        viewModelScope.launch {
-            val charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-            val title =
-                (1..Random.nextInt(2, 20)).map { charset[Random.nextInt(charset.lastIndex)] }
-                    .joinToString("")
-            val description =
-                (1..Random.nextInt(20, 100)).map { charset[Random.nextInt(charset.lastIndex)] }
-                    .joinToString("")
-            val amount = BigDecimal(
-                Random.nextFloat().times(Random.nextInt(1, charset.lastIndex)).toString()
-            )
-                .setScale(2, RoundingMode.DOWN).toFloat()
-            val date = LocalDate.of(
-                Random.nextInt(2011, 2023),
-                Random.nextInt(1, 12),
-                Random.nextInt(1, 25),
-            )
-            val category = Category.values().random()
-            repository.addPayment(
-                NewPaymentDetails(
-                    title = title,
-                    description = description,
-                    amount = amount,
-                    photoUris = emptyList(),
-                    date = date,
-                    category = category
-                )
-            )
-        }
     }
 
     override fun onCleared() {
