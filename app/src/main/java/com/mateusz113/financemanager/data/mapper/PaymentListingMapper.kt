@@ -17,7 +17,7 @@ fun PaymentListingDto.toPaymentListing(): PaymentListing {
     return PaymentListing(
         id = id ?: "",
         title = title ?: "",
-        amount = amount ?: 0.00f,
+        amount = amount ?: 0.00,
         date = date ?: LocalDate.now(),
         category = convertStringToCategory(category)
     )

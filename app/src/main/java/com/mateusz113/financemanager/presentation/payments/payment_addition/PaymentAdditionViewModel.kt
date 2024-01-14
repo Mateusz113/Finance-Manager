@@ -189,7 +189,7 @@ class PaymentAdditionViewModel @Inject constructor(
         decimalFormat.decimalFormatSymbols =
             DecimalFormatSymbols.getInstance(Locale.ENGLISH)
         val formattedAmount = decimalFormat.format(
-            _state.value.amount.toFloat()
+            _state.value.amount.toDouble()
         )
         _state.value = _state.value.copy(
             amount = formattedAmount
@@ -213,7 +213,7 @@ class PaymentAdditionViewModel @Inject constructor(
             val paymentDetails = NewPaymentDetails(
                 title = _state.value.title,
                 description = _state.value.description,
-                amount = _state.value.amount.toFloat(),
+                amount = _state.value.amount.toDouble(),
                 photoUrls = _state.value.uploadedPhotos,
                 photoUris = _state.value.newPhotos,
                 deletedPhotos = _state.value.deletedPhotos,

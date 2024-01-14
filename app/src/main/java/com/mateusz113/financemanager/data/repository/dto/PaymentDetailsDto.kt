@@ -3,7 +3,7 @@ package com.mateusz113.financemanager.data.repository.dto
 class PaymentDetailsDto() {
     var title: String? = null
     var description: String? = null
-    var amount: Float? = null
+    var amount: Double? = null
     var photoUrls: List<String>? = null
     var timestamp: Long? = null
     var category: String? = null
@@ -11,7 +11,7 @@ class PaymentDetailsDto() {
     constructor(
         title: String?,
         description: String?,
-        amount: Float?,
+        amount: Double?,
         photoUrls: List<String>?,
         timestamp: Long?,
         category: String?

@@ -357,9 +357,9 @@ private fun isAmountValid(
     amount: String
 ): Boolean {
     return amount.isNotBlank() &&
-            amount.split(".").first().length < 8 &&
+            amount.split(".").first().length < 7 &&
             try {
-                amount.toFloat()
+                amount.toDouble()
                 true
             } catch (e: NumberFormatException) {
                 false

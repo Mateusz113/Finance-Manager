@@ -6,7 +6,7 @@ import java.time.LocalDate
 data class NewPaymentDetails(
     val title: String,
     val description: String,
-    val amount: Float,
+    val amount: Double,
     val photoUris: List<Uri>,
     val photoUrls: List<String> = emptyList(),
     val deletedPhotos: List<String> = emptyList(),

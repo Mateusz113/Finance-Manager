@@ -16,7 +16,7 @@ fun PaymentDetailsDto.toPaymentDetails(): PaymentDetails {
     return PaymentDetails(
         title = title ?: "",
         description = description ?: "",
-        amount = amount ?: 0.00f,
+        amount = amount ?: 0.00,
         photoUrls = photoUrls ?: emptyList(),
         date = date ?: LocalDate.now(),
         category = convertStringToCategory(category)

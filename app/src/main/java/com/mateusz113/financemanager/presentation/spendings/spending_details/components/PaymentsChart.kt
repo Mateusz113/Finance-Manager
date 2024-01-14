@@ -42,8 +42,7 @@ fun PaymentsChart(
                 label = category.name,
                 value = decimalFormat
                     .format(listingsMap[category]
-                        ?.sumOf { it.amount.toDouble() }
-                        ?.toFloat() ?: 0f)
+                        ?.sumOf { it.amount })
                     .toFloat(),
                 color = colorsMap[category] ?: Color.Transparent
             )

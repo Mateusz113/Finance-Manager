@@ -104,9 +104,9 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
                                             && (filterSettings.categories.isEmpty() ||
                                             filterSettings.categories.contains(it.category))
                                             && (filterSettings.minValue.isBlank() ||
-                                            filterSettings.minValue.toFloat() <= it.amount)
+                                            filterSettings.minValue.toDouble() <= it.amount)
                                             && (filterSettings.maxValue.isBlank() ||
-                                            filterSettings.maxValue.toFloat() >= it.amount)
+                                            filterSettings.maxValue.toDouble() >= it.amount)
                                             && filterSettings.startDate <= it.date
                                             && filterSettings.endDate >= it.date
                                 })

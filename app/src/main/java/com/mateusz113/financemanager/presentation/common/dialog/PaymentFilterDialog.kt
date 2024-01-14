@@ -67,14 +67,14 @@ fun PaymentFilterDialog(
             derivedStateOf {
                 val minIsLowerIfBothNumbers =
                     if (
-                        isValidFloatInput(filterSettings.minValue)
-                        && isValidFloatInput(filterSettings.maxValue)
+                        isValidDoubleInput(filterSettings.minValue)
+                        && isValidDoubleInput(filterSettings.maxValue)
                     ) {
-                        filterSettings.minValue.toFloat() < filterSettings.maxValue.toFloat()
+                        filterSettings.minValue.toDouble() < filterSettings.maxValue.toDouble()
                     } else {
                         true
                     }
-                (isValidFloatInput(filterSettings.minValue) && minIsLowerIfBothNumbers)
+                (isValidDoubleInput(filterSettings.minValue) && minIsLowerIfBothNumbers)
                         || filterSettings.minValue.isEmpty()
             }
         }
@@ -82,13 +82,13 @@ fun PaymentFilterDialog(
         val maxValueInputIsValid by remember {
             derivedStateOf {
                 val maxIsBiggerIfBothNumbers = if (
-                    isValidFloatInput(filterSettings.minValue) && isValidFloatInput(filterSettings.maxValue)
+                    isValidDoubleInput(filterSettings.minValue) && isValidDoubleInput(filterSettings.maxValue)
                 ) {
-                    filterSettings.minValue.toFloat() < filterSettings.maxValue.toFloat()
+                    filterSettings.minValue.toDouble() < filterSettings.maxValue.toDouble()
                 } else {
                     true
                 }
-                (isValidFloatInput(filterSettings.maxValue) && maxIsBiggerIfBothNumbers)
+                (isValidDoubleInput(filterSettings.maxValue) && maxIsBiggerIfBothNumbers)
                         || filterSettings.maxValue.isEmpty()
             }
         }
@@ -224,7 +224,7 @@ fun PaymentFilterDialog(
                                     .padding(end = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
                                 label = {
-                                        Text(text = "From")
+                                    Text(text = "From")
                                 },
                                 readOnly = true,
                                 value = formattedStartDate,
@@ -323,7 +323,7 @@ fun PaymentFilterDialog(
                                         val formattedMinVale =
                                             if (filterSettings.minValue.isNotEmpty()) {
                                                 decimalFormat.format(
-                                                    filterSettings.minValue.toFloat()
+                                                    filterSettings.minValue.toDouble()
                                                 )
                                             } else {
                                                 filterSettings.minValue
@@ -331,7 +331,7 @@ fun PaymentFilterDialog(
                                         val formattedMaxValue =
                                             if (filterSettings.maxValue.isNotEmpty()) {
                                                 decimalFormat.format(
-                                                    filterSettings.maxValue.toFloat()
+                                                    filterSettings.maxValue.toDouble()
                                                 )
                                             } else {
                                                 filterSettings.maxValue
@@ -402,9 +402,9 @@ fun PaymentFilterDialog(
     }
 }
 
-private fun isValidFloatInput(s: String): Boolean {
+private fun isValidDoubleInput(s: String): Boolean {
     return try {
-        s.toFloat()
+        s.toDouble()
         true
     } catch (e: NumberFormatException) {
         false
