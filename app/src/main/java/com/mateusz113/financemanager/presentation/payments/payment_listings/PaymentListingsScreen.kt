@@ -25,6 +25,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.common.components.PaymentListingsInfo
 import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
+import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
 import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
@@ -97,15 +98,6 @@ fun PaymentListingsScreen(
                         )
                     }
                     items(state.payments.size) { i ->
-                        val amount = buildString {
-                            if (state.isCurrencyPrefix == true || (state.isCurrencyPrefix == null && state.currency.isPrefix)) {
-                                append("${state.currency.symbol ?: state.currency.name} ")
-                            }
-                            append(state.payments[i].amount)
-                            if (state.isCurrencyPrefix == false || (state.isCurrencyPrefix == null && !state.currency.isPrefix)) {
-                                append(" ${state.currency.symbol ?: state.currency.name}")
-                            }
-                        }
                         PaymentListingsInfo(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -120,8 +112,12 @@ fun PaymentListingsScreen(
                             isDeletable = true,
                             onPaymentDelete = {
                                 viewModel.onEvent(
-                                    PaymentListingsEvent.DeletePayment(state.payments[i].id)
+                                    PaymentListingsEvent.UpdateDeleteDialogInfo(
+                                        id = state.payments[i].id,
+                                        title = state.payments[i].title
+                                    )
                                 )
+                                viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(true))
                             }
                         )
                         if (i < state.payments.size - 1) {
@@ -142,6 +138,22 @@ fun PaymentListingsScreen(
             },
             updateFilterSettings = { filterSettings ->
                 viewModel.onEvent(PaymentListingsEvent.UpdateFilterSettings(filterSettings))
+            }
+        )
+
+        ConfirmationDialog(
+            dialogTitle = stringResource(id = R.string.deletion),
+            dialogText = stringResource(
+                id = R.string.deletion_text,
+                state.deleteDialogPaymentTitle
+            ),
+            isDialogOpen = state.isDeleteDialogOpen,
+            onDismiss = {
+                viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
+            },
+            onConfirm = {
+                viewModel.onEvent(PaymentListingsEvent.DeletePayment(state.deleteDialogPaymentId))
+                viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
             }
         )
     }

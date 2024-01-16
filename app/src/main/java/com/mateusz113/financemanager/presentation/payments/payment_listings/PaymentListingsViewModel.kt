@@ -1,13 +1,10 @@
 package com.mateusz113.financemanager.presentation.payments.payment_listings
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.FilterSettings
-import com.mateusz113.financemanager.domain.model.NewPaymentDetails
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Currency
 import com.mateusz113.financemanager.util.Resource
@@ -17,12 +14,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
-import java.math.RoundingMode
-import java.time.LocalDate
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class PaymentListingsViewModel @Inject constructor(
@@ -73,6 +67,23 @@ class PaymentListingsViewModel @Inject constructor(
                 )
                 viewModelScope.launch {
                     getPaymentListings()
+                }
+            }
+
+            is PaymentListingsEvent.UpdateDeleteDialogState -> {
+                _state.update {
+                    it.copy(
+                        isDeleteDialogOpen = event.isOpen
+                    )
+                }
+            }
+
+            is PaymentListingsEvent.UpdateDeleteDialogInfo -> {
+                _state.update {
+                    it.copy(
+                        deleteDialogPaymentId = event.id,
+                        deleteDialogPaymentTitle = event.title
+                    )
                 }
             }
         }

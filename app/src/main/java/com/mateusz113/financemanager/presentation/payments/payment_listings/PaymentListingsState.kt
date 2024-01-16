@@ -11,5 +11,8 @@ data class PaymentListingsState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val isFilterDialogOpen: Boolean = false,
-    val filterSettings: FilterSettings = FilterSettings()
+    val filterSettings: FilterSettings = FilterSettings(),
+    val isDeleteDialogOpen: Boolean = false,
+    val deleteDialogPaymentTitle: String = "",
+    val deleteDialogPaymentId: String = ""
 )
