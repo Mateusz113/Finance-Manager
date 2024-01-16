@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
 import com.mateusz113.financemanager.util.Resource
+import com.mateusz113.financemanager.util.convertTimestampIntoLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -82,15 +83,29 @@ class ProfileViewModel @Inject constructor(
 
     private fun updateJoinDate() {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val user = FirebaseAuth.getInstance().currentUser
         _state.value.googleAuthUiClient?.getSignedInUser()?.let { userData ->
             if (!sharedPreferences.contains("${userData.userId}JoinDate")) {
-                updateJoinDateInSharedPrefs(
-                    userId = userData.userId,
-                    defaultDate = formatter.format(LocalDate.now())
-                )
+                val userId = user?.uid ?: ""
+                val userJoinTimestamp = user?.metadata?.creationTimestamp
+                if (userJoinTimestamp != null) {
+                    val userJoinDate = convertTimestampIntoLocalDate(userJoinTimestamp)
+                    updateJoinDateInSharedPrefs(
+                        userId = userId,
+                        userJoinDate = formatter.format(userJoinDate)
+                    )
+                } else {
+                    updateJoinDateInSharedPrefs(
+                        userId = userId,
+                        userJoinDate = formatter.format(LocalDate.now())
+                    )
+                }
             }
             val joinDate =
-                sharedPreferences.getString("${userData.userId}JoinDate", "22/07/2011")
+                sharedPreferences.getString(
+                    "${userData.userId}JoinDate",
+                    formatter.format(LocalDate.now())
+                )
             _state.value = _state.value.copy(
                 joinDate = joinDate!!
             )
@@ -98,7 +113,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun updatePaymentNumber() {
-        Log.d("PaymentNumber", "Function called")
         _state.value.googleAuthUiClient?.getSignedInUser()?.let { userData ->
             if (!sharedPreferences.contains("${userData.userId}PaymentsNum")) {
                 updateNumOfPaymentsInSharedPrefs(userData.userId)
@@ -142,11 +156,11 @@ class ProfileViewModel @Inject constructor(
 
     private fun updateJoinDateInSharedPrefs(
         userId: String,
-        defaultDate: String = "22/07/2011"
+        userJoinDate: String
     ) {
         sharedPreferences.edit().apply {
             this.putString(
-                "${userId}JoinDate", defaultDate
+                "${userId}JoinDate", userJoinDate
             )
         }.apply()
     }
