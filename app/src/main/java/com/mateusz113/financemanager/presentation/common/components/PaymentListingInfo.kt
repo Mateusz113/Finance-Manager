@@ -46,20 +46,9 @@ fun PaymentListingsInfo(
     isDeletable: Boolean = false,
     onPaymentDelete: () -> Unit = {}
 ) {
-    var isDialogOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
     val formattedDate = DateTimeFormatter
         .ofPattern("dd/MM/yyyy")
         .format(paymentListing.date)
-
-
-    val amount = buildString {
-
-        append(paymentListing.amount)
-
-    }
 
     Row(
         modifier = modifier
@@ -135,7 +124,7 @@ fun PaymentListingsInfo(
             Text(
                 modifier = Modifier
                     .weight(1f),
-                text = amount,
+                text = paymentListing.amount.toString(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = if (isCurrencyPrefix == true || (isCurrencyPrefix == null && currency.isPrefix)) {
@@ -172,13 +161,14 @@ fun PaymentListingsInfo(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(
                     modifier = Modifier
                         .size(80.dp),
                     onClick = {
-                        isDialogOpen = true
+                        onPaymentDelete()
                     }
                 ) {
                     Icon(
@@ -187,19 +177,6 @@ fun PaymentListingsInfo(
                     )
                 }
             }
-
-            ConfirmationDialog(
-                dialogTitle = stringResource(id = R.string.deletion),
-                dialogText = stringResource(id = R.string.deletion_text, paymentListing.title),
-                isDialogOpen = isDialogOpen,
-                onDismiss = {
-                    isDialogOpen = false
-                },
-                onConfirm = {
-                    isDialogOpen = false
-                    onPaymentDelete()
-                }
-            )
         }
     }
 }
