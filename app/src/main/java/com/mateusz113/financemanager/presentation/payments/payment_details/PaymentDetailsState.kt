@@ -9,7 +9,6 @@ data class PaymentDetailsState<T>(
     val isCurrencyPrefix: Boolean? = null,
     var error: String? = null,
     var isLoading: Boolean = false,
-    var isRefreshing: Boolean = false,
     var isPhotoDialogOpen: Boolean = false,
     var dialogPhoto: T? = null
 )

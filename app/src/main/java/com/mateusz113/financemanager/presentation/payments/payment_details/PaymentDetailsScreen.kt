@@ -48,7 +48,7 @@ fun PaymentDetailsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val swipeRefreshState = rememberSwipeRefreshState(
-        isRefreshing = state.isRefreshing
+        isRefreshing = state.isLoading
     )
     if (state.error == null) {
         ScaffoldWrapper(
@@ -120,13 +120,11 @@ fun PaymentDetailsScreen(
                 viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(isOpen))
             }
         )
+    } else {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Center
         ) {
-            if (state.isLoading) {
-                CircularProgressIndicator()
-            }
             state.error?.let {
                 Text(
                     text = it,
