@@ -1,9 +1,9 @@
 package com.mateusz113.financemanager.presentation.profile
 
-import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
+import com.mateusz113.financemanager.presentation.auth.AuthUiClient
 
 data class ProfileState(
-    val googleAuthUiClient: GoogleAuthUiClient? = null,
+    val authUiClient: AuthUiClient? = null,
     val errorMessage: String = "",
     val isLoading: Boolean = false,
     val isDeletionConfirmOpen: Boolean = false,

@@ -22,7 +22,7 @@ import androidx.core.content.ContextCompat.getString
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
+import com.mateusz113.financemanager.presentation.auth.AuthUiClient
 import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
 import com.mateusz113.financemanager.presentation.destinations.SettingsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel(),
-    googleAuthUiClient: GoogleAuthUiClient,
+    authUiClient: AuthUiClient,
     navigator: DestinationsNavigator
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,7 +45,7 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.updateAuthClient(googleAuthUiClient)
+        viewModel.updateAuthClient(authUiClient)
     }
 
     LaunchedEffect(key1 = state.shouldDelete) {
