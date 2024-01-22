@@ -16,7 +16,7 @@ import java.util.concurrent.CancellationException
 class GoogleAuthUiClient(
     private val context: Context,
     private val oneTapClient: SignInClient
-) {
+): AuthUiClient{
     private val auth = Firebase.auth
 
     //Get the IntentSender from
@@ -73,8 +73,7 @@ class GoogleAuthUiClient(
             )
         }
     }
-
-    suspend fun signOut(){
+    override suspend fun signOut(){
         try {
             oneTapClient.signOut().await()
             auth.signOut()
