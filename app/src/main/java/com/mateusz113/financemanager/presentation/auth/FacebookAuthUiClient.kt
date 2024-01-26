@@ -64,16 +64,9 @@ class FacebookAuthUiClient(
     ): SignInResult {
         val credential = FacebookAuthProvider.getCredential(accessInfo.token)
         return try {
-            val user = auth.signInWithCredential(credential).await().user
+            auth.signInWithCredential(credential).await()
             SignInResult(
-                data = user?.run {
-                    UserData(
-                        userId = uid,
-                        username = displayName,
-                        email = email,
-                        profilePictureUrl = photoUrl?.toString()
-                    )
-                },
+                wasSignInSuccessful = true,
                 errorMessage = null
             )
         } catch (e: Exception) {
@@ -87,7 +80,7 @@ class FacebookAuthUiClient(
                 ).show()
             }
             SignInResult(
-                data = null,
+                wasSignInSuccessful = false,
                 errorMessage = e.message
             )
         }
