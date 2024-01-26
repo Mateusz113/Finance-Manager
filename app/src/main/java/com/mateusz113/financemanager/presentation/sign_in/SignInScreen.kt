@@ -39,7 +39,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun SignInScreen(
     viewModel: SignInViewModel = hiltViewModel(),
     onSignInClick: () -> Unit,
-    onFacebookSignInClick: () -> Unit
+    onFacebookSignInClick: () -> Unit,
+    onGitHubSignInClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -66,6 +67,10 @@ fun SignInScreen(
 
             Button(onClick = onFacebookSignInClick) {
                 Text(text = "Sign in with facebook")
+            }
+
+            Button(onClick = onGitHubSignInClick) {
+                Text(text = "Sign in with GitHub")
             }
         }
     }
