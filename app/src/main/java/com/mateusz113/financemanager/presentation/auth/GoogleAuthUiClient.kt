@@ -52,7 +52,7 @@ class GoogleAuthUiClient(
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         return try {
-            auth.signInWithCredential(googleCredentials).await().user
+            auth.signInWithCredential(googleCredentials).await()
             SignInResult(
                 wasSignInSuccessful = true,
                 errorMessage = null
