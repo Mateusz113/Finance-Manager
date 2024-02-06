@@ -30,6 +30,8 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.destinations.RegisterScreenDestination
+import com.mateusz113.financemanager.presentation.sign_in.component.LoginBlock
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -38,9 +40,11 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun SignInScreen(
     viewModel: SignInViewModel = hiltViewModel(),
-    onSignInClick: () -> Unit,
+    navigator: DestinationsNavigator,
+    onGoogleSignInClick: () -> Unit,
     onFacebookSignInClick: () -> Unit,
-    onGitHubSignInClick: () -> Unit
+    onGitHubSignInClick: () -> Unit,
+    onFirebaseSignInClick: (String, String) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -61,7 +65,15 @@ fun SignInScreen(
         contentAlignment = Alignment.Center
     ) {
         Column {
-            Button(onClick = onSignInClick) {
+            LoginBlock(
+                onLoginClick = onFirebaseSignInClick
+            )
+            Button(onClick = {
+                navigator.navigate(RegisterScreenDestination)
+            }) {
+                Text(text = "Register")
+            }
+            Button(onClick = onGoogleSignInClick) {
                 Text(text = stringResource(id = R.string.sign_in))
             }
 
