@@ -1,8 +1,8 @@
 package com.mateusz113.financemanager
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,6 +29,7 @@ import com.mateusz113.financemanager.di.DaggerSharedPrefsSetupComponent
 import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.appCurrentDestinationAsState
 import com.mateusz113.financemanager.presentation.auth.FacebookAuthUiClient
+import com.mateusz113.financemanager.presentation.auth.FirebaseAuthUiClient
 import com.mateusz113.financemanager.presentation.auth.GitHubAuthUiClient
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
 import com.mateusz113.financemanager.presentation.common.bottom_nav.BottomNavigationBar
@@ -37,9 +38,11 @@ import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionSc
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.ProfileScreenDestination
+import com.mateusz113.financemanager.presentation.destinations.RegisterScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SettingsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
 import com.mateusz113.financemanager.presentation.profile.ProfileScreen
+import com.mateusz113.financemanager.presentation.register.RegisterScreen
 import com.mateusz113.financemanager.presentation.sign_in.SignInScreen
 import com.mateusz113.financemanager.ui.theme.FinanceManagerTheme
 import com.mateusz113.financemanager.util.AuthMethod
@@ -74,27 +77,31 @@ class MainActivity : ComponentActivity() {
     //GitHub auth
     private val gitHubAuthUiClient by lazy {
         GitHubAuthUiClient(
-            firebaseAuth = firebaseAuth,
             activity = this@MainActivity
+        )
+    }
+
+    //Firebase auth
+    private val firebaseAuthUiClient by lazy {
+        FirebaseAuthUiClient(
+            context = applicationContext
         )
     }
 
     //State to keep track if user is logged in
     private var isUserLoggedIn by mutableStateOf(false)
 
-    //Instance of auth used across authentication
-    private val firebaseAuth = FirebaseAuth.getInstance()
-
     //Variable to keep track of what authentication method was used
     private lateinit var authMethod: AuthMethod
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val sharedPreferences = applicationContext.getSharedPreferences("SharedPrefs", Context.MODE_PRIVATE)
-        authMethod = firebaseAuth.currentUser?.let {
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("SharedPrefs", Context.MODE_PRIVATE)
+        authMethod = FirebaseAuth.getInstance().currentUser?.let { user ->
             AuthMethod.valueOf(
                 sharedPreferences.getString(
-                    "${firebaseAuth.currentUser!!.uid}AuthMethod",
+                    "${user.uid}AuthMethod",
                     "FIREBASE"
                 )!!
             )
@@ -106,7 +113,8 @@ class MainActivity : ComponentActivity() {
                         PaymentDetailsScreenDestination,
                         PaymentAdditionScreenDestination,
                         SignInScreenDestination,
-                        SettingsScreenDestination
+                        SettingsScreenDestination,
+                        RegisterScreenDestination
                     )
                 }
 
@@ -118,7 +126,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val currentDestination = navController.appCurrentDestinationAsState().value
                     val startRoute =
-                        if (firebaseAuth.currentUser == null) SignInScreenDestination else NavGraphs.root.startRoute
+                        if (FirebaseAuth.getInstance().currentUser == null) SignInScreenDestination else NavGraphs.root.startRoute
 
                     Scaffold(
                         bottomBar = {
@@ -146,7 +154,8 @@ class MainActivity : ComponentActivity() {
                                                         googleAuthUiClient.signInWithIntent(
                                                             intent = result.data ?: return@launch
                                                         )
-                                                    isUserLoggedIn = signInResult.wasSignInSuccessful
+                                                    isUserLoggedIn =
+                                                        signInResult.wasSignInSuccessful
                                                 }
                                             }
                                         }
@@ -157,17 +166,7 @@ class MainActivity : ComponentActivity() {
                                         key1 = isUserLoggedIn,
                                     ) {
                                         if (isUserLoggedIn) {
-                                            val component = DaggerSharedPrefsSetupComponent.create()
-                                            val sharedPreferencesSetup = component.getSharedPreferencesSetup()
-                                            val userJoinDate = firebaseAuth.currentUser?.metadata?.creationTimestamp?.let { timestamp ->
-                                                convertTimestampIntoLocalDate(timestamp)
-                                            } ?: LocalDate.now()
-                                            sharedPreferencesSetup.setupSharedPreferences(
-                                                sharedPreferences = sharedPreferences,
-                                                userId = firebaseAuth.uid ?: "",
-                                                userJoinDate = userJoinDate,
-                                                authMethod = authMethod
-                                            )
+                                            setupSharedPreferences(sharedPreferences)
                                             Toast.makeText(
                                                 applicationContext,
                                                 "Sign in successful",
@@ -181,7 +180,8 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     SignInScreen(
-                                        onSignInClick = {
+                                        navigator = destinationsNavigator,
+                                        onGoogleSignInClick = {
                                             lifecycleScope.launch {
                                                 val signInIntentSender =
                                                     googleAuthUiClient.getIntentSender()
@@ -202,18 +202,25 @@ class MainActivity : ComponentActivity() {
                                         onGitHubSignInClick = {
                                             gitHubAuthUiClient.signIn(
                                                 onSignInComplete = { signInResult ->
-                                                    isUserLoggedIn = signInResult.wasSignInSuccessful
+                                                    isUserLoggedIn =
+                                                        signInResult.wasSignInSuccessful
                                                     authMethod = AuthMethod.GITHUB
                                                 }
                                             )
+                                        },
+                                        onFirebaseSignInClick = { email, password ->
+                                            lifecycleScope.launch {
+                                                val signInResult =
+                                                    firebaseAuthUiClient.signIn(email, password)
+                                                isUserLoggedIn = signInResult.wasSignInSuccessful
+                                            }
                                         }
                                     )
                                 }
                                 composable(ProfileScreenDestination) {
                                     ProfileScreen(
                                         navigator = destinationsNavigator,
-                                        authUiClient =
-                                        when (authMethod) {
+                                        authUiClient = when (authMethod) {
                                             AuthMethod.FACEBOOK -> {
                                                 facebookAuthUiClient
                                             }
@@ -227,7 +234,37 @@ class MainActivity : ComponentActivity() {
                                             }
 
                                             AuthMethod.FIREBASE -> {
-                                                googleAuthUiClient
+                                                firebaseAuthUiClient
+                                            }
+                                        }
+                                    )
+                                }
+                                composable(RegisterScreenDestination) {
+                                    LaunchedEffect(
+                                        key1 = isUserLoggedIn,
+                                    ) {
+                                        if (isUserLoggedIn) {
+                                            setupSharedPreferences(sharedPreferences)
+                                            Toast.makeText(
+                                                applicationContext,
+                                                "Register successful",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            destinationsNavigator.navigate(
+                                                PaymentListingsScreenDestination
+                                            )
+                                            isUserLoggedIn = false
+                                        }
+                                    }
+                                    RegisterScreen(
+                                        onRegisterClick = { displayName, email, password ->
+                                            lifecycleScope.launch {
+                                                val result = firebaseAuthUiClient.register(
+                                                    displayName,
+                                                    email,
+                                                    password
+                                                )
+                                                isUserLoggedIn = result.wasSignInSuccessful
                                             }
                                         }
                                     )
@@ -238,6 +275,24 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setupSharedPreferences(
+        sharedPreferences: SharedPreferences
+    ) {
+        val component = DaggerSharedPrefsSetupComponent.create()
+        val sharedPreferencesSetup =
+            component.getSharedPreferencesSetup()
+        val userJoinDate =
+            FirebaseAuth.getInstance().currentUser?.metadata?.creationTimestamp?.let { timestamp ->
+                convertTimestampIntoLocalDate(timestamp)
+            } ?: LocalDate.now()
+        sharedPreferencesSetup.setupSharedPreferences(
+            sharedPreferences = sharedPreferences,
+            userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+            userJoinDate = userJoinDate,
+            authMethod = authMethod
+        )
     }
 
     override fun onDestroy() {
