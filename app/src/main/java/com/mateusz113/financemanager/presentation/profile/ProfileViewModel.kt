@@ -101,7 +101,6 @@ class ProfileViewModel @Inject constructor(
 
     private fun updateUserInfo() {
         FirebaseAuth.getInstance().currentUser?.let { userData ->
-            Log.d("EMAIL_CASE", userData.email.toString())
             _state.value = _state.value.copy(
                 userId = userData.uid,
                 username = userData.displayName,
