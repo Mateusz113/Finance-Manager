@@ -11,14 +11,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GitHubAuthUiClient(
-    private val firebaseAuth: FirebaseAuth,
     private val activity: Activity
 ) : AuthUiClient {
     private val tag = "GITHUB_INFO"
+    private val auth = FirebaseAuth.getInstance()
     fun signIn(
         onSignInComplete: (SignInResult) -> Unit
     ) {
-        val pendingSignInTask = firebaseAuth.pendingAuthResult
+        val pendingSignInTask = auth.pendingAuthResult
         if (pendingSignInTask != null) {
             pendingSignInTask
                 .addOnSuccessListener {
@@ -42,7 +42,7 @@ class GitHubAuthUiClient(
                     )
                 }
         } else {
-            firebaseAuth
+            auth
                 .startActivityForSignInWithProvider(activity, buildProvider())
                 .addOnSuccessListener {
                     Log.d(tag, "Logging success")
@@ -69,7 +69,7 @@ class GitHubAuthUiClient(
 
     private fun buildProvider(): OAuthProvider {
         val provider = OAuthProvider.newBuilder("github.com")
-        provider.addCustomParameter("login", "your-email.com")
+        provider.addCustomParameter("login","")
         return provider.build()
     }
 

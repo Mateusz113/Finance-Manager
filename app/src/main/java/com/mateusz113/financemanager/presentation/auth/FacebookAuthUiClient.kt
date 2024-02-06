@@ -10,9 +10,8 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +26,6 @@ class FacebookAuthUiClient(
 ) : AuthUiClient {
     private val loginManager = LoginManager.getInstance()
     private val callbackManager = CallbackManager.Factory.create()
-    private val auth = Firebase.auth
 
     init {
         loginManager.registerCallback(
@@ -64,7 +62,7 @@ class FacebookAuthUiClient(
     ): SignInResult {
         val credential = FacebookAuthProvider.getCredential(accessInfo.token)
         return try {
-            auth.signInWithCredential(credential).await()
+            FirebaseAuth.getInstance().signInWithCredential(credential).await()
             SignInResult(
                 wasSignInSuccessful = true,
                 errorMessage = null
@@ -93,7 +91,7 @@ class FacebookAuthUiClient(
     override suspend fun signOut() {
         try {
             LoginManager.getInstance().logOut()
-            auth.signOut()
+            FirebaseAuth.getInstance().signOut()
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             e.printStackTrace()
