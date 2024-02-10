@@ -58,9 +58,9 @@ fun ProfileInfo(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        email?.let {
+        if (!email.isNullOrEmpty()) {
             Text(
-                text = stringResource(id = R.string.email, it),
+                text = stringResource(id = R.string.email_screen_display, email),
                 textAlign = TextAlign.Center,
                 fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                 overflow = TextOverflow.Ellipsis,

@@ -75,17 +75,18 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.facebook.android:facebook-android-sdk:16.3.0")
 
     //Dagger - Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
-    kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Compose dependencies
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")

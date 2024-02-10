@@ -1,5 +1,7 @@
 package com.mateusz113.financemanager
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -15,15 +17,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FirebaseAuth
+import com.mateusz113.financemanager.di.DaggerSharedPrefsSetupComponent
 import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.appCurrentDestinationAsState
+import com.mateusz113.financemanager.presentation.auth.FacebookAuthUiClient
+import com.mateusz113.financemanager.presentation.auth.FirebaseAuthUiClient
+import com.mateusz113.financemanager.presentation.auth.GitHubAuthUiClient
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
 import com.mateusz113.financemanager.presentation.common.bottom_nav.BottomNavigationBar
 import com.mateusz113.financemanager.presentation.destinations.Destination
@@ -31,20 +38,24 @@ import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionSc
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.ProfileScreenDestination
+import com.mateusz113.financemanager.presentation.destinations.RegisterScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SettingsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.SignInScreenDestination
 import com.mateusz113.financemanager.presentation.profile.ProfileScreen
+import com.mateusz113.financemanager.presentation.register.RegisterScreen
 import com.mateusz113.financemanager.presentation.sign_in.SignInScreen
-import com.mateusz113.financemanager.presentation.sign_in.SignInViewModel
 import com.mateusz113.financemanager.ui.theme.FinanceManagerTheme
+import com.mateusz113.financemanager.util.AuthMethod
+import com.mateusz113.financemanager.util.convertTimestampIntoLocalDate
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
-import com.ramcosta.composedestinations.navigation.popUpTo
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    //Google auth
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
             context = applicationContext,
@@ -52,8 +63,49 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    //Facebook auth
+    private val facebookAuthUiClient by lazy {
+        FacebookAuthUiClient(
+            context = applicationContext,
+            activity = this@MainActivity,
+            onSignIn = { result ->
+                isUserLoggedIn = result.wasSignInSuccessful
+            }
+        )
+    }
+
+    //GitHub auth
+    private val gitHubAuthUiClient by lazy {
+        GitHubAuthUiClient(
+            activity = this@MainActivity
+        )
+    }
+
+    //Firebase auth
+    private val firebaseAuthUiClient by lazy {
+        FirebaseAuthUiClient(
+            context = applicationContext
+        )
+    }
+
+    //State to keep track if user is logged in
+    private var isUserLoggedIn by mutableStateOf(false)
+
+    //Variable to keep track of what authentication method was used
+    private lateinit var authMethod: AuthMethod
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("SharedPrefs", Context.MODE_PRIVATE)
+        authMethod = FirebaseAuth.getInstance().currentUser?.let { user ->
+            AuthMethod.valueOf(
+                sharedPreferences.getString(
+                    "${user.uid}AuthMethod",
+                    "FIREBASE"
+                )!!
+            )
+        } ?: AuthMethod.FIREBASE
         setContent {
             FinanceManagerTheme {
                 val screensWithoutBottomNav = remember {
@@ -61,9 +113,11 @@ class MainActivity : ComponentActivity() {
                         PaymentDetailsScreenDestination,
                         PaymentAdditionScreenDestination,
                         SignInScreenDestination,
-                        SettingsScreenDestination
+                        SettingsScreenDestination,
+                        RegisterScreenDestination
                     )
                 }
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -72,7 +126,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val currentDestination = navController.appCurrentDestinationAsState().value
                     val startRoute =
-                        if (googleAuthUiClient.getSignedInUser() == null) SignInScreenDestination else NavGraphs.root.startRoute
+                        if (FirebaseAuth.getInstance().currentUser == null) SignInScreenDestination else NavGraphs.root.startRoute
 
                     Scaffold(
                         bottomBar = {
@@ -90,24 +144,8 @@ class MainActivity : ComponentActivity() {
                                 startRoute = startRoute
                             ) {
                                 composable(SignInScreenDestination) {
-                                    val viewModel = hiltViewModel<SignInViewModel>()
-                                    val state by viewModel.state.collectAsStateWithLifecycle()
-
-                                    //Navigates to signed in screen if sign in was successful
-                                    LaunchedEffect(key1 = Unit) {
-                                        if (googleAuthUiClient.getSignedInUser() != null) {
-                                            destinationsNavigator.navigate(
-                                                PaymentListingsScreenDestination
-                                            ) {
-                                                popUpTo(NavGraphs.root.startRoute) {
-                                                    inclusive = true
-                                                }
-                                            }
-                                        }
-                                    }
-
                                     //Intent launcher
-                                    val launcher = rememberLauncherForActivityResult(
+                                    val googleLauncher = rememberLauncherForActivityResult(
                                         contract = ActivityResultContracts.StartIntentSenderForResult(),
                                         onResult = { result ->
                                             if (result.resultCode == RESULT_OK) {
@@ -116,7 +154,8 @@ class MainActivity : ComponentActivity() {
                                                         googleAuthUiClient.signInWithIntent(
                                                             intent = result.data ?: return@launch
                                                         )
-                                                    viewModel.onSignInResult(signInResult)
+                                                    isUserLoggedIn =
+                                                        signInResult.wasSignInSuccessful
                                                 }
                                             }
                                         }
@@ -124,9 +163,10 @@ class MainActivity : ComponentActivity() {
 
                                     //Navigates user to signed it page when the sign in is successful
                                     LaunchedEffect(
-                                        key1 = state.isSignInSuccessful,
+                                        key1 = isUserLoggedIn,
                                     ) {
-                                        if (state.isSignInSuccessful) {
+                                        if (isUserLoggedIn) {
+                                            setupSharedPreferences(sharedPreferences)
                                             Toast.makeText(
                                                 applicationContext,
                                                 "Sign in successful",
@@ -135,22 +175,44 @@ class MainActivity : ComponentActivity() {
                                             destinationsNavigator.navigate(
                                                 PaymentListingsScreenDestination
                                             )
-                                            viewModel.resetState()
-
+                                            isUserLoggedIn = false
                                         }
                                     }
 
                                     SignInScreen(
                                         navigator = destinationsNavigator,
-                                        onSignInClick = {
+                                        onGoogleSignInClick = {
                                             lifecycleScope.launch {
                                                 val signInIntentSender =
                                                     googleAuthUiClient.getIntentSender()
-                                                launcher.launch(
+                                                googleLauncher.launch(
                                                     IntentSenderRequest.Builder(
                                                         signInIntentSender ?: return@launch
                                                     ).build()
                                                 )
+                                                authMethod = AuthMethod.GOOGLE
+                                            }
+                                        },
+                                        onFacebookSignInClick = {
+                                            lifecycleScope.launch {
+                                                facebookAuthUiClient.openLoginPage()
+                                                authMethod = AuthMethod.FACEBOOK
+                                            }
+                                        },
+                                        onGitHubSignInClick = {
+                                            gitHubAuthUiClient.signIn(
+                                                onSignInComplete = { signInResult ->
+                                                    isUserLoggedIn =
+                                                        signInResult.wasSignInSuccessful
+                                                    authMethod = AuthMethod.GITHUB
+                                                }
+                                            )
+                                        },
+                                        onFirebaseSignInClick = { email, password ->
+                                            lifecycleScope.launch {
+                                                val signInResult =
+                                                    firebaseAuthUiClient.signIn(email, password)
+                                                isUserLoggedIn = signInResult.wasSignInSuccessful
                                             }
                                         }
                                     )
@@ -158,7 +220,53 @@ class MainActivity : ComponentActivity() {
                                 composable(ProfileScreenDestination) {
                                     ProfileScreen(
                                         navigator = destinationsNavigator,
-                                        googleAuthUiClient = googleAuthUiClient
+                                        authUiClient = when (authMethod) {
+                                            AuthMethod.FACEBOOK -> {
+                                                facebookAuthUiClient
+                                            }
+
+                                            AuthMethod.GOOGLE -> {
+                                                googleAuthUiClient
+                                            }
+
+                                            AuthMethod.GITHUB -> {
+                                                gitHubAuthUiClient
+                                            }
+
+                                            AuthMethod.FIREBASE -> {
+                                                firebaseAuthUiClient
+                                            }
+                                        }
+                                    )
+                                }
+                                composable(RegisterScreenDestination) {
+                                    LaunchedEffect(
+                                        key1 = isUserLoggedIn,
+                                    ) {
+                                        if (isUserLoggedIn) {
+                                            setupSharedPreferences(sharedPreferences)
+                                            Toast.makeText(
+                                                applicationContext,
+                                                "Register successful",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                            destinationsNavigator.navigate(
+                                                PaymentListingsScreenDestination
+                                            )
+                                            isUserLoggedIn = false
+                                        }
+                                    }
+                                    RegisterScreen(
+                                        onRegisterClick = { displayName, email, password ->
+                                            lifecycleScope.launch {
+                                                val result = firebaseAuthUiClient.register(
+                                                    displayName,
+                                                    email,
+                                                    password
+                                                )
+                                                isUserLoggedIn = result.wasSignInSuccessful
+                                            }
+                                        }
                                     )
                                 }
                             }
@@ -167,5 +275,28 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setupSharedPreferences(
+        sharedPreferences: SharedPreferences
+    ) {
+        val component = DaggerSharedPrefsSetupComponent.create()
+        val sharedPreferencesSetup =
+            component.getSharedPreferencesSetup()
+        val userJoinDate =
+            FirebaseAuth.getInstance().currentUser?.metadata?.creationTimestamp?.let { timestamp ->
+                convertTimestampIntoLocalDate(timestamp)
+            } ?: LocalDate.now()
+        sharedPreferencesSetup.setupSharedPreferences(
+            sharedPreferences = sharedPreferences,
+            userId = FirebaseAuth.getInstance().currentUser?.uid ?: "",
+            userJoinDate = userJoinDate,
+            authMethod = authMethod
+        )
+    }
+
+    override fun onDestroy() {
+        facebookAuthUiClient.unregisterCallback()
+        super.onDestroy()
     }
 }

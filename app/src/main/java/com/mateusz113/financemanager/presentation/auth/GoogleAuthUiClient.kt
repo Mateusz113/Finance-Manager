@@ -16,7 +16,7 @@ import java.util.concurrent.CancellationException
 class GoogleAuthUiClient(
     private val context: Context,
     private val oneTapClient: SignInClient
-) {
+): AuthUiClient{
     private val auth = Firebase.auth
 
     //Get the IntentSender from
@@ -52,29 +52,21 @@ class GoogleAuthUiClient(
         val googleIdToken = credential.googleIdToken
         val googleCredentials = GoogleAuthProvider.getCredential(googleIdToken, null)
         return try {
-            val user = auth.signInWithCredential(googleCredentials).await().user
+            auth.signInWithCredential(googleCredentials).await()
             SignInResult(
-                data = user?.run {
-                    UserData(
-                        userId = uid,
-                        username = displayName,
-                        email = email,
-                        profilePictureUrl = photoUrl?.toString()
-                    )
-                },
+                wasSignInSuccessful = true,
                 errorMessage = null
             )
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             e.printStackTrace()
             SignInResult(
-                data = null,
+                wasSignInSuccessful = false,
                 errorMessage = e.message
             )
         }
     }
-
-    suspend fun signOut(){
+    override suspend fun signOut(){
         try {
             oneTapClient.signOut().await()
             auth.signOut()
@@ -82,14 +74,5 @@ class GoogleAuthUiClient(
             e.printStackTrace()
             if (e is CancellationException) throw e
         }
-    }
-
-    fun getSignedInUser(): UserData? = auth.currentUser?.run {
-        UserData(
-            userId = uid,
-            username = displayName,
-            email = email,
-            profilePictureUrl = photoUrl?.toString()
-        )
     }
 }

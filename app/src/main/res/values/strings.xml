@@ -58,10 +58,11 @@
     <string name="settings">Settings</string>
     <string name="join_date">Join date: %1$s</string>
     <string name="payments_number">Payments number: %1$s</string>
-    <string name="email">Email: %1$s</string>
+    <string name="email_screen_display">Email: %1$s</string>
     <string name="acc_deletion_confirmation_text">This operation is very sensitive. All the data will be deleted and lost forever. Are you sure you want to continue?</string>
     <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="account_deletion">Account deletion</string>
+    <string name="or_alternatively">Or alternatively:</string>
 
     //Settings
     <string name="currency">Currency</string>
@@ -71,7 +72,7 @@
     
     //Toast text
     <string name="delete_unsuccessful">This operation is sensitive.\nLog in again before retrying.</string>
-    <string name="delete_successful">Account delete successful</string>
+    <string name="delete_successful">Account delete successful.</string>
 
     //Symbol placement labels
     <string name="sp_inappcontrol">In application control</string>
@@ -92,8 +93,24 @@
     <string name="unknown">Unknown</string>
 
     //Error messages
-    <string name="too_many_pictures">Maxiumum amount of pictures for single payment is 5</string>
+    <string name="too_many_pictures">Maximum amount of pictures for single payment is 5.</string>
     <string name="is_incorrect">is incorrect</string>
     <string name="are_incorrect">are incorrect</string>
+    <string name="email_error">Email is blank or incorrectly formatted.</string>
+    <string name="password_error">Password is too short. It must be at least 6 characters long.</string>
+    <string name="generic_error">Error occurred.</string>
+    <string name="login_ui_provider_error">Incorrect value passed to external sign in button.</string>
 
+    //Sign in buttons content descriptions
+    <string name="facebook_sign_in">Sign in with Facebook</string>
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="github_sign_in">Sign in with GitHub</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="display_name_error">Display name is too long or empty. It must be at most 50 characters long.</string>
+
+    //Login fields labels
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
 </resources>
