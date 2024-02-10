@@ -3,6 +3,7 @@ package com.mateusz113.financemanager.presentation.register
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ fun RegisterScreen(
         contentAlignment = Alignment.Center
     ) {
         RegisterBlock(
+            modifier = Modifier.fillMaxWidth(0.8f),
             onRegisterClick = onRegisterClick
         )
     }
