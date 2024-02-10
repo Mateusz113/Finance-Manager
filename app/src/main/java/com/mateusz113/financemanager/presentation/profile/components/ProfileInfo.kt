@@ -60,7 +60,7 @@ fun ProfileInfo(
         }
         if (!email.isNullOrEmpty()) {
             Text(
-                text = stringResource(id = R.string.email, email),
+                text = stringResource(id = R.string.email_screen_display, email),
                 textAlign = TextAlign.Center,
                 fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                 overflow = TextOverflow.Ellipsis,
