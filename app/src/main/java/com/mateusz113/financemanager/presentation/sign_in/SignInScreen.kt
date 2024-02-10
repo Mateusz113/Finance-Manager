@@ -1,39 +1,31 @@
 package com.mateusz113.financemanager.presentation.sign_in
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.ActivityResultRegistryOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
-import com.facebook.login.widget.LoginButton
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.destinations.RegisterScreenDestination
+import com.mateusz113.financemanager.presentation.sign_in.component.ExternalSignInBlock
 import com.mateusz113.financemanager.presentation.sign_in.component.LoginBlock
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
@@ -48,6 +40,7 @@ fun SignInScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
     LaunchedEffect(key1 = state.signInError) {
         state.signInError?.let { error ->
             Toast.makeText(
@@ -64,26 +57,32 @@ fun SignInScreen(
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             LoginBlock(
-                onLoginClick = onFirebaseSignInClick
+                modifier = Modifier.fillMaxWidth(0.8f),
+                onLoginClick = onFirebaseSignInClick,
+                onRegisterClick = {
+                    navigator.navigate(RegisterScreenDestination)
+                }
             )
-            Button(onClick = {
-                navigator.navigate(RegisterScreenDestination)
-            }) {
-                Text(text = "Register")
-            }
-            Button(onClick = onGoogleSignInClick) {
-                Text(text = stringResource(id = R.string.sign_in))
-            }
+            Spacer(modifier = Modifier.height(30.dp))
 
-            Button(onClick = onFacebookSignInClick) {
-                Text(text = "Sign in with facebook")
-            }
+            Text(
+                text = stringResource(id = R.string.or_alternatively),
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.displaySmall.fontSize
+                )
+            )
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Button(onClick = onGitHubSignInClick) {
-                Text(text = "Sign in with GitHub")
-            }
+            ExternalSignInBlock(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                googleOnClick = onGoogleSignInClick,
+                facebookOnClick = onFacebookSignInClick,
+                gitHubOnClick = onGitHubSignInClick
+            )
         }
     }
 }
