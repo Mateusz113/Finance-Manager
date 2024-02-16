@@ -1,6 +1,7 @@
 package com.mateusz113.financemanager.presentation.common.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,7 +17,8 @@ fun InputTextField(
     label: @Composable () -> Unit = {},
     isError: Boolean = false,
     isPassword: Boolean = false,
-    isSingleLine: Boolean = true
+    isSingleLine: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     //Determine the transformation
     val transformation =
@@ -30,6 +32,7 @@ fun InputTextField(
         isError = isError,
         visualTransformation = transformation,
         singleLine = isSingleLine,
+        keyboardOptions = keyboardOptions,
         shape = RoundedCornerShape(5.dp)
     )
 }
