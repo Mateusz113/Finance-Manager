@@ -3,7 +3,6 @@ package com.mateusz113.financemanager.presentation.payments.payment_addition.com
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
@@ -28,7 +27,6 @@ fun PaymentAdditionAddPhotoContainer(
         modifier = Modifier
             .fillMaxHeight()
             .width(120.dp)
-            .padding(horizontal = 5.dp)
             .border(
                 1.dp,
                 MaterialTheme.colorScheme.outline,
