@@ -99,6 +99,10 @@
     <string name="email_error">Email is blank or incorrectly formatted.</string>
     <string name="password_error">Password is too short. It must be at least 6 characters long.</string>
     <string name="generic_error">Error occurred.</string>
+    <string name="payment_title_error">Payment title is too long or empty. It must be at most 50 characters long.</string>
+    <string name="payment_description_error">Payment description is too long or empty. It must be at most 500 characters long.</string>
+    <string name="payment_amount_error">Amount value is too big or incorrectly formatted. The decimal point must be a dot. Maximum value is 6 digits long.</string>
+    <string name="payment_photo_quantity_error">Maximum amount of photos attached to payment is 5.</string>
     <string name="login_ui_provider_error">Incorrect value passed to external sign in button.</string>
 
     //Sign in buttons content descriptions
