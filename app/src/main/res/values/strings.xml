@@ -16,6 +16,7 @@
     <string name="date_picker">Open date picker for payment</string>
     <string name="photo">Clicked photo display</string>
     <string name="arrow">Arrow indicating that the row is clickable</string>
+    <string name="sorting_button">Button that changes payment sorting method</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
@@ -63,6 +64,7 @@
     <string name="sign_out_text">Are you sure you want to sign out?</string>
     <string name="account_deletion">Account deletion</string>
     <string name="or_alternatively">Or alternatively:</string>
+    <string name="sorting_method">Sorting method</string>
 
     //Settings
     <string name="currency">Currency</string>
@@ -117,4 +119,11 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="username">Username</string>
+
+    //Sorting methods labels
+    <string name="amount_ascending">Amount ascending</string>
+    <string name="amount_descending">Amount descending</string>
+    <string name="alphabetically">Alphabetically</string>
+    <string name="old_to_new">Old to new</string>
+    <string name="new_to_old">New to old</string>
 </resources>
