@@ -1,5 +1,6 @@
 package com.mateusz113.financemanager.presentation.common.components
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
@@ -48,7 +49,8 @@ fun PaymentSearchBar(
                 .weight(1f)
                 .fillMaxHeight()
                 .padding(start = 10.dp),
-            shape = RoundedCornerShape(5.dp)
+            shape = RoundedCornerShape(5.dp),
+            contentPadding = PaddingValues(0.dp)
         ) {
             Text(
                 text = "Filter",
