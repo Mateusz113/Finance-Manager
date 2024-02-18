@@ -1,13 +1,16 @@
 package com.mateusz113.financemanager.presentation.payments.payment_listings
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.mateusz113.financemanager.domain.model.FilterSettings
+import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.util.Currency
 import com.mateusz113.financemanager.util.Resource
+import com.mateusz113.financemanager.util.SortingMethod
 import com.mateusz113.financemanager.util.SymbolPlacement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -86,6 +89,23 @@ class PaymentListingsViewModel @Inject constructor(
                     )
                 }
             }
+
+            is PaymentListingsEvent.UpdateSortingDialogState -> {
+                _state.update {
+                    it.copy(isSortingMethodDialogOpen = event.isOpen)
+                }
+            }
+
+            is PaymentListingsEvent.UpdateSortingMethod -> {
+                _state.update {
+                    it.copy(
+                        sortingSettingsInfo = it.sortingSettingsInfo.copy(
+                            currentOption = event.sortingMethod
+                        )
+                    )
+                }
+                sortPayments()
+            }
         }
     }
 
@@ -116,6 +136,7 @@ class PaymentListingsViewModel @Inject constructor(
                                     payments = listings
                                 )
                             }
+                            sortPayments()
                         }
 
                         is Resource.Error -> {
@@ -183,6 +204,46 @@ class PaymentListingsViewModel @Inject constructor(
         _state.value = _state.value.copy(
             currency = currentCurrency,
         )
+    }
+
+    private fun getComparator(sortingMethod: SortingMethod): Comparator<PaymentListing> {
+        return when (sortingMethod) {
+            SortingMethod.Alphabetically -> {
+                Comparator { payment1: PaymentListing, payment2: PaymentListing ->
+                    payment1.title.compareTo(payment2.title)
+                }
+            }
+
+            SortingMethod.AmountAscending -> {
+                Comparator { payment1: PaymentListing, payment2: PaymentListing ->
+                    payment1.amount.compareTo(payment2.amount)
+                }
+            }
+
+            SortingMethod.AmountDescending -> {
+                Comparator { payment1: PaymentListing, payment2: PaymentListing ->
+                    payment1.amount.compareTo(payment2.amount).unaryMinus()
+                }
+            }
+
+            SortingMethod.OldToNew -> {
+                Comparator { payment1: PaymentListing, payment2: PaymentListing ->
+                    payment1.date.compareTo(payment2.date)
+                }
+            }
+
+            SortingMethod.NewToOld -> {
+                Comparator { payment1: PaymentListing, payment2: PaymentListing ->
+                    payment1.date.compareTo(payment2.date).unaryMinus()
+                }
+            }
+        }
+    }
+
+    private fun sortPayments() {
+        _state.update {
+            it.copy(payments = it.payments.sortedWith(getComparator(it.sortingSettingsInfo.currentOption)))
+        }
     }
 
     override fun onCleared() {
