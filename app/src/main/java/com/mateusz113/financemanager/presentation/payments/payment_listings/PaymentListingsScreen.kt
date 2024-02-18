@@ -2,17 +2,24 @@ package com.mateusz113.financemanager.presentation.payments.payment_listings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -27,6 +34,7 @@ import com.mateusz113.financemanager.presentation.common.components.PaymentListi
 import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
 import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
 import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
+import com.mateusz113.financemanager.presentation.common.dialog.RadioButtonSelectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
@@ -79,23 +87,51 @@ fun PaymentListingsScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     item {
-                        PaymentSearchBar(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(80.dp)
                                 .padding(16.dp),
-                            value = state.filterSettings.query,
-                            openFilterDialog = {
-                                viewModel.onEvent(
-                                    PaymentListingsEvent.UpdateFilterDialogState(true)
-                                )
-                            },
-                            searchValueChange = { query ->
-                                viewModel.onEvent(
-                                    PaymentListingsEvent.SearchPayment(query)
+                        ) {
+                            PaymentSearchBar(
+                                modifier = Modifier
+                                    .weight(0.9f)
+                                    .fillMaxHeight(),
+                                value = state.filterSettings.query,
+                                openFilterDialog = {
+                                    viewModel.onEvent(
+                                        PaymentListingsEvent.UpdateFilterDialogState(true)
+                                    )
+                                },
+                                searchValueChange = { query ->
+                                    viewModel.onEvent(
+                                        PaymentListingsEvent.SearchPayment(query)
+                                    )
+                                }
+                            )
+
+                            OutlinedButton(
+                                onClick = {
+                                    viewModel.onEvent(
+                                        PaymentListingsEvent.UpdateSortingDialogState(
+                                            true
+                                        )
+                                    )
+                                },
+                                modifier = Modifier
+                                    .weight(0.15f)
+                                    .padding(start = 10.dp)
+                                    .fillMaxHeight(),
+                                shape = RoundedCornerShape(5.dp),
+                                contentPadding = PaddingValues(0.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Sort,
+                                    modifier = Modifier.size(20.dp),
+                                    contentDescription = stringResource(id = R.string.sorting_button)
                                 )
                             }
-                        )
+                        }
                     }
                     items(state.payments.size) { i ->
                         PaymentListingsInfo(
@@ -156,6 +192,17 @@ fun PaymentListingsScreen(
                 viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
             }
         )
+
+        RadioButtonSelectionDialog(
+            isDialogOpen = state.isSortingMethodDialogOpen,
+            dialogInfo = state.sortingSettingsInfo,
+            onDismiss = {
+                viewModel.onEvent(PaymentListingsEvent.UpdateSortingDialogState(false))
+            },
+            onOptionSelect = { sortingMethod ->
+                viewModel.onEvent(PaymentListingsEvent.UpdateSortingMethod(sortingMethod))
+                viewModel.onEvent(PaymentListingsEvent.UpdateSortingDialogState(false))
+            }
+        )
     }
 }
-
