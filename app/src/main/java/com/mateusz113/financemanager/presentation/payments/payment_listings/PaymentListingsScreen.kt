@@ -28,8 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.presentation.common.components.PaymentListingsInfo
 import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
 import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
@@ -38,6 +40,7 @@ import com.mateusz113.financemanager.presentation.common.dialog.RadioButtonSelec
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
+import com.mateusz113.financemanager.util.SortingMethod
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -53,16 +56,94 @@ fun PaymentListingsScreen(
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isLoading
     )
+
+    PaymentListingsScreenContent(
+        state = state,
+        swipeRefreshState = swipeRefreshState,
+        onFABClick = {
+            navigator.navigate(
+                PaymentAdditionScreenDestination(
+                    topBarLabel = R.string.new_payment
+                )
+            )
+        },
+        onRefresh = {
+            viewModel.onEvent(PaymentListingsEvent.Refresh)
+        },
+        onOpenFilterDialog = {
+            viewModel.onEvent(
+                PaymentListingsEvent.UpdateFilterDialogState(true)
+            )
+        },
+        onSearchValueChange = { query ->
+            viewModel.onEvent(
+                PaymentListingsEvent.SearchPayment(query)
+            )
+        },
+        onSortingButtonClick = {
+            viewModel.onEvent(
+                PaymentListingsEvent.UpdateSortingDialogState(
+                    true
+                )
+            )
+        },
+        onPaymentClick = { paymentIndex ->
+            navigator.navigate(PaymentDetailsScreenDestination(id = state.payments[paymentIndex].id))
+        },
+        onPaymentDeleteClick = { paymentIndex ->
+            viewModel.onEvent(
+                PaymentListingsEvent.UpdateDeleteDialogInfo(
+                    id = state.payments[paymentIndex].id,
+                    title = state.payments[paymentIndex].title
+                )
+            )
+            viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(true))
+        },
+        filterDialogOpen = { isOpen ->
+            viewModel.onEvent(PaymentListingsEvent.UpdateFilterDialogState(isOpen))
+        },
+        onFilterSettingsUpdate = { filterSettings ->
+            viewModel.onEvent(PaymentListingsEvent.UpdateFilterSettings(filterSettings))
+        },
+        onConfirmationDialogDismiss = {
+            viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
+        },
+        onConfirmationDialogConfirm = {
+            viewModel.onEvent(PaymentListingsEvent.DeletePayment(state.deleteDialogPaymentId))
+            viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
+        },
+        onSortingDialogDismiss = {
+            viewModel.onEvent(PaymentListingsEvent.UpdateSortingDialogState(false))
+        },
+        onSortingDialogSelect = { sortingMethod ->
+            viewModel.onEvent(PaymentListingsEvent.UpdateSortingMethod(sortingMethod))
+            viewModel.onEvent(PaymentListingsEvent.UpdateSortingDialogState(false))
+        }
+    )
+}
+
+@Composable
+fun PaymentListingsScreenContent(
+    state: PaymentListingsState,
+    swipeRefreshState: SwipeRefreshState = SwipeRefreshState(false),
+    onFABClick: () -> Unit,
+    onRefresh: () -> Unit,
+    onOpenFilterDialog: () -> Unit,
+    onSearchValueChange: (String) -> Unit,
+    onSortingButtonClick: () -> Unit,
+    onPaymentClick: (Int) -> Unit,
+    onPaymentDeleteClick: (Int) -> Unit,
+    filterDialogOpen: (Boolean) -> Unit,
+    onFilterSettingsUpdate: (FilterSettings) -> Unit,
+    onConfirmationDialogDismiss: () -> Unit,
+    onConfirmationDialogConfirm: () -> Unit,
+    onSortingDialogDismiss: () -> Unit,
+    onSortingDialogSelect: (SortingMethod) -> Unit
+) {
     ScaffoldWrapper(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    navigator.navigate(
-                        PaymentAdditionScreenDestination(
-                            topBarLabel = R.string.new_payment
-                        )
-                    )
-                },
+                onClick = onFABClick,
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
                 Icon(
@@ -79,9 +160,7 @@ fun PaymentListingsScreen(
         ) {
             SwipeRefresh(
                 state = swipeRefreshState,
-                onRefresh = {
-                    viewModel.onEvent(PaymentListingsEvent.Refresh)
-                }
+                onRefresh = onRefresh
             ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
@@ -98,26 +177,12 @@ fun PaymentListingsScreen(
                                     .weight(0.9f)
                                     .fillMaxHeight(),
                                 value = state.filterSettings.query,
-                                openFilterDialog = {
-                                    viewModel.onEvent(
-                                        PaymentListingsEvent.UpdateFilterDialogState(true)
-                                    )
-                                },
-                                searchValueChange = { query ->
-                                    viewModel.onEvent(
-                                        PaymentListingsEvent.SearchPayment(query)
-                                    )
-                                }
+                                openFilterDialog = onOpenFilterDialog,
+                                searchValueChange = onSearchValueChange
                             )
 
                             OutlinedButton(
-                                onClick = {
-                                    viewModel.onEvent(
-                                        PaymentListingsEvent.UpdateSortingDialogState(
-                                            true
-                                        )
-                                    )
-                                },
+                                onClick = onSortingButtonClick,
                                 modifier = Modifier
                                     .weight(0.15f)
                                     .padding(start = 10.dp)
@@ -140,21 +205,13 @@ fun PaymentListingsScreen(
                                 .padding(16.dp)
                                 .height(85.dp)
                                 .clickable {
-                                    navigator.navigate(PaymentDetailsScreenDestination(id = state.payments[i].id))
+                                    onPaymentClick(i)
                                 },
                             paymentListing = state.payments[i],
                             currency = state.currency,
                             isCurrencyPrefix = state.isCurrencyPrefix,
                             isDeletable = true,
-                            onPaymentDelete = {
-                                viewModel.onEvent(
-                                    PaymentListingsEvent.UpdateDeleteDialogInfo(
-                                        id = state.payments[i].id,
-                                        title = state.payments[i].title
-                                    )
-                                )
-                                viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(true))
-                            }
+                            onPaymentDelete = { onPaymentDeleteClick(i) }
                         )
                         if (i < state.payments.size - 1) {
                             Divider(
@@ -169,12 +226,8 @@ fun PaymentListingsScreen(
         PaymentFilterDialog(
             currentFilterSettings = state.filterSettings,
             isDialogOpen = state.isFilterDialogOpen,
-            dialogOpen = { isOpen ->
-                viewModel.onEvent(PaymentListingsEvent.UpdateFilterDialogState(isOpen))
-            },
-            updateFilterSettings = { filterSettings ->
-                viewModel.onEvent(PaymentListingsEvent.UpdateFilterSettings(filterSettings))
-            }
+            dialogOpen = filterDialogOpen,
+            updateFilterSettings = onFilterSettingsUpdate
         )
 
         ConfirmationDialog(
@@ -184,25 +237,15 @@ fun PaymentListingsScreen(
                 state.deleteDialogPaymentTitle
             ),
             isDialogOpen = state.isDeleteDialogOpen,
-            onDismiss = {
-                viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
-            },
-            onConfirm = {
-                viewModel.onEvent(PaymentListingsEvent.DeletePayment(state.deleteDialogPaymentId))
-                viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
-            }
+            onDismiss = onConfirmationDialogDismiss,
+            onConfirm = onConfirmationDialogConfirm
         )
 
         RadioButtonSelectionDialog(
             isDialogOpen = state.isSortingMethodDialogOpen,
             dialogInfo = state.sortingSettingsInfo,
-            onDismiss = {
-                viewModel.onEvent(PaymentListingsEvent.UpdateSortingDialogState(false))
-            },
-            onOptionSelect = { sortingMethod ->
-                viewModel.onEvent(PaymentListingsEvent.UpdateSortingMethod(sortingMethod))
-                viewModel.onEvent(PaymentListingsEvent.UpdateSortingDialogState(false))
-            }
+            onDismiss = onSortingDialogDismiss,
+            onOptionSelect = onSortingDialogSelect
         )
     }
 }
