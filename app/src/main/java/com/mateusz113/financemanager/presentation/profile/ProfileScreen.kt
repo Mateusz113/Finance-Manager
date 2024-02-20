@@ -81,6 +81,45 @@ fun ProfileScreen(
         }
     }
 
+    ProfileScreenContent(
+        state = state,
+        onSettingsClick = {
+            navigator.navigate(SettingsScreenDestination)
+        },
+        onSignOutClick = {
+            viewModel.onEvent(ProfileEvent.UpdateSignOutDialogState(true))
+        },
+        onDeleteClick = {
+            viewModel.onEvent(ProfileEvent.UpdateConfirmationDialogState(true))
+        },
+        onSignOutDialogDismiss = {
+            viewModel.onEvent(ProfileEvent.UpdateSignOutDialogState(false))
+        },
+        onSignOutDialogConfirm = {
+            viewModel.onEvent(ProfileEvent.UpdateSignOutDialogState(false))
+            viewModel.onEvent(ProfileEvent.UpdateSignOutCondition(true))
+        },
+        onDeleteDialogDismiss = {
+            viewModel.onEvent(ProfileEvent.UpdateConfirmationDialogState(false))
+        },
+        onDeleteDialogConfirm = {
+            viewModel.onEvent(ProfileEvent.UpdateConfirmationDialogState(false))
+            viewModel.onEvent(ProfileEvent.UpdateDeleteCondition(true))
+        }
+    )
+}
+
+@Composable
+fun ProfileScreenContent(
+    state: ProfileState,
+    onSettingsClick: () -> Unit,
+    onSignOutClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onSignOutDialogDismiss: () -> Unit,
+    onSignOutDialogConfirm: () -> Unit,
+    onDeleteDialogDismiss: () -> Unit,
+    onDeleteDialogConfirm: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -99,9 +138,7 @@ fun ProfileScreen(
         Button(
             modifier = Modifier
                 .fillMaxWidth(0.6f),
-            onClick = {
-                navigator.navigate(SettingsScreenDestination)
-            }
+            onClick = onSettingsClick
         ) {
             Text(text = stringResource(id = R.string.settings))
         }
@@ -110,9 +147,7 @@ fun ProfileScreen(
         Button(
             modifier = Modifier
                 .fillMaxWidth(0.6f),
-            onClick = {
-                viewModel.onEvent(ProfileEvent.UpdateSignOutDialogState(true))
-            }
+            onClick = onSignOutClick
         ) {
             Text(text = stringResource(id = R.string.sign_out))
         }
@@ -121,35 +156,24 @@ fun ProfileScreen(
         Button(
             modifier = Modifier
                 .fillMaxWidth(0.6f),
-            onClick = {
-                viewModel.onEvent(ProfileEvent.UpdateConfirmationDialogState(true))
-            }
+            onClick = onDeleteClick
         ) {
             Text(text = stringResource(id = R.string.delete_account))
         }
     }
-    ConfirmationDialog(
-        dialogTitle = stringResource(id = R.string.account_deletion),
-        dialogText = stringResource(id = R.string.acc_deletion_confirmation_text),
-        isDialogOpen = state.isDeletionConfirmOpen,
-        onDismiss = {
-            viewModel.onEvent(ProfileEvent.UpdateConfirmationDialogState(false))
-        },
-        onConfirm = {
-            viewModel.onEvent(ProfileEvent.UpdateConfirmationDialogState(false))
-            viewModel.onEvent(ProfileEvent.UpdateDeleteCondition(true))
-        }
-    )
+
     ConfirmationDialog(
         dialogTitle = stringResource(id = R.string.sign_out),
         dialogText = stringResource(id = R.string.sign_out_text),
         isDialogOpen = state.isSignOutDialogOpen,
-        onDismiss = {
-            viewModel.onEvent(ProfileEvent.UpdateSignOutDialogState(false))
-        },
-        onConfirm = {
-            viewModel.onEvent(ProfileEvent.UpdateSignOutDialogState(false))
-            viewModel.onEvent(ProfileEvent.UpdateSignOutCondition(true))
-        }
+        onDismiss = onSignOutDialogDismiss,
+        onConfirm = onSignOutDialogConfirm
+    )
+    ConfirmationDialog(
+        dialogTitle = stringResource(id = R.string.account_deletion),
+        dialogText = stringResource(id = R.string.acc_deletion_confirmation_text),
+        isDialogOpen = state.isDeletionConfirmOpen,
+        onDismiss = onDeleteDialogDismiss,
+        onConfirm = onDeleteDialogConfirm
     )
 }

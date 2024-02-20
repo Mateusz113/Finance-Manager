@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,9 +35,55 @@ fun SettingsScreen(
     navController: NavController
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    SettingsScreenContent(
+        state = state,
+        navController = navController,
+        onCurrencyClick = {
+            viewModel.onEvent(
+                SettingsEvent.UpdateDialogInfo(
+                    label = R.string.currency,
+                    currentOption = state.currentCurrency,
+                    optionsLabelsMap = Currency.labelMap,
+                    optionsList = Currency.values().toList()
+                )
+            )
+            viewModel.onEvent(SettingsEvent.UpdateDialogState(true))
+        },
+        onSymbolPlacementClick = {
+            viewModel.onEvent(
+                SettingsEvent.UpdateDialogInfo(
+                    label = R.string.symbol_placement,
+                    currentOption = state.currentSymbolPlacement,
+                    optionsLabelsMap = SymbolPlacement.labelMap,
+                    optionsList = SymbolPlacement.values().toList()
+                )
+            )
+            viewModel.onEvent(SettingsEvent.UpdateDialogState(true))
+        },
+        onDialogDismiss = {
+            viewModel.onEvent(SettingsEvent.UpdateDialogState(false))
+        },
+        onOptionSelect = { option ->
+            viewModel.onEvent(SettingsEvent.UpdateDialogState(false))
+            viewModel.onEvent(SettingsEvent.UpdateSelectedOption(option))
+        }
+    )
+}
+
+@Composable
+fun SettingsScreenContent(
+    state: SettingsState,
+    navController: NavController = NavController(LocalContext.current),
+    onCurrencyClick: () -> Unit,
+    onSymbolPlacementClick: () -> Unit,
+    onDialogDismiss: () -> Unit,
+    onOptionSelect: (Any?) -> Unit
+) {
     val itemModifier = Modifier
         .fillMaxWidth()
         .height(60.dp)
+    
     ScaffoldWrapper(
         topAppBar = {
             TopAppBarWithBack(
@@ -58,17 +105,7 @@ fun SettingsScreen(
                 currentSetting = stringResource(
                     id = Currency.labelMap[state.currentCurrency] ?: R.string.unknown
                 ),
-                onClick = {
-                    viewModel.onEvent(
-                        SettingsEvent.UpdateDialogInfo(
-                            label = R.string.currency,
-                            currentOption = state.currentCurrency,
-                            optionsLabelsMap = Currency.labelMap,
-                            optionsList = Currency.values().toList()
-                        )
-                    )
-                    viewModel.onEvent(SettingsEvent.UpdateDialogState(true))
-                }
+                onClick = onCurrencyClick
             )
             SettingsItem(
                 modifier = itemModifier,
@@ -76,30 +113,15 @@ fun SettingsScreen(
                 currentSetting = stringResource(
                     id = SymbolPlacement.labelMap[state.currentSymbolPlacement] ?: R.string.unknown
                 ),
-                onClick = {
-                    viewModel.onEvent(
-                        SettingsEvent.UpdateDialogInfo(
-                            label = R.string.symbol_placement,
-                            currentOption = state.currentSymbolPlacement,
-                            optionsLabelsMap = SymbolPlacement.labelMap,
-                            optionsList = SymbolPlacement.values().toList()
-                        )
-                    )
-                    viewModel.onEvent(SettingsEvent.UpdateDialogState(true))
-                }
+                onClick = onSymbolPlacementClick
             )
         }
 
         RadioButtonSelectionDialog(
             isDialogOpen = state.isDialogOpen,
             dialogInfo = state.dialogInfo,
-            onDismiss = {
-                viewModel.onEvent(SettingsEvent.UpdateDialogState(false))
-            },
-            onOptionSelect = { option ->
-                viewModel.onEvent(SettingsEvent.UpdateDialogState(false))
-                viewModel.onEvent(SettingsEvent.UpdateSelectedOption(option))
-            }
+            onDismiss = onDialogDismiss,
+            onOptionSelect = onOptionSelect
         )
     }
 }
