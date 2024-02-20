@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,96 +50,69 @@ fun PaymentDetailsInfoBlock(
                 }
             })
     }
+
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
+        InfoElement(
+            headlineText = stringResource(id = R.string.title),
+            infoText = paymentDetails.title
+        )
+
+        InfoElement(
+            headlineText = stringResource(id = R.string.description),
+            infoText = paymentDetails.description
+        )
+
+        InfoElement(
+            headlineText = stringResource(id = R.string.amount),
+            infoText = amount
+        )
+
+        InfoElement(
+            headlineText = stringResource(id = R.string.date),
+            infoText = formattedDate.value
+        )
+
+        InfoElement(
+            headlineText = stringResource(id = R.string.category),
+            infoText = paymentDetails.category.name
+        )
+    }
+}
+
+@Composable
+private fun InfoElement(
+    headlineText: String,
+    infoText: String
+) {
+    val headlineTextStyle = TextStyle(
+        fontWeight = FontWeight.Medium,
+        fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+
+    val infoTextStyle = TextStyle(
+        fontWeight = FontWeight.Light,
+        fontSize = MaterialTheme.typography.titleLarge.fontSize
+    )
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
-            text = stringResource(id = R.string.title),
-            style = TextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize
-            )
+            text = headlineText,
+            style = headlineTextStyle
         )
         Spacer(modifier = Modifier.height(8.dp))
+
         Text(
-            text = paymentDetails.title,
-            style = TextStyle(
-                fontWeight = FontWeight.Normal,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            ),
+            text = infoText,
+            style = infoTextStyle,
             modifier = Modifier.padding(horizontal = 10.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.description),
-            style = TextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = paymentDetails.description,
-            style = TextStyle(
-                fontWeight = FontWeight.Normal,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            ),
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
+        Divider()
         Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.amount),
-            style = TextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = amount,
-            style = TextStyle(
-                fontWeight = FontWeight.Normal,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            ),
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.date),
-            style = TextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = formattedDate.value,
-            style = TextStyle(
-                fontWeight = FontWeight.Normal,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            ),
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(id = R.string.category),
-            style = TextStyle(
-                fontWeight = FontWeight.SemiBold,
-                fontSize = MaterialTheme.typography.headlineLarge.fontSize
-            )
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = paymentDetails.category.name,
-            style = TextStyle(
-                fontWeight = FontWeight.Normal,
-                fontSize = MaterialTheme.typography.titleLarge.fontSize
-            ),
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
     }
 }
