@@ -51,6 +51,25 @@ fun SignInScreen(
         }
     }
 
+    SignInScreenContent(
+        onRegisterClick = {
+            navigator.navigate(RegisterScreenDestination)
+        },
+        onGoogleSignInClick = onGoogleSignInClick,
+        onFacebookSignInClick = onFacebookSignInClick,
+        onGitHubSignInClick = onGitHubSignInClick,
+        onFirebaseSignInClick = onFirebaseSignInClick
+    )
+}
+
+@Composable
+fun SignInScreenContent(
+    onRegisterClick: () -> Unit,
+    onGoogleSignInClick: () -> Unit,
+    onFacebookSignInClick: () -> Unit,
+    onGitHubSignInClick: () -> Unit,
+    onFirebaseSignInClick: (String, String) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,9 +82,7 @@ fun SignInScreen(
             LoginBlock(
                 modifier = Modifier.fillMaxWidth(0.8f),
                 onLoginClick = onFirebaseSignInClick,
-                onRegisterClick = {
-                    navigator.navigate(RegisterScreenDestination)
-                }
+                onRegisterClick = onRegisterClick
             )
             Spacer(modifier = Modifier.height(30.dp))
 
