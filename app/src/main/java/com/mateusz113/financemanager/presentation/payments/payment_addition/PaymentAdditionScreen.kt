@@ -1,6 +1,7 @@
 package com.mateusz113.financemanager.presentation.payments.payment_addition
 
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -31,6 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.common.dialog.PhotoDisplayDialog
@@ -44,6 +46,7 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @RootNavGraph
 @Destination
@@ -57,9 +60,9 @@ fun PaymentAdditionScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     if (state.error == null) {
-        val snackbarHostState = remember { SnackbarHostState() }
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
+        val snackbarHostState = remember { SnackbarHostState() }
         val photoPicker = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
@@ -68,96 +71,135 @@ fun PaymentAdditionScreen(
                 }
             }
         )
-        ScaffoldWrapper(
-            topAppBar = {
-                TopAppBarWithBack(
-                    label = topBarLabel,
-                    navController = navController
+        PaymentAdditionScreenContent(
+            state = state,
+            topBarLabel = topBarLabel,
+            snackbarHostState = snackbarHostState,
+            navController = navController,
+            onTitleChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeTitle(it)) },
+            onDescriptionChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeDescription(it)) },
+            onAmountChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeAmount(it)) },
+            onCategoryChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeCategory(it)) },
+            onDateChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeDate(it)) },
+            onUploadedPhotoDelete = { photoUrl ->
+                handlePhotoDelete(
+                    context = context,
+                    coroutineScope = coroutineScope,
+                    snackbarHostState = snackbarHostState,
+                    newPhotosSize = state.newPhotos.size,
+                    uploadedPhotosSize = state.uploadedPhotos.size,
+                    deleteImplementation = {
+                        viewModel.onEvent(PaymentAdditionEvent.RemoveUploadedPhoto(photoUrl))
+                    },
+                    retrieveImplementation = {
+                        viewModel.onEvent(PaymentAdditionEvent.RestoreDeletedPhoto(photoUrl))
+                    }
                 )
             },
-            snackbarContent = { snackbarData ->
-                Snackbar(
-                    modifier = Modifier
-                        .offset(y = (-80).dp),
-                    containerColor = MaterialTheme.colorScheme.inverseSurface,
-                    snackbarData = snackbarData
+            onNewPhotoDelete = { photoUri ->
+                handlePhotoDelete(
+                    context = context,
+                    coroutineScope = coroutineScope,
+                    snackbarHostState = snackbarHostState,
+                    newPhotosSize = state.newPhotos.size,
+                    uploadedPhotosSize = state.uploadedPhotos.size,
+                    deleteImplementation = {
+                        viewModel.onEvent(PaymentAdditionEvent.RemovePhoto(photoUri))
+                    },
+                    retrieveImplementation = {
+                        viewModel.onEvent(PaymentAdditionEvent.RestoreDeletedPhoto(photoUri))
+                    }
                 )
             },
-            snackbarHostState = snackbarHostState
-        ) { innerPadding ->
-            PaymentAdditionBlock(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                title = state.title,
-                onTitleChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeTitle(it)) },
-                description = state.description,
-                onDescriptionChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeDescription(it)) },
-                amount = state.amount,
-                onAmountChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeAmount(it)) },
-                category = state.category,
-                onCategoryChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeCategory(it)) },
-                date = state.date,
-                onDateChange = { viewModel.onEvent(PaymentAdditionEvent.ChangeDate(it)) },
-                uploadedPhotos = state.uploadedPhotos,
-                onUploadedPhotoDelete = { photoUrl ->
-                    handlePhotoDelete(
-                        context = context,
-                        coroutineScope = coroutineScope,
-                        snackbarHostState = snackbarHostState,
-                        newPhotosSize = state.newPhotos.size,
-                        uploadedPhotosSize = state.uploadedPhotos.size,
-                        deleteImplementation = {
-                            viewModel.onEvent(PaymentAdditionEvent.RemoveUploadedPhoto(photoUrl))
-                        },
-                        retrieveImplementation = {
-                            viewModel.onEvent(PaymentAdditionEvent.RestoreDeletedPhoto(photoUrl))
+            onPhotoAddClick = {
+                photoPicker.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            },
+            onPhotoClick = { photo ->
+                viewModel.onEvent(PaymentAdditionEvent.UpdateDialogPhoto(photo))
+                viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(true))
+            },
+            onConfirmClick = {
+                handleConfirmationClick(
+                    context = context,
+                    title = state.title,
+                    description = state.description,
+                    amount = state.amount,
+                    onCorrectValuesAction = {
+                        viewModel.onEvent(PaymentAdditionEvent.AdditionConfirm)
+                        navController.navigate(PaymentListingsScreenDestination) {
+                            popUpTo(NavGraphs.root)
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    )
-                },
-                newPhotos = state.newPhotos,
-                onNewPhotoDelete = { photoUri ->
-                    handlePhotoDelete(
-                        context = context,
-                        coroutineScope = coroutineScope,
-                        snackbarHostState = snackbarHostState,
-                        newPhotosSize = state.newPhotos.size,
-                        uploadedPhotosSize = state.uploadedPhotos.size,
-                        deleteImplementation = {
-                            viewModel.onEvent(PaymentAdditionEvent.RemovePhoto(photoUri))
-                        },
-                        retrieveImplementation = {
-                            viewModel.onEvent(PaymentAdditionEvent.RestoreDeletedPhoto(photoUri))
-                        }
-                    )
-                },
-                onPhotoAddClick = {
-                    photoPicker.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
-                },
-                onPhotoClick = { photo ->
-                    viewModel.onEvent(PaymentAdditionEvent.UpdateDialogPhoto(photo))
-                    viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(true))
-                },
-                onConfirmClick = {
-                    handleConfirmationClick(
-                        context = context,
-                        title = state.title,
-                        description = state.description,
-                        amount = state.amount,
-                        onCorrectValuesAction = {
-                            viewModel.onEvent(PaymentAdditionEvent.AdditionConfirm)
-                            navController.navigate(PaymentListingsScreenDestination) {
-                                popUpTo(NavGraphs.root)
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    )
-                }
+                    }
+                )
+            },
+            onPhotoDialogOpen = { isOpen ->
+                viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(isOpen))
+            }
+        )
+    }
+}
+
+@Composable
+fun PaymentAdditionScreenContent(
+    state: PaymentAdditionState,
+    @StringRes topBarLabel: Int,
+    snackbarHostState: SnackbarHostState,
+    navController: NavController = NavController(LocalContext.current),
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onAmountChange: (String) -> Unit,
+    onCategoryChange: (Category) -> Unit,
+    onDateChange: (LocalDate) -> Unit,
+    onUploadedPhotoDelete: (String) -> Unit,
+    onNewPhotoDelete: (Uri) -> Unit,
+    onPhotoAddClick: () -> Unit,
+    onPhotoClick: (Any) -> Unit,
+    onConfirmClick: () -> Unit,
+    onPhotoDialogOpen: (Boolean) -> Unit
+) {
+    ScaffoldWrapper(
+        topAppBar = {
+            TopAppBarWithBack(
+                label = topBarLabel,
+                navController = navController
             )
-        }
+        },
+        snackbarContent = { snackbarData ->
+            Snackbar(
+                modifier = Modifier
+                    .offset(y = (-80).dp),
+                containerColor = MaterialTheme.colorScheme.inverseSurface,
+                snackbarData = snackbarData
+            )
+        },
+        snackbarHostState = snackbarHostState
+    ) { innerPadding ->
+        PaymentAdditionBlock(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            title = state.title,
+            onTitleChange = onTitleChange,
+            description = state.description,
+            onDescriptionChange = onDescriptionChange,
+            amount = state.amount,
+            onAmountChange = onAmountChange,
+            category = state.category,
+            onCategoryChange = onCategoryChange,
+            date = state.date,
+            onDateChange = onDateChange,
+            uploadedPhotos = state.uploadedPhotos,
+            onUploadedPhotoDelete = onUploadedPhotoDelete,
+            newPhotos = state.newPhotos,
+            onNewPhotoDelete = onNewPhotoDelete,
+            onPhotoAddClick = onPhotoAddClick,
+            onPhotoClick = onPhotoClick,
+            onConfirmClick = onConfirmClick
+        )
     }
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -179,9 +221,8 @@ fun PaymentAdditionScreen(
     PhotoDisplayDialog(
         photo = state.dialogPhoto,
         isDialogOpen = state.isPhotoDialogOpen,
-        dialogOpen = { isOpen ->
-            viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(isOpen))
-        })
+        dialogOpen = onPhotoDialogOpen
+    )
 }
 
 
