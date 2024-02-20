@@ -20,10 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.Category
+import com.mateusz113.financemanager.domain.model.FilterSettings
+import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
 import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
 import com.mateusz113.financemanager.presentation.common.dialog.PaymentListingsCollectionDialog
@@ -43,12 +47,64 @@ fun SpendingDetailsScreen(
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isLoading
     )
+
+    SpendingDetailsScreenContent(
+        state = state,
+        swipeRefreshState = swipeRefreshState,
+        onRefresh = {
+            viewModel.onEvent(SpendingDetailsEvent.Refresh)
+        },
+        onFilterDialogOpen = {
+            viewModel.onEvent(
+                SpendingDetailsEvent.UpdateFilterDialogState(true)
+            )
+        },
+        onSearchValueChange = { query ->
+            viewModel.onEvent(
+                SpendingDetailsEvent.SearchForPayment(query)
+            )
+        },
+        onKeyClick = { slice ->
+            viewModel.onEvent(SpendingDetailsEvent.UpdateCurrentSlice(slice))
+            viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(true))
+        },
+        filterDialogOpen = { isOpen ->
+            viewModel.onEvent(SpendingDetailsEvent.UpdateFilterDialogState(isOpen))
+        },
+        onFilterSettingsUpdate = { filterSettings ->
+            viewModel.onEvent(SpendingDetailsEvent.UpdateFilterSettings(filterSettings))
+        },
+        paymentListingsDialogOpen = { isOpen ->
+            viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(isOpen))
+        },
+        onPaymentClick = { listing ->
+            viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(false))
+            navigator.navigate(
+                direction = PaymentDetailsScreenDestination(
+                    id = listing.id
+                )
+            )
+        }
+    )
+}
+
+@Composable
+fun SpendingDetailsScreenContent(
+    state: SpendingDetailsState,
+    swipeRefreshState: SwipeRefreshState = SwipeRefreshState(false),
+    onRefresh: () -> Unit,
+    onFilterDialogOpen: () -> Unit,
+    onSearchValueChange: (String) -> Unit,
+    onKeyClick: (PieChartData.Slice) -> Unit,
+    filterDialogOpen: (Boolean) -> Unit,
+    onFilterSettingsUpdate: (FilterSettings) -> Unit,
+    paymentListingsDialogOpen: (Boolean) -> Unit,
+    onPaymentClick: (PaymentListing) -> Unit
+) {
     ScaffoldWrapper { paddingValues ->
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = {
-                viewModel.onEvent(SpendingDetailsEvent.Refresh)
-            },
+            onRefresh = onRefresh,
             modifier = Modifier.padding(paddingValues)
         ) {
             Column(
@@ -63,16 +119,8 @@ fun SpendingDetailsScreen(
                         .fillMaxWidth()
                         .padding(16.dp),
                     value = state.filterSettings.query,
-                    openFilterDialog = {
-                        viewModel.onEvent(
-                            SpendingDetailsEvent.UpdateFilterDialogState(true)
-                        )
-                    },
-                    searchValueChange = { query ->
-                        viewModel.onEvent(
-                            SpendingDetailsEvent.SearchForPayment(query)
-                        )
-                    }
+                    openFilterDialog = onFilterDialogOpen,
+                    searchValueChange = onSearchValueChange
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -90,22 +138,15 @@ fun SpendingDetailsScreen(
                 PaymentsChart(
                     listingsMap = state.listingsMap,
                     currency = state.currency,
-                    onKeyClick = { slice ->
-                        viewModel.onEvent(SpendingDetailsEvent.UpdateCurrentSlice(slice))
-                        viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(true))
-                    }
+                    onKeyClick = onKeyClick
                 )
             }
         }
         PaymentFilterDialog(
             currentFilterSettings = state.filterSettings,
             isDialogOpen = state.isFilterDialogOpen,
-            dialogOpen = { isOpen ->
-                viewModel.onEvent(SpendingDetailsEvent.UpdateFilterDialogState(isOpen))
-            },
-            updateFilterSettings = { filterSettings ->
-                viewModel.onEvent(SpendingDetailsEvent.UpdateFilterSettings(filterSettings))
-            }
+            dialogOpen = filterDialogOpen,
+            updateFilterSettings = onFilterSettingsUpdate
         )
         PaymentListingsCollectionDialog(
             paymentListings = state.listingsMap[Category.valueOf(state.currentSlice.label)]
@@ -113,17 +154,8 @@ fun SpendingDetailsScreen(
             currency = state.currency,
             isCurrencyPrefix = state.isCurrencyPrefix,
             isDialogOpen = state.isKeyDialogOpen,
-            isOpen = { isOpen ->
-                viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(isOpen))
-            },
-            onPaymentClick = { listing ->
-                viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(false))
-                navigator.navigate(
-                    direction = PaymentDetailsScreenDestination(
-                        id = listing.id
-                    )
-                )
-            }
+            isOpen = paymentListingsDialogOpen,
+            onPaymentClick = onPaymentClick
         )
     }
 }
