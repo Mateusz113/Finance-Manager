@@ -3,6 +3,7 @@ package com.mateusz113.financemanager.presentation.payments.payment_details.comp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,7 +38,7 @@ fun PaymentDetailsPhotosRow(
             modifier = Modifier
                 .height(150.dp)
         ) {
-            photos.forEach { photo ->
+            photos.forEachIndexed { index, photo ->
                 item {
                     PhotoContainer(
                         photo = photo,
@@ -45,6 +46,9 @@ fun PaymentDetailsPhotosRow(
                             onPhotoClick(clickedPhoto)
                         }
                     )
+                    if (index < photos.lastIndex) {
+                        Spacer(modifier = Modifier.width(10.dp))
+                    }
                 }
             }
         }
