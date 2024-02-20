@@ -12,24 +12,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.common.dialog.PhotoDisplayDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
-import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.payments.payment_details.components.PaymentDetailsInfoBlock
 import com.mateusz113.financemanager.presentation.payments.payment_details.components.PaymentDetailsPhotosRow
@@ -50,6 +51,43 @@ fun PaymentDetailsScreen(
     val swipeRefreshState = rememberSwipeRefreshState(
         isRefreshing = state.isLoading
     )
+
+    PaymentDetailsScreenContent(
+        state = state,
+        swipeRefreshState = swipeRefreshState,
+        navController = navController,
+        onRefresh = {
+            viewModel.onEvent(PaymentDetailsEvent.Refresh)
+        },
+        onPhotoClick = { photo ->
+            viewModel.onEvent(PaymentDetailsEvent.UpdateDialogPhoto(photo))
+            viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(true))
+        },
+        onEditClick = {
+            navigator.navigate(
+                PaymentAdditionScreenDestination(
+                    topBarLabel = R.string.edit_payment,
+                    paymentId = id
+                )
+            )
+        },
+        onPhotoDialogOpenClick = { isOpen ->
+            viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(isOpen))
+        }
+    )
+}
+
+
+@Composable
+fun PaymentDetailsScreenContent(
+    state: PaymentDetailsState<*>,
+    swipeRefreshState: SwipeRefreshState = SwipeRefreshState(isRefreshing = false),
+    navController: NavController = NavController(LocalContext.current),
+    onRefresh: () -> Unit,
+    onPhotoClick: (String) -> Unit,
+    onEditClick: () -> Unit,
+    onPhotoDialogOpenClick: (Boolean) -> Unit
+) {
     if (state.error == null) {
         ScaffoldWrapper(
             topAppBar = {
@@ -61,9 +99,7 @@ fun PaymentDetailsScreen(
         ) {
             SwipeRefresh(
                 state = swipeRefreshState,
-                onRefresh = {
-                    viewModel.onEvent(PaymentDetailsEvent.Refresh)
-                }
+                onRefresh = onRefresh
             ) {
                 state.paymentDetails?.let { details ->
                     Column(
@@ -83,10 +119,7 @@ fun PaymentDetailsScreen(
                             PaymentDetailsPhotosRow(
                                 modifier = Modifier.padding(horizontal = 10.dp),
                                 photos = details.photoUrls,
-                                onPhotoClick = { photo ->
-                                    viewModel.onEvent(PaymentDetailsEvent.UpdateDialogPhoto(photo))
-                                    viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(true))
-                                }
+                                onPhotoClick = onPhotoClick
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
@@ -96,14 +129,7 @@ fun PaymentDetailsScreen(
                         ) {
                             Button(
                                 modifier = Modifier.fillMaxWidth(0.5f),
-                                onClick = {
-                                    navigator.navigate(
-                                        PaymentAdditionScreenDestination(
-                                            topBarLabel = R.string.edit_payment,
-                                            paymentId = id
-                                        )
-                                    )
-                                }
+                                onClick = onEditClick
                             ) {
                                 Text(text = stringResource(id = R.string.edit_payment))
                             }
@@ -116,9 +142,7 @@ fun PaymentDetailsScreen(
         PhotoDisplayDialog(
             photo = state.dialogPhoto,
             isDialogOpen = state.isPhotoDialogOpen,
-            dialogOpen = { isOpen ->
-                viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(isOpen))
-            }
+            dialogOpen = onPhotoDialogOpenClick
         )
     } else {
         Box(
