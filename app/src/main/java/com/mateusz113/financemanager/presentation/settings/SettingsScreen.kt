@@ -2,8 +2,6 @@ package com.mateusz113.financemanager.presentation.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,19 +11,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.common.components.ClickableItemRow
 import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.common.dialog.RadioButtonSelectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
-import com.mateusz113.financemanager.presentation.settings.components.SettingsItem
+import com.mateusz113.financemanager.presentation.destinations.ExternalLicensesScreenDestination
 import com.mateusz113.financemanager.util.Currency
 import com.mateusz113.financemanager.util.SymbolPlacement
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.navigation.navigate
 
 @RootNavGraph
 @Destination
@@ -80,10 +79,6 @@ fun SettingsScreenContent(
     onDialogDismiss: () -> Unit,
     onOptionSelect: (Any?) -> Unit
 ) {
-    val itemModifier = Modifier
-        .fillMaxWidth()
-        .height(60.dp)
-    
     ScaffoldWrapper(
         topAppBar = {
             TopAppBarWithBack(
@@ -99,21 +94,27 @@ fun SettingsScreenContent(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            SettingsItem(
-                modifier = itemModifier,
-                optionLabel = stringResource(id = R.string.currency_option),
-                currentSetting = stringResource(
+            ClickableItemRow(
+                label = stringResource(id = R.string.currency_option),
+                bottomText = stringResource(
                     id = Currency.labelMap[state.currentCurrency] ?: R.string.unknown
                 ),
                 onClick = onCurrencyClick
             )
-            SettingsItem(
-                modifier = itemModifier,
-                optionLabel = stringResource(id = R.string.symbol_placement_option),
-                currentSetting = stringResource(
+
+            ClickableItemRow(
+                label = stringResource(id = R.string.symbol_placement_option),
+                bottomText = stringResource(
                     id = SymbolPlacement.labelMap[state.currentSymbolPlacement] ?: R.string.unknown
                 ),
                 onClick = onSymbolPlacementClick
+            )
+
+            ClickableItemRow(
+                label = "ExternalLicenses",
+                onClick = {
+                    navController.navigate(ExternalLicensesScreenDestination)
+                }
             )
         }
 

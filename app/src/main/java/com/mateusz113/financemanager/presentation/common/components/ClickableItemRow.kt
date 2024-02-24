@@ -1,8 +1,9 @@
-package com.mateusz113.financemanager.presentation.settings.components
+package com.mateusz113.financemanager.presentation.common.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -20,14 +21,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
 
 @Composable
-fun SettingsItem(
+fun ClickableItemRow(
     modifier: Modifier = Modifier,
-    optionLabel: String,
-    currentSetting: String,
+    label: String,
+    bottomText: String = "",
     onClick: () -> Unit
 ) {
     ConstraintLayout(
         modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp)
             .clickable { onClick() }
     ) {
         val (text, icon) = createRefs()
@@ -40,20 +43,21 @@ fun SettingsItem(
                 .padding(start = 20.dp)
         ) {
             Text(
-                text = optionLabel,
+                text = label,
                 style = TextStyle(
                     fontWeight = FontWeight.Medium,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
             )
-
-            Text(
-                text = currentSetting,
-                style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize
+            if (bottomText.isNotEmpty()){
+                Text(
+                    text = bottomText,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Normal,
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
+                    )
                 )
-            )
+            }
         }
 
         Icon(
