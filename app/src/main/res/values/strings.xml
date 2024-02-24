@@ -65,6 +65,7 @@
     <string name="account_deletion">Account deletion</string>
     <string name="or_alternatively">Or alternatively:</string>
     <string name="sorting_method">Sorting method</string>
+    <string name="external_licenses_notice">External licenses notice</string>
 
     //Settings
     <string name="currency">Currency</string>
@@ -126,4 +127,10 @@
     <string name="alphabetically">Alphabetically</string>
     <string name="old_to_new">Old to new</string>
     <string name="new_to_old">New to old</string>
+
+    //External licenses labels
+    <string name="ycharts_label">YCharts</string>
+
+    //External licenses texts
+    <string name="ycharts_license_text">Copyright 2022 YCharts\n\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License.\n\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and limitations under the License.</string>
 </resources>
