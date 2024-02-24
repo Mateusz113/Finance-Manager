@@ -34,6 +34,7 @@ import com.mateusz113.financemanager.presentation.auth.GitHubAuthUiClient
 import com.mateusz113.financemanager.presentation.auth.GoogleAuthUiClient
 import com.mateusz113.financemanager.presentation.common.bottom_nav.BottomNavigationBar
 import com.mateusz113.financemanager.presentation.destinations.Destination
+import com.mateusz113.financemanager.presentation.destinations.ExternalLicensesScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
@@ -114,7 +115,8 @@ class MainActivity : ComponentActivity() {
                         PaymentAdditionScreenDestination,
                         SignInScreenDestination,
                         SettingsScreenDestination,
-                        RegisterScreenDestination
+                        RegisterScreenDestination,
+                        ExternalLicensesScreenDestination
                     )
                 }
 
