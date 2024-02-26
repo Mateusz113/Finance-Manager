@@ -28,7 +28,7 @@ import com.mateusz113.financemanager.R
 fun <T> PhotoContainer(
     modifier: Modifier = Modifier,
     photo: T,
-    deleteEnabled: Boolean = false,
+    isDeleteEnabled: Boolean = false,
     onDeleteClick: (T) -> Unit = {},
     onPhotoClick: (T) -> Unit
 ) {
@@ -67,7 +67,7 @@ fun <T> PhotoContainer(
                     }
             )
         }
-        if (deleteEnabled) {
+        if (isDeleteEnabled) {
             IconButton(
                 modifier = Modifier
                     .constrainAs(deleteButton) {

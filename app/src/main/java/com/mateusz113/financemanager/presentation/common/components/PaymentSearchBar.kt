@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 fun PaymentSearchBar(
     modifier: Modifier,
     value: String,
-    openFilterDialog: () -> Unit,
-    searchValueChange: (String) -> Unit
+    onFilterDialogOpen: () -> Unit,
+    onSearchValueChange: (String) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -30,7 +30,7 @@ fun PaymentSearchBar(
                 fontSize = MaterialTheme.typography.titleMedium.fontSize
             ),
             onValueChange = { valueToSearch ->
-                searchValueChange(valueToSearch)
+                onSearchValueChange(valueToSearch)
             },
             modifier = Modifier
                 .weight(3f)
@@ -43,7 +43,7 @@ fun PaymentSearchBar(
         )
         OutlinedButton(
             onClick = {
-                openFilterDialog()
+                onFilterDialogOpen()
             },
             modifier = Modifier
                 .weight(1f)
