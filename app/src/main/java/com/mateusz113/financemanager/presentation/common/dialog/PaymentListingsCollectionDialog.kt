@@ -34,14 +34,14 @@ fun PaymentListingsCollectionDialog(
     currency: Currency,
     isCurrencyPrefix: Boolean?,
     isDialogOpen: Boolean,
-    isOpen: (Boolean) -> Unit,
-    onPaymentClick: (PaymentListing) -> Unit
+    onPaymentClick: (PaymentListing) -> Unit,
+    onDismiss: () -> Unit
 ) {
     if (isDialogOpen) {
         Dialog(
             onDismissRequest = {
                 //Do not update settings when dialog is dismissed
-                isOpen(false)
+                onDismiss()
             },
         ) {
             Card(

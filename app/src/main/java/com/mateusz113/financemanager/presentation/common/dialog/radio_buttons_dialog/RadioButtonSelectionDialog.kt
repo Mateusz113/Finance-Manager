@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.common.dialog
+package com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -30,10 +30,10 @@ import com.mateusz113.financemanager.R
 
 @Composable
 fun <T> RadioButtonSelectionDialog(
-    isDialogOpen: Boolean,
     dialogInfo: RadioButtonsDialogInfo<T>,
-    onDismiss: () -> Unit,
+    isDialogOpen: Boolean,
     onOptionSelect: (T) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     if (isDialogOpen) {
         Dialog(

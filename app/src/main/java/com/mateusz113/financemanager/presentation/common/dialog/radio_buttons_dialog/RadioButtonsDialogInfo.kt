@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.presentation.common.dialog
+package com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog
 
 data class RadioButtonsDialogInfo<T>(
     val label: Int,

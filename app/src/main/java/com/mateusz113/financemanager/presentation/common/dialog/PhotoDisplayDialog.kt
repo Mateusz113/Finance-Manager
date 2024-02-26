@@ -22,13 +22,11 @@ import com.mateusz113.financemanager.R
 fun <T> PhotoDisplayDialog(
     photo: T,
     isDialogOpen: Boolean,
-    dialogOpen: (Boolean) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     if (isDialogOpen) {
         Dialog(
-            onDismissRequest = {
-                dialogOpen(false)
-            },
+            onDismissRequest = onDismiss,
         ) {
             Card(
                 modifier = Modifier.sizeIn(

@@ -39,25 +39,25 @@ import java.util.Locale
 
 @Composable
 fun PaymentFilterDialog(
-    currentFilterSettings: FilterSettings,
+    filterSettings: FilterSettings,
     isDialogOpen: Boolean,
-    dialogOpen: (Boolean) -> Unit,
-    updateFilterSettings: (FilterSettings) -> Unit,
+    onFilterSettingsUpdate: (FilterSettings) -> Unit,
+    onDismiss: () -> Unit
 ) {
     if (isDialogOpen) {
-        var filterSettings by remember { mutableStateOf(currentFilterSettings) }
+        var filterSettingsState by remember { mutableStateOf(filterSettings) }
         val formattedStartDate by remember {
             derivedStateOf {
                 DateTimeFormatter
                     .ofPattern("dd/MM/yyyy")
-                    .format(filterSettings.startDate)
+                    .format(filterSettingsState.startDate)
             }
         }
         val formattedEndDate by remember {
             derivedStateOf {
                 DateTimeFormatter
                     .ofPattern("dd/MM/yyyy")
-                    .format(filterSettings.endDate)
+                    .format(filterSettingsState.endDate)
             }
         }
         val startDateDialogState = rememberMaterialDialogState()
@@ -67,29 +67,29 @@ fun PaymentFilterDialog(
             derivedStateOf {
                 val minIsLowerIfBothNumbers =
                     if (
-                        isValidDoubleInput(filterSettings.minValue)
-                        && isValidDoubleInput(filterSettings.maxValue)
+                        isValidDoubleInput(filterSettingsState.minValue)
+                        && isValidDoubleInput(filterSettingsState.maxValue)
                     ) {
-                        filterSettings.minValue.toDouble() < filterSettings.maxValue.toDouble()
+                        filterSettingsState.minValue.toDouble() < filterSettingsState.maxValue.toDouble()
                     } else {
                         true
                     }
-                (isValidDoubleInput(filterSettings.minValue) && minIsLowerIfBothNumbers)
-                        || filterSettings.minValue.isEmpty()
+                (isValidDoubleInput(filterSettingsState.minValue) && minIsLowerIfBothNumbers)
+                        || filterSettingsState.minValue.isEmpty()
             }
         }
 
         val maxValueInputIsValid by remember {
             derivedStateOf {
                 val maxIsBiggerIfBothNumbers = if (
-                    isValidDoubleInput(filterSettings.minValue) && isValidDoubleInput(filterSettings.maxValue)
+                    isValidDoubleInput(filterSettingsState.minValue) && isValidDoubleInput(filterSettingsState.maxValue)
                 ) {
-                    filterSettings.minValue.toDouble() < filterSettings.maxValue.toDouble()
+                    filterSettingsState.minValue.toDouble() < filterSettingsState.maxValue.toDouble()
                 } else {
                     true
                 }
-                (isValidDoubleInput(filterSettings.maxValue) && maxIsBiggerIfBothNumbers)
-                        || filterSettings.maxValue.isEmpty()
+                (isValidDoubleInput(filterSettingsState.maxValue) && maxIsBiggerIfBothNumbers)
+                        || filterSettingsState.maxValue.isEmpty()
             }
         }
 
@@ -105,7 +105,7 @@ fun PaymentFilterDialog(
         Dialog(
             onDismissRequest = {
                 //Do not update settings when dialog is dismissed
-                dialogOpen(false)
+                onDismiss()
             },
         ) {
             Card(
@@ -156,21 +156,21 @@ fun PaymentFilterDialog(
                     ) {
                         MultipleOptionsButtonSpinner(
                             options = Category.values().toList(),
-                            selectedItems = filterSettings.categories,
+                            selectedOptions = filterSettingsState.categories,
                             modifier = Modifier
                                 .height(50.dp)
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp),
-                            selectedOption = { category ->
+                            onOptionSelect = { category ->
                                 val newCategoriesList: MutableList<Category?>
-                                if (filterSettings.categories.contains(category)) {
-                                    newCategoriesList = filterSettings.categories.toMutableList()
+                                if (filterSettingsState.categories.contains(category)) {
+                                    newCategoriesList = filterSettingsState.categories.toMutableList()
                                     newCategoriesList.remove(category)
                                 } else {
-                                    newCategoriesList = filterSettings.categories.toMutableList()
+                                    newCategoriesList = filterSettingsState.categories.toMutableList()
                                     newCategoriesList.add(category)
                                 }
-                                filterSettings = filterSettings.copy(categories = newCategoriesList)
+                                filterSettingsState = filterSettingsState.copy(categories = newCategoriesList)
                             },
                             menuOffset = DpOffset(0.dp, 8.dp)
                         )
@@ -186,12 +186,12 @@ fun PaymentFilterDialog(
                                     .padding(end = 2.dp)
                                     .fillMaxHeight(),
                                 shape = RoundedCornerShape(5.dp),
-                                value = filterSettings.minValue,
+                                value = filterSettingsState.minValue,
                                 isError = !minValueInputIsValid,
                                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                                 onValueChange = { minValue ->
-                                    filterSettings =
-                                        filterSettings.copy(minValue = minValue)
+                                    filterSettingsState =
+                                        filterSettingsState.copy(minValue = minValue)
                                 },
                                 singleLine = true
                             )
@@ -205,12 +205,12 @@ fun PaymentFilterDialog(
                                     .weight(1f)
                                     .fillMaxHeight()
                                     .padding(start = 2.dp),
-                                value = filterSettings.maxValue,
+                                value = filterSettingsState.maxValue,
                                 isError = !maxValueInputIsValid,
                                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                                 onValueChange = { maxValue ->
-                                    filterSettings =
-                                        filterSettings.copy(maxValue = maxValue)
+                                    filterSettingsState =
+                                        filterSettingsState.copy(maxValue = maxValue)
                                 },
                                 singleLine = true
                             )
@@ -300,7 +300,7 @@ fun PaymentFilterDialog(
                                     end.linkTo(parent.end)
                                     bottom.linkTo(parent.bottom)
                                 },
-                            onClick = { dialogOpen(false) },
+                            onClick = onDismiss,
                         ) {
                             Text(
                                 text = stringResource(id = R.string.cancel)
@@ -321,32 +321,29 @@ fun PaymentFilterDialog(
                                         DecimalFormatSymbols.getInstance(Locale.ENGLISH)
                                     try {
                                         val formattedMinVale =
-                                            if (filterSettings.minValue.isNotEmpty()) {
+                                            if (filterSettingsState.minValue.isNotEmpty()) {
                                                 decimalFormat.format(
-                                                    filterSettings.minValue.toDouble()
+                                                    filterSettingsState.minValue.toDouble()
                                                 )
                                             } else {
-                                                filterSettings.minValue
+                                                filterSettingsState.minValue
                                             }
                                         val formattedMaxValue =
-                                            if (filterSettings.maxValue.isNotEmpty()) {
+                                            if (filterSettingsState.maxValue.isNotEmpty()) {
                                                 decimalFormat.format(
-                                                    filterSettings.maxValue.toDouble()
+                                                    filterSettingsState.maxValue.toDouble()
                                                 )
                                             } else {
-                                                filterSettings.maxValue
+                                                filterSettingsState.maxValue
                                             }
-                                        filterSettings = filterSettings.copy(
+                                        filterSettingsState = filterSettingsState.copy(
                                             minValue = formattedMinVale,
                                             maxValue = formattedMaxValue
                                         )
-                                        updateFilterSettings(filterSettings)
-                                        dialogOpen(false)
+                                        onFilterSettingsUpdate(filterSettingsState)
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
-
-
                                 }
                             },
                         ) {
@@ -363,8 +360,7 @@ fun PaymentFilterDialog(
                                     bottom.linkTo(parent.bottom)
                                 },
                             onClick = {
-                                updateFilterSettings(FilterSettings())
-                                dialogOpen(false)
+                                onFilterSettingsUpdate(FilterSettings())
                             }
                         ) {
                             Text(
@@ -378,25 +374,25 @@ fun PaymentFilterDialog(
         }
         com.mateusz113.financemanager.presentation.common.option_picker.DatePicker(
             datePickerState = startDateDialogState,
-            date = filterSettings.startDate,
+            date = filterSettingsState.startDate,
             dateValidator = { date ->
                 date > minStartDate
-                        && date < filterSettings.endDate
+                        && date < filterSettingsState.endDate
             },
             onDateChange = { date ->
-                filterSettings = filterSettings.copy(startDate = date)
+                filterSettingsState = filterSettingsState.copy(startDate = date)
             }
         )
 
         com.mateusz113.financemanager.presentation.common.option_picker.DatePicker(
             datePickerState = endDateDialogState,
-            date = filterSettings.endDate,
+            date = filterSettingsState.endDate,
             dateValidator = { date ->
-                date > filterSettings.startDate
+                date > filterSettingsState.startDate
                         && date <= LocalDate.now()
             },
             onDateChange = { date ->
-                filterSettings = filterSettings.copy(endDate = date)
+                filterSettingsState = filterSettingsState.copy(endDate = date)
             }
         )
     }
