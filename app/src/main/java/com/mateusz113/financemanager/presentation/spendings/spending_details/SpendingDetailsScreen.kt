@@ -68,14 +68,15 @@ fun SpendingDetailsScreen(
             viewModel.onEvent(SpendingDetailsEvent.UpdateCurrentSlice(slice))
             viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(true))
         },
-        filterDialogOpen = { isOpen ->
-            viewModel.onEvent(SpendingDetailsEvent.UpdateFilterDialogState(isOpen))
+        onPaymentFilterDialogDismiss = {
+            viewModel.onEvent(SpendingDetailsEvent.UpdateFilterDialogState(false))
         },
         onFilterSettingsUpdate = { filterSettings ->
             viewModel.onEvent(SpendingDetailsEvent.UpdateFilterSettings(filterSettings))
+            viewModel.onEvent(SpendingDetailsEvent.UpdateFilterDialogState(false))
         },
-        paymentListingsDialogOpen = { isOpen ->
-            viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(isOpen))
+        onPaymentListingsDialogDismiss = {
+            viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(false))
         },
         onPaymentClick = { listing ->
             viewModel.onEvent(SpendingDetailsEvent.UpdateSliceDialogState(false))
@@ -96,9 +97,9 @@ fun SpendingDetailsScreenContent(
     onFilterDialogOpen: () -> Unit,
     onSearchValueChange: (String) -> Unit,
     onKeyClick: (PieChartData.Slice) -> Unit,
-    filterDialogOpen: (Boolean) -> Unit,
+    onPaymentFilterDialogDismiss: () -> Unit,
     onFilterSettingsUpdate: (FilterSettings) -> Unit,
-    paymentListingsDialogOpen: (Boolean) -> Unit,
+    onPaymentListingsDialogDismiss: () -> Unit,
     onPaymentClick: (PaymentListing) -> Unit
 ) {
     ScaffoldWrapper { paddingValues ->
@@ -119,8 +120,8 @@ fun SpendingDetailsScreenContent(
                         .fillMaxWidth()
                         .padding(16.dp),
                     value = state.filterSettings.query,
-                    openFilterDialog = onFilterDialogOpen,
-                    searchValueChange = onSearchValueChange
+                    onFilterDialogOpen = onFilterDialogOpen,
+                    onSearchValueChange = onSearchValueChange
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -143,10 +144,10 @@ fun SpendingDetailsScreenContent(
             }
         }
         PaymentFilterDialog(
-            currentFilterSettings = state.filterSettings,
+            filterSettings = state.filterSettings,
             isDialogOpen = state.isFilterDialogOpen,
-            dialogOpen = filterDialogOpen,
-            updateFilterSettings = onFilterSettingsUpdate
+            onFilterSettingsUpdate = onFilterSettingsUpdate,
+            onDismiss = onPaymentFilterDialogDismiss
         )
         PaymentListingsCollectionDialog(
             paymentListings = state.listingsMap[Category.valueOf(state.currentSlice.label)]
@@ -154,8 +155,8 @@ fun SpendingDetailsScreenContent(
             currency = state.currency,
             isCurrencyPrefix = state.isCurrencyPrefix,
             isDialogOpen = state.isKeyDialogOpen,
-            isOpen = paymentListingsDialogOpen,
-            onPaymentClick = onPaymentClick
+            onPaymentClick = onPaymentClick,
+            onDismiss = onPaymentListingsDialogDismiss
         )
     }
 }

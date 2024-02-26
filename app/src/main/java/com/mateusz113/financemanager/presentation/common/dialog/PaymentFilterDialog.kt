@@ -172,7 +172,8 @@ fun PaymentFilterDialog(
                                 }
                                 filterSettingsState = filterSettingsState.copy(categories = newCategoriesList)
                             },
-                            menuOffset = DpOffset(0.dp, 8.dp)
+                            menuOffset = DpOffset(0.dp, 8.dp),
+                            noSelectionLabel = stringResource(id = R.string.select_categories)
                         )
                         Row(
                             modifier = settingsInnerRowModifier

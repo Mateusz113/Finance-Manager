@@ -32,7 +32,7 @@ fun PaymentAdditionPhotoAddingBlock(
                 item {
                     PhotoContainer(
                         photo = photoUrl,
-                        deleteEnabled = true,
+                        isDeleteEnabled = true,
                         onDeleteClick = { photo ->
                             onUploadedPhotoDelete(photo)
                         },
@@ -47,7 +47,7 @@ fun PaymentAdditionPhotoAddingBlock(
                 item {
                     PhotoContainer(
                         photo = photoUri,
-                        deleteEnabled = true,
+                        isDeleteEnabled = true,
                         onDeleteClick = { photo ->
                             onNewPhotoDelete(photo)
                         },

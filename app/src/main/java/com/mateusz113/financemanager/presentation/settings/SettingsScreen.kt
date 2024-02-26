@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.common.components.ClickableItemRow
 import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
-import com.mateusz113.financemanager.presentation.common.dialog.RadioButtonSelectionDialog
+import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonSelectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.ExternalLicensesScreenDestination
 import com.mateusz113.financemanager.util.Currency

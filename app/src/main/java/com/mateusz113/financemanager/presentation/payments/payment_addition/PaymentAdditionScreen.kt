@@ -136,8 +136,8 @@ fun PaymentAdditionScreen(
                     }
                 )
             },
-            onPhotoDialogOpen = { isOpen ->
-                viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(isOpen))
+            onPhotoDialogDismiss = {
+                viewModel.onEvent(PaymentAdditionEvent.UpdateDialogState(false))
             }
         )
     }
@@ -159,7 +159,7 @@ fun PaymentAdditionScreenContent(
     onPhotoAddClick: () -> Unit,
     onPhotoClick: (Any) -> Unit,
     onConfirmClick: () -> Unit,
-    onPhotoDialogOpen: (Boolean) -> Unit
+    onPhotoDialogDismiss: () -> Unit
 ) {
     ScaffoldWrapper(
         topAppBar = {
@@ -221,7 +221,7 @@ fun PaymentAdditionScreenContent(
     PhotoDisplayDialog(
         photo = state.dialogPhoto,
         isDialogOpen = state.isPhotoDialogOpen,
-        dialogOpen = onPhotoDialogOpen
+        onDismiss = onPhotoDialogDismiss
     )
 }
 

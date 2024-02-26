@@ -36,7 +36,7 @@ import com.mateusz113.financemanager.presentation.common.components.PaymentListi
 import com.mateusz113.financemanager.presentation.common.components.PaymentSearchBar
 import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
 import com.mateusz113.financemanager.presentation.common.dialog.PaymentFilterDialog
-import com.mateusz113.financemanager.presentation.common.dialog.RadioButtonSelectionDialog
+import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonSelectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
@@ -99,11 +99,12 @@ fun PaymentListingsScreen(
             )
             viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(true))
         },
-        filterDialogOpen = { isOpen ->
-            viewModel.onEvent(PaymentListingsEvent.UpdateFilterDialogState(isOpen))
+        onFilterDialogDismiss = {
+            viewModel.onEvent(PaymentListingsEvent.UpdateFilterDialogState(false))
         },
         onFilterSettingsUpdate = { filterSettings ->
             viewModel.onEvent(PaymentListingsEvent.UpdateFilterSettings(filterSettings))
+            viewModel.onEvent(PaymentListingsEvent.UpdateFilterDialogState(false))
         },
         onConfirmationDialogDismiss = {
             viewModel.onEvent(PaymentListingsEvent.UpdateDeleteDialogState(false))
@@ -133,7 +134,7 @@ fun PaymentListingsScreenContent(
     onSortingButtonClick: () -> Unit,
     onPaymentClick: (Int) -> Unit,
     onPaymentDeleteClick: (Int) -> Unit,
-    filterDialogOpen: (Boolean) -> Unit,
+    onFilterDialogDismiss: () -> Unit,
     onFilterSettingsUpdate: (FilterSettings) -> Unit,
     onConfirmationDialogDismiss: () -> Unit,
     onConfirmationDialogConfirm: () -> Unit,
@@ -177,8 +178,8 @@ fun PaymentListingsScreenContent(
                                     .weight(0.9f)
                                     .fillMaxHeight(),
                                 value = state.filterSettings.query,
-                                openFilterDialog = onOpenFilterDialog,
-                                searchValueChange = onSearchValueChange
+                                onFilterDialogOpen = onOpenFilterDialog,
+                                onSearchValueChange = onSearchValueChange
                             )
 
                             OutlinedButton(
@@ -224,10 +225,10 @@ fun PaymentListingsScreenContent(
         }
 
         PaymentFilterDialog(
-            currentFilterSettings = state.filterSettings,
+            filterSettings = state.filterSettings,
             isDialogOpen = state.isFilterDialogOpen,
-            dialogOpen = filterDialogOpen,
-            updateFilterSettings = onFilterSettingsUpdate
+            onFilterSettingsUpdate = onFilterSettingsUpdate,
+            onDismiss = onFilterDialogDismiss
         )
 
         ConfirmationDialog(

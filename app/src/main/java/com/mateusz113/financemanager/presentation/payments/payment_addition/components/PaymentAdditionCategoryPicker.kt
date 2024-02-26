@@ -21,11 +21,11 @@ fun PaymentAdditionCategoryPicker(
     ) {
         SingleOptionButtonSpinner(
             options = Category.values().toList(),
-            selectedItem = category,
+            selectedOption = category,
             modifier = Modifier
                 .width(160.dp)
                 .height(56.dp),
-            selectedOption = { category ->
+            onOptionSelect = { category ->
                 categoryChange(category)
             }
         )

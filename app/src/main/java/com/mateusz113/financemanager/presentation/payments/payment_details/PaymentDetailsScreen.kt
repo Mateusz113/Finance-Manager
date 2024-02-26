@@ -71,8 +71,8 @@ fun PaymentDetailsScreen(
                 )
             )
         },
-        onPhotoDialogOpenClick = { isOpen ->
-            viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(isOpen))
+        onPhotoDialogDismiss = {
+            viewModel.onEvent(PaymentDetailsEvent.UpdateDialogState(false))
         }
     )
 }
@@ -86,7 +86,7 @@ fun PaymentDetailsScreenContent(
     onRefresh: () -> Unit,
     onPhotoClick: (String) -> Unit,
     onEditClick: () -> Unit,
-    onPhotoDialogOpenClick: (Boolean) -> Unit
+    onPhotoDialogDismiss: () -> Unit
 ) {
     if (state.error == null) {
         ScaffoldWrapper(
@@ -142,7 +142,7 @@ fun PaymentDetailsScreenContent(
         PhotoDisplayDialog(
             photo = state.dialogPhoto,
             isDialogOpen = state.isPhotoDialogOpen,
-            dialogOpen = onPhotoDialogOpenClick
+            onDismiss = onPhotoDialogDismiss
         )
     } else {
         Box(

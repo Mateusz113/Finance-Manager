@@ -3,7 +3,7 @@ package com.mateusz113.financemanager.presentation.settings
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.mateusz113.financemanager.presentation.common.dialog.RadioButtonsDialogInfo
+import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonsDialogInfo
 import com.mateusz113.financemanager.util.Currency
 import com.mateusz113.financemanager.util.SymbolPlacement
 import dagger.hilt.android.lifecycle.HiltViewModel
