@@ -26,11 +26,12 @@ import com.mateusz113.financemanager.R
 
 @Composable
 fun <T> MultipleOptionsButtonSpinner(
+    modifier: Modifier = Modifier,
+    menuOffset: DpOffset = DpOffset(0.dp, 0.dp),
     options: List<T>,
-    selectedItems: List<T>,
-    modifier: Modifier,
-    selectedOption: (T) -> Unit,
-    menuOffset: DpOffset
+    selectedOptions: List<T>,
+    onOptionSelect: (T) -> Unit,
+    noSelectionLabel: String
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -43,10 +44,10 @@ fun <T> MultipleOptionsButtonSpinner(
     ) {
         Text(
             modifier = Modifier.weight(3f),
-            text = if (selectedItems.isNotEmpty()) {
-                selectedItems.joinToString { it.toString() }
+            text = if (selectedOptions.isNotEmpty()) {
+                selectedOptions.joinToString { it.toString() }
             } else {
-                "Select categories"
+                noSelectionLabel
             },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -55,7 +56,7 @@ fun <T> MultipleOptionsButtonSpinner(
         Icon(
             modifier = Modifier.weight(0.5f),
             imageVector = Icons.Filled.ArrowDropDown,
-            contentDescription = stringResource(id = R.string.category_selection_filter)
+            contentDescription = stringResource(id = R.string.option_selection_dropdown)
         )
         DropdownMenu(
             modifier = Modifier.heightIn(max = 300.dp),
@@ -66,15 +67,15 @@ fun <T> MultipleOptionsButtonSpinner(
             options.forEach { option ->
                 Row {
                     Checkbox(
-                        checked = selectedItems.contains(option),
+                        checked = selectedOptions.contains(option),
                         onCheckedChange = {
-                            selectedOption(option)
+                            onOptionSelect(option)
                         }
                     )
                     DropdownMenuItem(
                         text = { Text(text = option.toString()) },
                         onClick = {
-                            selectedOption(option)
+                            onOptionSelect(option)
                         })
                 }
             }

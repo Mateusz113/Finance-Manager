@@ -24,11 +24,11 @@ import com.mateusz113.financemanager.R
 
 @Composable
 fun <T> SingleOptionButtonSpinner(
+    modifier: Modifier = Modifier,
+    menuOffset: DpOffset = DpOffset(0.dp, 0.dp),
+    selectedOption: T,
     options: List<T>,
-    selectedItem: T,
-    modifier: Modifier,
-    selectedOption: (T) -> Unit,
-    menuOffset: DpOffset = DpOffset(0.dp, 0.dp)
+    onOptionSelect: (T) -> Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -41,13 +41,13 @@ fun <T> SingleOptionButtonSpinner(
     ) {
         Text(
             modifier = Modifier.weight(3f),
-            text = selectedItem.toString(),
+            text = selectedOption.toString(),
             textAlign = TextAlign.Center
         )
         Icon(
             modifier = Modifier.weight(0.5f),
             imageVector = Icons.Filled.ArrowDropDown,
-            contentDescription = stringResource(id = R.string.category_selection_filter)
+            contentDescription = stringResource(id = R.string.option_selection_dropdown)
         )
         DropdownMenu(
             modifier = Modifier.heightIn(max = 300.dp),
@@ -60,7 +60,7 @@ fun <T> SingleOptionButtonSpinner(
                     DropdownMenuItem(
                         text = { Text(text = option.toString()) },
                         onClick = {
-                            selectedOption(option)
+                            onOptionSelect(option)
                             expanded = false
                         })
                 }
