@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import co.yml.charts.common.model.PlotType
 import co.yml.charts.ui.piechart.charts.DonutPieChart
 import co.yml.charts.ui.piechart.models.PieChartConfig
@@ -24,30 +24,21 @@ fun PaymentsChart(
     onKeyClick: (PieChartData.Slice) -> Unit
 ) {
     val slicesList = mutableListOf<PieChartData.Slice>()
-    val colorsMap = mapOf(
-        Category.Housing to Color.Black,
-        Category.Transportation to Color.Blue,
-        Category.Groceries to Color.Red,
-        Category.Health to Color.Yellow,
-        Category.Entertainment to Color.Green,
-        Category.Utilities to Color.Gray,
-        Category.Personal to Color.Magenta,
-        Category.Savings to Color.White,
-        Category.Education to Color.LightGray
-    )
     val decimalFormat = DecimalFormat("#.##")
     decimalFormat.decimalFormatSymbols =
         DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+
     Category.values().forEach { category ->
         val value = decimalFormat
             .format(listingsMap[category]
-                ?.sumOf { it.amount }?: 0.0)
+                ?.sumOf { it.amount } ?: 0.0
+            )
             .toFloat()
         slicesList.add(
             PieChartData.Slice(
                 label = category.name,
                 value = value,
-                color = colorsMap[category] ?: Color.Transparent
+                color = ChartColors.getColorFromCategory(LocalContext.current, category)
             )
         )
     }
