@@ -5,8 +5,6 @@
     <string name="web_client_id">424578956737-i79r01mig9g2h1grp498auhbm59brdb1.apps.googleusercontent.com</string>
 
     //Content descriptions
-    <string name="profile_pic_content_desc">Profile picture</string>
-    <string name="category_selection_filter">Category selection filter button</string>
     <string name="start_date_picker">Start date dialog picker open</string>
     <string name="end_date_picker">End date dialog picker open</string>
     <string name="remove_payment">Remove payment</string>
@@ -17,14 +15,12 @@
     <string name="photo">Clicked photo display</string>
     <string name="arrow">Arrow indicating that the row is clickable</string>
     <string name="sorting_button">Button that changes payment sorting method</string>
+    <string name="option_selection_dropdown">Option selection dropdown button</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
-    <string name="sign_in">Sign in</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
     <string name="reset_filter">Reset filter</string>
     <string name="payments">Payments</string>
     <string name="spendings">Spendings</string>
@@ -32,6 +28,7 @@
     <string name="confirm">Confirm</string>
     <string name="undo">Undo</string>
     <string name="delete_account">Delete account</string>
+    <string name="select_categories">Select categories</string>
 
     //Placeholders
     <string name="min_payment_value">Min value</string>
@@ -39,7 +36,6 @@
 
     //On screen text
     <string name="filter_settings">Filter settings</string>
-    <string name="pick_start_date">Pick start date</string>
     <string name="pick_end_date">Pick end date</string>
     <string name="deletion_text">Are you sure you want to delete the payment with title \"%1$s\"?</string>
     <string name="deletion">Deletion</string>
@@ -97,15 +93,12 @@
 
     //Error messages
     <string name="too_many_pictures">Maximum amount of pictures for single payment is 5.</string>
-    <string name="is_incorrect">is incorrect</string>
-    <string name="are_incorrect">are incorrect</string>
     <string name="email_error">Email is blank or incorrectly formatted.</string>
     <string name="password_error">Password is too short. It must be at least 6 characters long.</string>
     <string name="generic_error">Error occurred.</string>
     <string name="payment_title_error">Payment title is too long or empty. It must be at most 50 characters long.</string>
     <string name="payment_description_error">Payment description is too long or empty. It must be at most 500 characters long.</string>
     <string name="payment_amount_error">Amount value is too big or incorrectly formatted. The decimal point must be a dot. Maximum value is 6 digits long.</string>
-    <string name="payment_photo_quantity_error">Maximum amount of photos attached to payment is 5.</string>
     <string name="login_ui_provider_error">Incorrect value passed to external sign in button.</string>
 
     //Sign in buttons content descriptions
