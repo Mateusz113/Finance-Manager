@@ -1,6 +1,5 @@
 package com.mateusz113.financemanager.util
 
-import androidx.annotation.StringRes
 import com.mateusz113.financemanager.R
 
 enum class SortingMethod {

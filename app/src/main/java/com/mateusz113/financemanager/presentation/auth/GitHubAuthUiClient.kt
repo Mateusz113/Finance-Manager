@@ -2,13 +2,10 @@ package com.mateusz113.financemanager.presentation.auth
 
 import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.auth.auth
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class GitHubAuthUiClient(
     private val activity: Activity
@@ -69,7 +66,7 @@ class GitHubAuthUiClient(
 
     private fun buildProvider(): OAuthProvider {
         val provider = OAuthProvider.newBuilder("github.com")
-        provider.addCustomParameter("login","")
+        provider.addCustomParameter("login", "")
         return provider.build()
     }
 

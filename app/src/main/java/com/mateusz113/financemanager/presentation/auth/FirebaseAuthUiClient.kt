@@ -5,7 +5,6 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -72,4 +71,3 @@ class FirebaseAuthUiClient(
         FirebaseAuth.getInstance().signOut()
     }
 }
-
