@@ -19,10 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
-import com.mateusz113.financemanager.presentation.common.dialog.ConfirmationDialog
 import com.mateusz113.financemanager.util.Currency
 import java.time.format.DateTimeFormatter
 

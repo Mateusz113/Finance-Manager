@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.domain.model.PaymentListing
 
 @Composable
 fun ConfirmationDialog(
