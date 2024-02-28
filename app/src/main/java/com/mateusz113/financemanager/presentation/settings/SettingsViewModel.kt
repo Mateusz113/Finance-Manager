@@ -4,8 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonsDialogInfo
-import com.mateusz113.financemanager.util.Currency
-import com.mateusz113.financemanager.util.SymbolPlacement
+import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

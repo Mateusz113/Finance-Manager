@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 import java.time.format.DateTimeFormatter
 
 @Composable

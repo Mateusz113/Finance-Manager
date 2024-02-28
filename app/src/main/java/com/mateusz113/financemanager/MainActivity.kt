@@ -25,7 +25,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
+import com.mateusz113.financemanager.data.converter.DateConverter
 import com.mateusz113.financemanager.di.DaggerSharedPrefsSetupComponent
+import com.mateusz113.financemanager.domain.enumeration.AuthMethod
 import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.appCurrentDestinationAsState
 import com.mateusz113.financemanager.presentation.auth.FacebookAuthUiClient
@@ -46,8 +48,6 @@ import com.mateusz113.financemanager.presentation.profile.ProfileScreen
 import com.mateusz113.financemanager.presentation.register.RegisterScreen
 import com.mateusz113.financemanager.presentation.sign_in.SignInScreen
 import com.mateusz113.financemanager.ui.theme.FinanceManagerTheme
-import com.mateusz113.financemanager.util.AuthMethod
-import com.mateusz113.financemanager.util.convertTimestampIntoLocalDate
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.manualcomposablecalls.composable
 import dagger.hilt.android.AndroidEntryPoint
@@ -287,7 +287,7 @@ class MainActivity : ComponentActivity() {
             component.getSharedPreferencesSetup()
         val userJoinDate =
             FirebaseAuth.getInstance().currentUser?.metadata?.creationTimestamp?.let { timestamp ->
-                convertTimestampIntoLocalDate(timestamp)
+                DateConverter.convertTimestampIntoLocalDate(timestamp)
             } ?: LocalDate.now()
         sharedPreferencesSetup.setupSharedPreferences(
             sharedPreferences = sharedPreferences,

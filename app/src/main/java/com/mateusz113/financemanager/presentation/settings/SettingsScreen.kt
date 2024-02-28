@@ -20,8 +20,8 @@ import com.mateusz113.financemanager.presentation.common.components.TopAppBarWit
 import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonSelectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.ExternalLicensesScreenDestination
-import com.mateusz113.financemanager.util.Currency
-import com.mateusz113.financemanager.util.SymbolPlacement
+import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate

@@ -4,8 +4,8 @@ import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonsDialogInfo
-import com.mateusz113.financemanager.util.Currency
-import com.mateusz113.financemanager.util.SortingMethod
+import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.enumeration.SortingMethod
 
 data class PaymentListingsState(
     val payments: List<PaymentListing> = emptyList(),

@@ -26,7 +26,7 @@ import androidx.compose.ui.window.Dialog
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.presentation.common.components.PaymentListingsInfo
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 
 @Composable
 fun PaymentListingsCollectionDialog(

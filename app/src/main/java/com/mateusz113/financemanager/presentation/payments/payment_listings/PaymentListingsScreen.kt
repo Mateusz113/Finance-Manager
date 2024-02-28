@@ -40,7 +40,7 @@ import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_di
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.destinations.PaymentDetailsScreenDestination
-import com.mateusz113.financemanager.util.SortingMethod
+import com.mateusz113.financemanager.domain.enumeration.SortingMethod
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator

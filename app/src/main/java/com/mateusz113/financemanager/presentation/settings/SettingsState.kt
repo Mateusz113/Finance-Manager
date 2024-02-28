@@ -2,8 +2,8 @@ package com.mateusz113.financemanager.presentation.settings
 
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonsDialogInfo
-import com.mateusz113.financemanager.util.Currency
-import com.mateusz113.financemanager.util.SymbolPlacement
+import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
 
 data class SettingsState(
     val isDialogOpen: Boolean = false,

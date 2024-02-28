@@ -12,7 +12,7 @@ import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.PaymentListing
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
