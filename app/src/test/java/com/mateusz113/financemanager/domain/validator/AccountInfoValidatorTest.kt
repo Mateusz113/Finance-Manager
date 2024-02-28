@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.util
+package com.mateusz113.financemanager.domain.validator
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -42,19 +42,19 @@ class AccountInfoValidatorTest {
     }
 
     @Test
-    fun `Validate correct password, return true`(){
+    fun `Validate correct password, return true`() {
         val password = "correct password"
         assertThat(AccountInfoValidator.passwordValidator(password)).isTrue()
     }
 
     @Test
-    fun `Validate empty password, return false`(){
+    fun `Validate empty password, return false`() {
         val password = ""
         assertThat(AccountInfoValidator.passwordValidator(password)).isFalse()
     }
 
     @Test
-    fun `Validate too short password, return false`(){
+    fun `Validate too short password, return false`() {
         val password = "pass"
         assertThat(AccountInfoValidator.passwordValidator(password)).isFalse()
     }
