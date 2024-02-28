@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.common.components.InputTextField
-import com.mateusz113.financemanager.util.AccountInfoValidator
+import com.mateusz113.financemanager.domain.validator.AccountInfoValidator
 
 @Composable
 fun LoginBlock(

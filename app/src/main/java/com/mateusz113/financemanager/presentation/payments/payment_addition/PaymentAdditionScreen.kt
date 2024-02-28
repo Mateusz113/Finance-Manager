@@ -39,7 +39,7 @@ import com.mateusz113.financemanager.presentation.common.dialog.PhotoDisplayDial
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.payments.payment_addition.components.PaymentAdditionBlock
-import com.mateusz113.financemanager.util.PaymentInfoValidator
+import com.mateusz113.financemanager.domain.validator.PaymentInfoValidator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate
