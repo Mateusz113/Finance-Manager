@@ -1,4 +1,4 @@
-package com.mateusz113.financemanager.util
+package com.mateusz113.financemanager.domain.enumeration
 
 import com.mateusz113.financemanager.R
 
