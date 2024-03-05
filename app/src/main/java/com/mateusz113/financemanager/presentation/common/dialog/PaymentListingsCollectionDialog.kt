@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.domain.enumeration.Currency
 import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.presentation.common.components.PaymentListingsInfo
-import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.util.TestTags
 
 @Composable
 fun PaymentListingsCollectionDialog(
@@ -58,7 +60,7 @@ fun PaymentListingsCollectionDialog(
                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().testTag(TestTags.LAZY_COLUMN)
                 ) {
                     item {
                         Text(
