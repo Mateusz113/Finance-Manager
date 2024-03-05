@@ -1,5 +1,6 @@
 package com.mateusz113.financemanager.presentation.common.option_picker
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +19,7 @@ import java.time.LocalDate
 fun DatePicker(
     datePickerState: MaterialDialogState,
     date: LocalDate,
+    @StringRes title: Int,
     dateValidator: (LocalDate) -> Boolean,
     onDateChange: (LocalDate) -> Unit
 ) {
@@ -43,7 +45,7 @@ fun DatePicker(
     ) {
         this.datepicker(
             initialDate = date,
-            title = stringResource(id = R.string.pick_end_date),
+            title = stringResource(id = title),
             colors = DatePickerDefaults.colors(
                 headerBackgroundColor = MaterialTheme.colorScheme.secondary,
                 headerTextColor = MaterialTheme.colorScheme.onSecondary,
