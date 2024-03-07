@@ -8,8 +8,6 @@ import com.google.common.truth.Truth.assertThat
 import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
-import com.mateusz113.financemanager.presentation.NavGraphs
-import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -36,7 +34,6 @@ class ClickableItemRowTest {
         wasClicked = false
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
-                DestinationsNavHost(navGraph = NavGraphs.root)
                 ClickableItemRow(
                     label = rowLabel,
                     onClick = {
