@@ -81,7 +81,7 @@ fun <T> PhotoContainer(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = stringResource(id = R.string.add_new_photo),
+                    contentDescription = stringResource(id = R.string.remove_photo),
                     tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(24.dp)
                 )
