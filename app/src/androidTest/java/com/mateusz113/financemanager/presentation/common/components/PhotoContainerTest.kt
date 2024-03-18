@@ -73,7 +73,7 @@ class PhotoContainerTest {
 
     @Test
     fun deleteClicked_deleteClickedFlagIsTrue() {
-        composeRule.onNodeWithContentDescription(context.getString(R.string.add_new_photo))
+        composeRule.onNodeWithContentDescription(context.getString(R.string.remove_photo))
             .performClick()
         assertThat(wasDeleteClicked).isTrue()
     }
