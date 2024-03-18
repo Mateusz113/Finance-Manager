@@ -2,6 +2,7 @@ package com.mateusz113.financemanager.presentation.spendings.spending_details.co
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PaymentsChart(
     listingsMap: Map<Category, List<PaymentListing>>,
