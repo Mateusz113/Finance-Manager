@@ -380,12 +380,12 @@ class PaymentAdditionScreenTest {
     @Test
     fun clickOnStringPhoto_dialogWithPhotoIsVisible() {
         val uploadedPhotosUpdated = state.value.uploadedPhotos.toMutableList()
-        uploadedPhotosUpdated.add("")
+        uploadedPhotosUpdated.add("https://w.example.c/image.jpg")
         state.value = state.value.copy(uploadedPhotos = uploadedPhotosUpdated)
-        composeRule.onNodeWithTag(TestTags.PHOTO).performClick()
+        composeRule.onNodeWithTag(TestTags.PHOTO_WRAPPER).performClick()
         composeRule.onNodeWithContentDescription(context.getString(R.string.photo))
             .assertIsDisplayed()
-        assertThat(state.value.dialogPhoto).isEqualTo("")
+        assertThat(state.value.dialogPhoto).isEqualTo("https://w.example.c/image.jpg")
     }
 
     @Test
@@ -393,7 +393,7 @@ class PaymentAdditionScreenTest {
         val newPhotosUpdated = state.value.newPhotos.toMutableList()
         newPhotosUpdated.add(emptyUri)
         state.value = state.value.copy(newPhotos = newPhotosUpdated)
-        composeRule.onNodeWithTag(TestTags.PHOTO).performClick()
+        composeRule.onNodeWithTag(TestTags.PHOTO_WRAPPER).performClick()
         composeRule.onNodeWithContentDescription(context.getString(R.string.photo))
             .assertIsDisplayed()
         assertThat(state.value.dialogPhoto).isEqualTo(emptyUri)
@@ -434,7 +434,7 @@ class PaymentAdditionScreenTest {
         composeRule.onNodeWithContentDescription(context.getString(R.string.remove_photo))
             .performClick()
         composeRule.onNodeWithText(context.getString(R.string.undo)).performClick()
-        composeRule.onNodeWithTag(TestTags.PHOTO).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.PHOTO_WRAPPER).assertIsDisplayed()
 
         assertThat(state.value.lastDeletedUrlPhoto).isEqualTo(null)
         assertThat(state.value.uploadedPhotos).contains("")
@@ -449,7 +449,7 @@ class PaymentAdditionScreenTest {
         composeRule.onNodeWithContentDescription(context.getString(R.string.remove_photo))
             .performClick()
         composeRule.onNodeWithText(context.getString(R.string.undo)).performClick()
-        composeRule.onNodeWithTag(TestTags.PHOTO).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.PHOTO_WRAPPER).assertIsDisplayed()
 
         assertThat(state.value.lastDeletedUriPhoto).isEqualTo(null)
         assertThat(state.value.newPhotos).contains(emptyUri)

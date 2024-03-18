@@ -33,7 +33,7 @@ fun PaymentAdditionPhotoAddingBlock(
             uploadedPhotos.forEach { photoUrl ->
                 item {
                     PhotoContainer(
-                        modifier = Modifier.testTag(TestTags.PHOTO),
+                        modifier = Modifier.testTag(TestTags.PHOTO_WRAPPER),
                         photo = photoUrl,
                         isDeleteEnabled = true,
                         onDeleteClick = { photo ->
@@ -49,7 +49,7 @@ fun PaymentAdditionPhotoAddingBlock(
             newPhotos.forEach { photoUri ->
                 item {
                     PhotoContainer(
-                        modifier = Modifier.testTag(TestTags.PHOTO),
+                        modifier = Modifier.testTag(TestTags.PHOTO_WRAPPER),
                         photo = photoUri,
                         isDeleteEnabled = true,
                         onDeleteClick = { photo ->
