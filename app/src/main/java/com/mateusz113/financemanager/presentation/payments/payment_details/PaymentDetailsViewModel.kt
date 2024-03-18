@@ -1,6 +1,7 @@
 package com.mateusz113.financemanager.presentation.payments.payment_details
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -79,6 +80,7 @@ class PaymentDetailsViewModel @Inject constructor(
             }
         }
     }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         if (key == "${FirebaseAuth.getInstance().currentUser?.uid}Currency") {
             updateCurrencyDetails()
@@ -90,17 +92,12 @@ class PaymentDetailsViewModel @Inject constructor(
 
     private fun updateSymbolPlacementDetails() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val symbolPlacement =
-            if (uid != null) {
-                SymbolPlacement.valueOf(
-                    sharedPreferences.getString(
-                        "${uid}SymbolPlacement",
-                        SymbolPlacement.InAppControl.name
-                    )!!
-                )
-            } else {
-                SymbolPlacement.InAppControl
-            }
+        val symbolPlacement = SymbolPlacement.valueOf(
+            sharedPreferences.getString(
+                "${uid}SymbolPlacement",
+                SymbolPlacement.InAppControl.name
+            )!!
+        )
         val isCurrencyPrefix =
             when (symbolPlacement) {
                 SymbolPlacement.InAppControl -> {
@@ -122,12 +119,7 @@ class PaymentDetailsViewModel @Inject constructor(
 
     private fun updateCurrencyDetails() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val currentCurrency =
-            if (uid != null) {
-                Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
-            } else {
-                Currency.PLN
-            }
+        val currentCurrency = Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
         _state.value = _state.value.copy(
             currency = currentCurrency,
         )
