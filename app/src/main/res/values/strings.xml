@@ -16,6 +16,7 @@
     <string name="arrow">Arrow indicating that the row is clickable</string>
     <string name="sorting_button">Button that changes payment sorting method</string>
     <string name="option_selection_dropdown">Option selection dropdown button</string>
+    <string name="remove_photo">Remove payment photo</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
@@ -29,6 +30,7 @@
     <string name="undo">Undo</string>
     <string name="delete_account">Delete account</string>
     <string name="select_categories">Select categories</string>
+    <string name="filter">Filter</string>
 
     //Placeholders
     <string name="min_payment_value">Min value</string>
@@ -62,6 +64,8 @@
     <string name="or_alternatively">Or alternatively:</string>
     <string name="sorting_method">Sorting method</string>
     <string name="external_licenses_notice">External licenses notice</string>
+    <string name="pick_start_date">Pick start date</string>
+    <string name="pick_date">Pick date</string>
 
     //Settings
     <string name="currency">Currency</string>
