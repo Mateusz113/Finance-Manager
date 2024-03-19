@@ -11,8 +11,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.mateusz113.financemanager.R
 
 @Composable
 fun PaymentSearchBar(
@@ -36,7 +38,7 @@ fun PaymentSearchBar(
                 .weight(3f)
                 .fillMaxHeight(),
             placeholder = {
-                Text(text = "Search for payment...")
+                Text(text = stringResource(id = R.string.search_for_payment))
             },
             singleLine = true,
             shape = RoundedCornerShape(5.dp)
@@ -53,7 +55,7 @@ fun PaymentSearchBar(
             contentPadding = PaddingValues(0.dp)
         ) {
             Text(
-                text = "Filter",
+                text = stringResource(id = R.string.filter),
                 style = TextStyle(
                     fontSize = MaterialTheme.typography.titleMedium.fontSize
                 )
