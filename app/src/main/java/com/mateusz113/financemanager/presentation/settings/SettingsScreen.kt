@@ -66,6 +66,9 @@ fun SettingsScreen(
         onOptionSelect = { option ->
             viewModel.onEvent(SettingsEvent.UpdateDialogState(false))
             viewModel.onEvent(SettingsEvent.UpdateSelectedOption(option))
+        },
+        onExternalLicensesButtonClick = {
+            navController.navigate(ExternalLicensesScreenDestination)
         }
     )
 }
@@ -77,7 +80,8 @@ fun SettingsScreenContent(
     onCurrencyClick: () -> Unit,
     onSymbolPlacementClick: () -> Unit,
     onDialogDismiss: () -> Unit,
-    onOptionSelect: (Any?) -> Unit
+    onOptionSelect: (Any?) -> Unit,
+    onExternalLicensesButtonClick: () -> Unit
 ) {
     ScaffoldWrapper(
         topAppBar = {
@@ -111,10 +115,8 @@ fun SettingsScreenContent(
             )
 
             ClickableItemRow(
-                label = "ExternalLicenses",
-                onClick = {
-                    navController.navigate(ExternalLicensesScreenDestination)
-                }
+                label = stringResource(id = R.string.external_licenses),
+                onClick = onExternalLicensesButtonClick
             )
         }
 
