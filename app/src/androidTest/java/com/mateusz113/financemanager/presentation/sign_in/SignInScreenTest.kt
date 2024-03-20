@@ -21,7 +21,7 @@ import kotlin.properties.Delegates
 
 @HiltAndroidTest
 @UninstallModules(RepositoryModule::class, SharedPreferencesModule::class)
-class RegisterScreenTest {
+class SignInScreenTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
