@@ -1,6 +1,7 @@
 package com.mateusz113.financemanager.util
 
 object TestTags {
+    const val SCROLLABLE_COLUMN = "SCROLLABLE_COLUMN"
     const val SWIPE_REFRESH_INDICATOR = "SWIPE_REFRESH_INDICATOR"
     const val PHOTO = "PHOTO"
     const val PHOTO_WRAPPER = "PHOTO_WRAPPER"
