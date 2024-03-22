@@ -20,19 +20,17 @@ class SettingsViewModel @Inject constructor(
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
 
     init {
-        userId?.let { uid ->
-            sharedPreferences.getString("${uid}Currency", Currency.PLN.name)?.let { code ->
+        sharedPreferences.getString("${userId}Currency", Currency.PLN.name)?.let { code ->
+            _state.value = _state.value.copy(
+                currentCurrency = Currency.valueOf(code)
+            )
+        }
+        sharedPreferences.getString("${userId}SymbolPlacement", SymbolPlacement.InAppControl.name)
+            ?.let { name ->
                 _state.value = _state.value.copy(
-                    currentCurrency = Currency.valueOf(code)
+                    currentSymbolPlacement = SymbolPlacement.valueOf(name)
                 )
             }
-            sharedPreferences.getString("${uid}SymbolPlacement", SymbolPlacement.InAppControl.name)
-                ?.let { name ->
-                    _state.value = _state.value.copy(
-                        currentSymbolPlacement = SymbolPlacement.valueOf(name)
-                    )
-                }
-        }
     }
 
     fun onEvent(event: SettingsEvent) {
@@ -72,21 +70,17 @@ class SettingsViewModel @Inject constructor(
         _state.value = _state.value.copy(
             currentSymbolPlacement = symbolPlacement
         )
-        userId?.let { uid ->
-            sharedPreferences.edit().apply {
-                this.putString("${uid}SymbolPlacement", symbolPlacement.name)
-            }.apply()
-        }
+        sharedPreferences.edit().apply {
+            this.putString("${userId}SymbolPlacement", symbolPlacement.name)
+        }.apply()
     }
 
     private fun updateCurrentCurrency(currency: Currency) {
         _state.value = _state.value.copy(
             currentCurrency = currency
         )
-        userId?.let { uid ->
-            sharedPreferences.edit().apply {
-                this.putString("${uid}Currency", currency.name)
-            }.apply()
-        }
+        sharedPreferences.edit().apply {
+            this.putString("${userId}Currency", currency.name)
+        }.apply()
     }
 }
