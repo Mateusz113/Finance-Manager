@@ -13,14 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,8 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.domain.model.PaymentListing
 import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.model.PaymentListing
+import com.mateusz113.financemanager.util.TestTags
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -50,7 +52,8 @@ fun PaymentListingsInfo(
             .border(
                 1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(5.dp)
             )
-            .padding(start = 10.dp),
+            .padding(start = 10.dp)
+            .testTag(TestTags.PAYMENT_LISTING_INFO),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -92,7 +95,7 @@ fun PaymentListingsInfo(
         //Used to cut the title early
         Spacer(modifier = Modifier.width(10.dp))
 
-        Divider(
+        VerticalDivider(
             modifier = Modifier
                 .fillMaxHeight(0.8f)
                 .width(1.dp)
@@ -146,7 +149,7 @@ fun PaymentListingsInfo(
             }
         }
         if (isDeletable) {
-            Divider(
+            VerticalDivider(
                 modifier = Modifier
                     .fillMaxHeight(0.8f)
                     .width(1.dp)
