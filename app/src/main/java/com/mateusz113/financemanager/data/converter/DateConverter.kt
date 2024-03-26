@@ -5,13 +5,19 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 object DateConverter {
-    fun convertTimestampIntoLocalDate(timestamp: Long): LocalDate {
+    fun convertTimestampIntoLocalDate(
+        timestamp: Long,
+        timeZone: ZoneId = ZoneId.systemDefault()
+    ): LocalDate {
         val instant = Instant.ofEpochMilli(timestamp)
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate()
+        return instant.atZone(timeZone).toLocalDate()
     }
 
-    fun convertLocalDateIntoTimestamp(localDate: LocalDate): Long {
-        val instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
+    fun convertLocalDateIntoTimestamp(
+        localDate: LocalDate,
+        timeZone: ZoneId = ZoneId.systemDefault()
+    ): Long {
+        val instant = localDate.atStartOfDay().atZone(timeZone).toInstant()
         return instant.toEpochMilli()
     }
 }
