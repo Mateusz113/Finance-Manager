@@ -6,17 +6,15 @@ import org.junit.Before
 import org.junit.Test
 
 class CategoryConverterTest {
-    private lateinit var categoryName: String
+    private lateinit var category: Category
 
     @Before
     fun setUp() {
-        categoryName = Category.values().random().toString()
+        category = Category.values().random()
     }
 
     @Test
     fun `Convert category name to the category enum, returns correct enum`() {
-        assertThat(CategoryConverter.convertStringToCategory(categoryName)).isEquivalentAccordingToCompareTo(
-            Category.Education
-        )
+        assertThat(CategoryConverter.convertStringToCategory(category.name)).isEqualTo(category)
     }
 }
