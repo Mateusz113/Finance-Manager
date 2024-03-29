@@ -3,7 +3,7 @@ package com.mateusz113.financemanager.presentation.common.components
 import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -23,6 +23,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlin.properties.Delegates
 
 @HiltAndroidTest
@@ -72,7 +73,7 @@ class PaymentListingInfoTest {
             context.getString(
                 R.string.remove_payment
             )
-        ).isDisplayed()
+        ).assertIsDisplayed()
     }
 
     @Test
@@ -89,10 +90,13 @@ class PaymentListingInfoTest {
 
     @Test
     fun paymentInfoIsProvided_infoIsDisplayedCorrectly() {
-        composeRule.onNodeWithText(paymentListing.title).isDisplayed()
-        composeRule.onNodeWithText(paymentListing.amount.toString()).isDisplayed()
-        composeRule.onNodeWithText(paymentListing.date.toString()).isDisplayed()
-        composeRule.onNodeWithText(paymentListing.category.name).isDisplayed()
+        val formattedDate = DateTimeFormatter
+            .ofPattern("dd/MM/yyyy")
+            .format(paymentListing.date)
+        composeRule.onNodeWithText(paymentListing.title).assertIsDisplayed()
+        composeRule.onNodeWithText(paymentListing.amount.toString()).assertIsDisplayed()
+        composeRule.onNodeWithText(formattedDate).assertIsDisplayed()
+        composeRule.onNodeWithText(paymentListing.category.name).assertIsDisplayed()
     }
 
     @Test
