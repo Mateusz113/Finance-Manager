@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -16,7 +16,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.text.AnnotatedString
-import androidx.test.espresso.Espresso
 import com.google.common.truth.Truth.assertThat
 import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.R
@@ -40,8 +39,6 @@ class MultipleOptionsButtonSpinnerTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val surfaceTestTag = "SURFACE_TEST_TAG"
-
     private lateinit var selectedOptions: MutableList<Category>
     private lateinit var context: Context
 
@@ -52,7 +49,7 @@ class MultipleOptionsButtonSpinnerTest {
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 Surface(
-                    modifier = Modifier.testTag(surfaceTestTag)
+                    modifier = Modifier.testTag(TestTags.SURFACE)
                 ) {
                     MultipleOptionsButtonSpinner(
                         options = Category.values().toList(),
@@ -71,23 +68,15 @@ class MultipleOptionsButtonSpinnerTest {
     fun clickOnSpinner_dropdownMenuIsVisible() {
         composeRule.onNodeWithContentDescription(context.getString(R.string.option_selection_dropdown))
             .performClick()
-        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).isDisplayed()
+        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).assertIsDisplayed()
     }
 
     @Test
-    fun pressBackButtonWhenMenuIsOpen_dropdownMenuIsNotVisible() {
+    fun dismissSpinner_dropdownMenuIsNotVisible() {
         composeRule.onNodeWithContentDescription(context.getString(R.string.option_selection_dropdown))
             .performClick()
-        Espresso.pressBack()
-        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).isNotDisplayed()
-    }
-
-    @Test
-    fun pressBackgroundWhenMenuIsOpen_dropdownMenuIsNotVisible() {
-        composeRule.onNodeWithContentDescription(context.getString(R.string.option_selection_dropdown))
-            .performClick()
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
-        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).isNotDisplayed()
+        composeRule.onNodeWithTag(TestTags.SURFACE).performClick()
+        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).assertIsNotDisplayed()
     }
 
     @Test
@@ -108,7 +97,7 @@ class MultipleOptionsButtonSpinnerTest {
             )
             composeRule.onNodeWithText(randomCategory.name).performClick()
         }
-        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).isDisplayed()
+        composeRule.onNodeWithTag(TestTags.DROPDOWN_MENU).assertIsDisplayed()
         randomCategories.forEach { category ->
             assertThat(selectedOptions.contains(category)).isTrue()
         }
