@@ -2,7 +2,7 @@ package com.mateusz113.financemanager.presentation.common.components
 
 import android.content.Context
 import androidx.activity.compose.setContent
-import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onRoot
@@ -51,8 +51,8 @@ class PhotoContainerTest {
 
     @Test
     fun deleteEnabled_deleteIconIsVisible() {
-        composeRule.onNodeWithContentDescription(context.getString(R.string.add_new_photo))
-            .isDisplayed()
+        composeRule.onNodeWithContentDescription(context.getString(R.string.remove_photo))
+            .assertIsDisplayed()
     }
 
     @Test
