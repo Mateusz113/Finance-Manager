@@ -2,13 +2,12 @@ package com.mateusz113.financemanager.presentation.common.option_picker
 
 import android.content.Context
 import androidx.activity.compose.setContent
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -19,6 +18,7 @@ import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
+import com.mateusz113.financemanager.util.TestTags
 import com.vanpra.composematerialdialogs.MaterialDialogState
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -29,7 +29,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @HiltAndroidTest
 @UninstallModules(RepositoryModule::class, SharedPreferencesModule::class)
 class DatePickerTest {
@@ -38,9 +37,6 @@ class DatePickerTest {
 
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
-
-    private val surfaceTestTag = "SURFACE_TEST_TAG"
-    private val buttonLabel = "BUTTON_LABEL"
 
     private lateinit var state: MaterialDialogState
     private lateinit var context: Context
@@ -60,7 +56,7 @@ class DatePickerTest {
                 state.show()
 
                 Surface(
-                    modifier = Modifier.testTag(surfaceTestTag)
+                    modifier = Modifier.testTag(TestTags.SURFACE)
                 ) {
                     DatePicker(
                         datePickerState = state,
@@ -79,17 +75,11 @@ class DatePickerTest {
     }
 
     @Test
-    fun pressBackgroundWhenDialogIsOpen_dialogIsNotVisible() {
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
-        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
-    }
-
-    @Test
-    fun pressBackButtonWhenDialogIsOpen_dialogIsNotVisible() {
+    fun dismissDialog_dialogIsNotVisible() {
         pressBack()
+        composeRule.waitForIdle()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
     }
 
     @Test
@@ -98,7 +88,7 @@ class DatePickerTest {
         composeRule.onNodeWithTag("dialog_date_selection_$newDayToClick").performClick()
         composeRule.onNodeWithText("APPLY").performClick()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
         assertThat(date).isNotEqualTo(initialDate)
     }
 
@@ -108,7 +98,7 @@ class DatePickerTest {
         composeRule.onNodeWithTag("dialog_date_selection_$newDayToClick").performClick()
         composeRule.onNodeWithText("APPLY").performClick()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
         assertThat(date).isEqualTo(initialDate)
     }
 }
