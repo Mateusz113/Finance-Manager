@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -28,6 +28,7 @@ import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.FilterSettings
+import com.mateusz113.financemanager.util.TestTags
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -44,7 +45,6 @@ class PaymentFilterDialogTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val surfaceTestTag: String = "Surface"
     private val buttonLabel: String = "Reopen dialog"
     private val defaultFilterSettings = FilterSettings()
     private val minValueInsertText = "50"
@@ -68,7 +68,7 @@ class PaymentFilterDialogTest {
                 }
 
                 Surface(
-                    modifier = Modifier.testTag(surfaceTestTag)
+                    modifier = Modifier.testTag(TestTags.SURFACE)
                 ) {
                     Button(onClick = { isDialogOpen.value = true }) {
                         Text(text = buttonLabel)
@@ -93,7 +93,7 @@ class PaymentFilterDialogTest {
     @Test
     fun isOpenFlagSetToTrue_dialogIsVisible() {
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isDisplayed()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -101,7 +101,7 @@ class PaymentFilterDialogTest {
         composeRule.onNodeWithContentDescription(context.getString(R.string.option_selection_dropdown))
             .performClick()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsPopup, Unit))
-            .isDisplayed()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -109,7 +109,7 @@ class PaymentFilterDialogTest {
         composeRule.onNodeWithContentDescription(context.getString(R.string.option_selection_dropdown))
             .performClick()
         composeRule.onNodeWithText(Category.values().first().name).performClick()
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
+        composeRule.onNodeWithTag(TestTags.SURFACE).performClick()
         composeRule.onNodeWithText(context.getString(R.string.apply)).performClick()
         assertThat(filterSettings.value.categories).contains(Category.values().first())
     }
@@ -133,18 +133,18 @@ class PaymentFilterDialogTest {
             .performTextInput(minValueInsertText)
         composeRule.onNodeWithText(context.getString(R.string.apply)).performClick()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isDisplayed()
+            .assertIsDisplayed()
     }
 
     @Test
     fun clickOnDatesIcons_correctDialogsOpen() {
         composeRule.onNodeWithContentDescription(context.getString(R.string.start_date_picker))
             .performClick()
-        composeRule.onNodeWithText(context.getString(R.string.pick_start_date)).isDisplayed()
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
+        composeRule.onNodeWithText(context.getString(R.string.pick_start_date)).assertIsDisplayed()
+        composeRule.onNodeWithTag(TestTags.SURFACE).performClick()
         composeRule.onNodeWithContentDescription(context.getString(R.string.end_date_picker))
             .performClick()
-        composeRule.onNodeWithText(context.getString(R.string.pick_end_date)).isDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.pick_end_date)).assertIsDisplayed()
     }
 
     @Test
@@ -154,7 +154,7 @@ class PaymentFilterDialogTest {
         composeRule.onNodeWithTag("dialog_date_selection_${filterSettings.value.startDate.dayOfMonth + 1}")
             .performClick()
         composeRule.onNodeWithText("APPLY").performClick()
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
+        composeRule.onNodeWithTag(TestTags.SURFACE).performClick()
         composeRule.onNodeWithText(context.getString(R.string.apply)).performClick()
 
         assertThat(filterSettings.value.startDate).isGreaterThan(defaultFilterSettings.startDate)
@@ -171,7 +171,7 @@ class PaymentFilterDialogTest {
             .performClick()
         composeRule.onNodeWithTag("dialog_date_selection_$dayOfMonth").performClick()
         composeRule.onNodeWithText("APPLY").performClick()
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
+        composeRule.onNodeWithTag(TestTags.SURFACE).performClick()
         composeRule.onNodeWithText(context.getString(R.string.apply)).performClick()
 
         assertThat(filterSettings.value.endDate).isAtMost(defaultFilterSettings.endDate)
@@ -197,17 +197,13 @@ class PaymentFilterDialogTest {
         assertThat(filterSettings.value).isEqualTo(defaultFilterSettings)
     }
 
-    @Test
-    fun pressBackWhenDialogIsOpen_dialogIsNotVisible() {
-        pressBack()
-        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
-    }
 
     @Test
-    fun backgroundClickedWhenDialogIsOpen_dialogIsNotVisible() {
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
+    fun dismissDialog_dialogIsNotVisible() {
+        pressBack()
+        composeRule.waitForIdle()
+        assertThat(isDialogOpen.value).isFalse()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
     }
 }

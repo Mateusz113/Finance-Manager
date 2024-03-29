@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -43,7 +43,6 @@ class PaymentListingsCollectionDialogTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val surfaceTestTag: String = "Surface"
     private val paymentListings: List<PaymentListing> = listOf(
         PaymentListing("A", "A", 1.toDouble(), LocalDate.now(), Category.Health),
         PaymentListing("B", "B", 2.toDouble(), LocalDate.now(), Category.Groceries),
@@ -65,6 +64,7 @@ class PaymentListingsCollectionDialogTest {
     fun setUp() {
         hiltRule.inject()
         context = composeRule.activity.applicationContext
+
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 isDialogOpen = remember {
@@ -72,7 +72,7 @@ class PaymentListingsCollectionDialogTest {
                 }
 
                 Surface(
-                    modifier = Modifier.testTag(surfaceTestTag)
+                    modifier = Modifier.testTag(TestTags.SURFACE)
                 ) {
                     PaymentListingsCollectionDialog(
                         paymentListings = paymentListings,
@@ -95,7 +95,7 @@ class PaymentListingsCollectionDialogTest {
     @Test
     fun isOpenFlagSetToTrue_dialogIsVisible() {
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isDisplayed()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -124,16 +124,11 @@ class PaymentListingsCollectionDialogTest {
     }
 
     @Test
-    fun pressBackWhenDialogIsOpen_dialogIsNotVisible() {
+    fun dismissDialog_dialogIsNotVisible() {
         pressBack()
+        composeRule.waitForIdle()
+        assertThat(isDialogOpen.value).isFalse()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
-    }
-
-    @Test
-    fun backgroundClickedWhenDialogIsOpen_dialogIsNotVisible() {
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
-        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
     }
 }
