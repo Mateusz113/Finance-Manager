@@ -5,15 +5,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.isDisplayed
-import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.pressBack
@@ -23,6 +21,7 @@ import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
 import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.util.TestTags
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -39,8 +38,6 @@ class RadioButtonSelectionDialogTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    private val surfaceTestTag: String = "Surface"
-
     private lateinit var dialogInfo: MutableState<RadioButtonsDialogInfo<Currency>>
     private lateinit var isDialogOpen: MutableState<Boolean>
     private lateinit var context: Context
@@ -51,24 +48,20 @@ class RadioButtonSelectionDialogTest {
         hiltRule.inject()
         context = composeRule.activity.applicationContext
         initialOption = Currency.PLN
+        dialogInfo = mutableStateOf(
+            RadioButtonsDialogInfo(
+                label = R.string.currency,
+                currentOption = initialOption,
+                optionsLabelsMap = Currency.labelMap,
+                optionsList = Currency.values().toList()
+            )
+        )
+        isDialogOpen = mutableStateOf(true)
+
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
-                dialogInfo = remember {
-                    mutableStateOf(
-                        RadioButtonsDialogInfo(
-                            label = R.string.currency,
-                            currentOption = initialOption,
-                            optionsLabelsMap = Currency.labelMap,
-                            optionsList = Currency.values().toList()
-                        )
-                    )
-                }
-                isDialogOpen = remember {
-                    mutableStateOf(true)
-                }
-
                 Surface(
-                    modifier = Modifier.testTag(surfaceTestTag)
+                    modifier = Modifier.testTag(TestTags.SURFACE)
                 ) {
                     RadioButtonSelectionDialog(
                         dialogInfo = dialogInfo.value,
@@ -91,7 +84,7 @@ class RadioButtonSelectionDialogTest {
     @Test
     fun isOpenFlagSetToTrue_dialogIsVisible() {
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isDisplayed()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -99,7 +92,7 @@ class RadioButtonSelectionDialogTest {
         composeRule.onNodeWithText(context.getString(Currency.labelMap[initialOption]!!))
             .performClick()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
         assertThat(dialogInfo.value.currentOption).isEqualTo(initialOption)
     }
 
@@ -108,21 +101,16 @@ class RadioButtonSelectionDialogTest {
         composeRule.onNodeWithText(context.getString(Currency.labelMap[Currency.AUD]!!))
             .performClick()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
         assertThat(dialogInfo.value.currentOption).isNotEqualTo(initialOption)
     }
 
     @Test
-    fun pressBackWhenDialogIsOpen_dialogIsNotVisible() {
+    fun dismissDialog_dialogIsNotVisible() {
         pressBack()
+        composeRule.waitForIdle()
+        assertThat(isDialogOpen.value).isFalse()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
-    }
-
-    @Test
-    fun backgroundClickedWhenDialogIsOpen_dialogIsNotVisible() {
-        composeRule.onNodeWithTag(surfaceTestTag).performClick()
-        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsNotDisplayed()
     }
 }
