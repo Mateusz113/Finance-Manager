@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -42,10 +41,10 @@ class ExternalLicensesScreenTest {
     fun setUp() {
         hiltRule.inject()
         context = composeRule.activity.applicationContext
+        state = mutableStateOf(ExternalLicensesState())
+
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
-                state = remember { mutableStateOf(ExternalLicensesState()) }
-
                 ExternalLicensesScreenContent(
                     state = state.value,
                     topBarLabel = R.string.external_licenses_notice,
@@ -81,10 +80,18 @@ class ExternalLicensesScreenTest {
 
     @Test
     fun dismissDialog_dialogIsNotVisible() {
-        composeRule.onNodeWithText(context.getString(R.string.ycharts_label))
-            .performClick()
-        pressBack()
+        //Programmatically open dialog
+        state.value = state.value.copy(
+            isLicenseDialogOpen = true
+        )
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .isNotDisplayed()
+            .assertIsDisplayed()
+
+        pressBack()
+        composeRule.waitForIdle()
+
+        assertThat(state.value.isLicenseDialogOpen).isFalse()
+        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
+            .assertIsNotDisplayed()
     }
 }
