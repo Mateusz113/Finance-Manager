@@ -1,10 +1,8 @@
 package com.mateusz113.financemanager.presentation.settings
 
 import android.content.SharedPreferences
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.auth.FirebaseAuth
-import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.di.AppModule
 import com.mateusz113.financemanager.di.RepositoryModule
@@ -26,9 +24,6 @@ import javax.inject.Inject
 class SettingsViewModelTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
-    val composeRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var viewModel: SettingsViewModel
 
