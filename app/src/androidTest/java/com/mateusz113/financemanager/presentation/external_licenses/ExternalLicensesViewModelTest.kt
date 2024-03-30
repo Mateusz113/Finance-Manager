@@ -1,9 +1,6 @@
 package com.mateusz113.financemanager.presentation.external_licenses
 
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.lifecycle.ViewModelProvider
 import com.google.common.truth.Truth.assertThat
-import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -19,16 +16,12 @@ class ExternalLicensesViewModelTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
-    @get:Rule(order = 1)
-    val composeRule = createAndroidComposeRule<MainActivity>()
-
     private lateinit var viewModel: ExternalLicensesViewModel
 
     @Before
     fun setUp() {
         hiltRule.inject()
-        val viewModelProvider = ViewModelProvider(composeRule.activity)
-        viewModel = viewModelProvider[ExternalLicensesViewModel::class.java]
+        viewModel = ExternalLicensesViewModel()
     }
 
     @Test
