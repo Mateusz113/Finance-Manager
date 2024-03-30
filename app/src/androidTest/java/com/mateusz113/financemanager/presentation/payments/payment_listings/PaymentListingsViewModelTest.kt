@@ -1,11 +1,9 @@
 package com.mateusz113.financemanager.presentation.payments.payment_listings
 
 import android.content.SharedPreferences
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.viewModelScope
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.auth.FirebaseAuth
-import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.di.AppModule
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
@@ -37,9 +35,6 @@ import kotlin.coroutines.CoroutineContext
 class PaymentListingsViewModelTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
-    val composeRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var viewModel: PaymentListingsViewModel
     private lateinit var viewModelCoroutineContext: CoroutineContext
@@ -106,7 +101,7 @@ class PaymentListingsViewModelTest {
             )
         }.join()
         //Waits until the search is finished
-        delay(1000)
+        delay(800)
         assertThat(viewModel.state.value.payments).isNotEmpty()
     }
 
