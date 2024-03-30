@@ -1,14 +1,12 @@
 package com.mateusz113.financemanager.presentation.payments.payment_details
 
 import android.content.SharedPreferences
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.core.content.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.di.AppModule
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
@@ -36,9 +34,6 @@ import javax.inject.Inject
 class PaymentDetailsViewModelTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
-    val composeRule = createAndroidComposeRule<MainActivity>()
 
     private val savedStatePaymentId = "id"
 
@@ -113,12 +108,12 @@ class PaymentDetailsViewModelTest {
     }
 
     @Test
-    fun updateSharedPreferences_listenerUpdatesState() = runTest{
+    fun updateSharedPreferences_listenerUpdatesState() = runTest {
         val currency = Currency.EUR
         val symbolPlacement = SymbolPlacement.Suffix
         updateSharedPreferences(currency, symbolPlacement)
         //Delay function to allow viewmodel to update its state
-        launch(viewModel.viewModelScope.coroutineContext) { delay(500) }.join()
+        launch(viewModel.viewModelScope.coroutineContext) { delay(200) }.join()
         assertThat(viewModel.state.value.currency).isEqualTo(currency)
         assertThat(viewModel.state.value.isCurrencyPrefix).isEqualTo(false)
     }
