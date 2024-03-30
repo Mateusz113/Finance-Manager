@@ -246,6 +246,7 @@ class PaymentListingsScreenTest {
         composeRule.onNodeWithContentDescription(context.getString(R.string.sorting_button))
             .performClick()
         pressBack()
+        composeRule.waitForIdle()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
             .assertIsNotDisplayed()
     }
