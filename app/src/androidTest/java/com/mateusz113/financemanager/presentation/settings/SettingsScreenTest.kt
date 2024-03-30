@@ -14,6 +14,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.text.AnnotatedString
+import androidx.test.espresso.Espresso.pressBack
 import com.google.common.truth.Truth.assertThat
 import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.R
@@ -111,8 +112,11 @@ class SettingsScreenTest {
         state.value = state.value.copy(
             isDialogOpen = true
         )
+        pressBack()
+        composeRule.waitForIdle()
+        assertThat(state.value.isDialogOpen).isFalse()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .assertIsDisplayed()
+            .assertIsNotDisplayed()
     }
 
     @Test
