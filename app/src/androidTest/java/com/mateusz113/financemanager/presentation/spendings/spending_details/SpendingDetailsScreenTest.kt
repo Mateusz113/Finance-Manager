@@ -158,6 +158,7 @@ class SpendingDetailsScreenTest {
             isFilterDialogOpen = true
         )
         pressBack()
+        composeRule.waitForIdle()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
             .assertIsNotDisplayed()
         assertThat(state.value.isFilterDialogOpen).isFalse()
@@ -198,6 +199,7 @@ class SpendingDetailsScreenTest {
             isKeyDialogOpen = true
         )
         pressBack()
+        composeRule.waitForIdle()
         composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
             .assertIsNotDisplayed()
         assertThat(state.value.isKeyDialogOpen).isFalse()
