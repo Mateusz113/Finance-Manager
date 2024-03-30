@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.presentation.common.components.PhotoContainer
+import com.mateusz113.financemanager.util.TestTags
 
 @Composable
 fun PaymentAdditionPhotoAddingBlock(
@@ -31,6 +33,7 @@ fun PaymentAdditionPhotoAddingBlock(
             uploadedPhotos.forEach { photoUrl ->
                 item {
                     PhotoContainer(
+                        modifier = Modifier.testTag(TestTags.PHOTO_WRAPPER),
                         photo = photoUrl,
                         isDeleteEnabled = true,
                         onDeleteClick = { photo ->
@@ -46,6 +49,7 @@ fun PaymentAdditionPhotoAddingBlock(
             newPhotos.forEach { photoUri ->
                 item {
                     PhotoContainer(
+                        modifier = Modifier.testTag(TestTags.PHOTO_WRAPPER),
                         photo = photoUri,
                         isDeleteEnabled = true,
                         onDeleteClick = { photo ->

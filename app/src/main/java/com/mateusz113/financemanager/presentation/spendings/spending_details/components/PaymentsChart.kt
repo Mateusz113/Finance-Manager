@@ -2,6 +2,7 @@ package com.mateusz113.financemanager.presentation.spendings.spending_details.co
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,11 +13,12 @@ import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.PaymentListing
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PaymentsChart(
     listingsMap: Map<Category, List<PaymentListing>>,

@@ -20,8 +20,8 @@ import com.mateusz113.financemanager.presentation.common.components.TopAppBarWit
 import com.mateusz113.financemanager.presentation.common.dialog.radio_buttons_dialog.RadioButtonSelectionDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.ExternalLicensesScreenDestination
-import com.mateusz113.financemanager.util.Currency
-import com.mateusz113.financemanager.util.SymbolPlacement
+import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate
@@ -66,6 +66,9 @@ fun SettingsScreen(
         onOptionSelect = { option ->
             viewModel.onEvent(SettingsEvent.UpdateDialogState(false))
             viewModel.onEvent(SettingsEvent.UpdateSelectedOption(option))
+        },
+        onExternalLicensesButtonClick = {
+            navController.navigate(ExternalLicensesScreenDestination)
         }
     )
 }
@@ -77,7 +80,8 @@ fun SettingsScreenContent(
     onCurrencyClick: () -> Unit,
     onSymbolPlacementClick: () -> Unit,
     onDialogDismiss: () -> Unit,
-    onOptionSelect: (Any?) -> Unit
+    onOptionSelect: (Any?) -> Unit,
+    onExternalLicensesButtonClick: () -> Unit
 ) {
     ScaffoldWrapper(
         topAppBar = {
@@ -111,10 +115,8 @@ fun SettingsScreenContent(
             )
 
             ClickableItemRow(
-                label = "ExternalLicenses",
-                onClick = {
-                    navController.navigate(ExternalLicensesScreenDestination)
-                }
+                label = stringResource(id = R.string.external_licenses),
+                onClick = onExternalLicensesButtonClick
             )
         }
 

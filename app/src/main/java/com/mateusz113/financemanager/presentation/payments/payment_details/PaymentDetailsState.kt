@@ -1,7 +1,7 @@
 package com.mateusz113.financemanager.presentation.payments.payment_details
 
 import com.mateusz113.financemanager.domain.model.PaymentDetails
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 
 data class PaymentDetailsState<T>(
     var paymentDetails: PaymentDetails? = null,

@@ -55,6 +55,7 @@ fun PaymentAdditionDatePicker(
     DatePicker(
         datePickerState = datePickerState,
         date = date,
+        title = R.string.pick_date,
         dateValidator = { validDate ->
             validDate <= LocalDate.now()
         },

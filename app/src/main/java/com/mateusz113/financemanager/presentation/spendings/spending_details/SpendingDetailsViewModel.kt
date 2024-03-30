@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 import com.mateusz113.financemanager.util.Resource
-import com.mateusz113.financemanager.util.SymbolPlacement
+import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -122,17 +122,12 @@ class SpendingDetailsViewModel @Inject constructor(
 
     private fun updateSymbolPlacementDetails() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val symbolPlacement =
-            if (uid != null) {
-                SymbolPlacement.valueOf(
-                    sharedPreferences.getString(
-                        "${uid}SymbolPlacement",
-                        SymbolPlacement.InAppControl.name
-                    )!!
-                )
-            } else {
-                SymbolPlacement.InAppControl
-            }
+        val symbolPlacement = SymbolPlacement.valueOf(
+            sharedPreferences.getString(
+                "${uid}SymbolPlacement",
+                SymbolPlacement.InAppControl.name
+            )!!
+        )
         val isCurrencyPrefix =
             when (symbolPlacement) {
                 SymbolPlacement.InAppControl -> {
@@ -155,11 +150,7 @@ class SpendingDetailsViewModel @Inject constructor(
     private fun updateCurrencyDetails() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val currentCurrency =
-            if (uid != null) {
-                Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
-            } else {
-                Currency.PLN
-            }
+            Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
         _state.value = _state.value.copy(
             currency = currentCurrency,
         )

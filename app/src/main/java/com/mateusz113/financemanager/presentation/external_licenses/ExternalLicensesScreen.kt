@@ -20,7 +20,7 @@ import com.mateusz113.financemanager.presentation.common.components.ClickableIte
 import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.common.dialog.TextInfoDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
-import com.mateusz113.financemanager.util.ExternalLicense
+import com.mateusz113.financemanager.domain.enumeration.ExternalLicense
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 

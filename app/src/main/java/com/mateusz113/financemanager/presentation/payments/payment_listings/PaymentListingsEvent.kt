@@ -1,7 +1,7 @@
 package com.mateusz113.financemanager.presentation.payments.payment_listings
 
 import com.mateusz113.financemanager.domain.model.FilterSettings
-import com.mateusz113.financemanager.util.SortingMethod
+import com.mateusz113.financemanager.domain.enumeration.SortingMethod
 
 sealed class PaymentListingsEvent {
     object Refresh : PaymentListingsEvent()

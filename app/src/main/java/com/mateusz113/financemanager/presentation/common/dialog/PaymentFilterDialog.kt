@@ -14,8 +14,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -26,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.Category
+import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.presentation.common.option_picker.MultipleOptionsButtonSpinner
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.text.DecimalFormat
@@ -376,6 +388,7 @@ fun PaymentFilterDialog(
         com.mateusz113.financemanager.presentation.common.option_picker.DatePicker(
             datePickerState = startDateDialogState,
             date = filterSettingsState.startDate,
+            title = R.string.pick_start_date,
             dateValidator = { date ->
                 date > minStartDate
                         && date < filterSettingsState.endDate
@@ -388,6 +401,7 @@ fun PaymentFilterDialog(
         com.mateusz113.financemanager.presentation.common.option_picker.DatePicker(
             datePickerState = endDateDialogState,
             date = filterSettingsState.endDate,
+            title = R.string.pick_end_date,
             dateValidator = { date ->
                 date > filterSettingsState.startDate
                         && date <= LocalDate.now()

@@ -16,6 +16,7 @@
     <string name="arrow">Arrow indicating that the row is clickable</string>
     <string name="sorting_button">Button that changes payment sorting method</string>
     <string name="option_selection_dropdown">Option selection dropdown button</string>
+    <string name="remove_photo">Remove payment photo</string>
 
     //Button labels
     <string name="sign_out">Sign out</string>
@@ -29,6 +30,7 @@
     <string name="undo">Undo</string>
     <string name="delete_account">Delete account</string>
     <string name="select_categories">Select categories</string>
+    <string name="filter">Filter</string>
 
     //Placeholders
     <string name="min_payment_value">Min value</string>
@@ -62,13 +64,17 @@
     <string name="or_alternatively">Or alternatively:</string>
     <string name="sorting_method">Sorting method</string>
     <string name="external_licenses_notice">External licenses notice</string>
+    <string name="pick_start_date">Pick start date</string>
+    <string name="pick_date">Pick date</string>
+    <string name="search_for_payment">Search for payment...</string>
+    <string name="external_licenses">External Licenses</string>
 
     //Settings
     <string name="currency">Currency</string>
     <string name="currency_option">Selected currency</string>
     <string name="symbol_placement_option">Selected currency symbol placement</string>
     <string name="symbol_placement">Symbol placement</string>
-    
+
     //Toast text
     <string name="delete_unsuccessful">This operation is sensitive.\nLog in again before retrying.</string>
     <string name="delete_successful">Account delete successful.</string>
@@ -93,6 +99,7 @@
 
     //Error messages
     <string name="too_many_pictures">Maximum amount of pictures for single payment is 5.</string>
+    <string name="display_name_error">Display name is too long or empty. It must be at most 50 characters long.</string>
     <string name="email_error">Email is blank or incorrectly formatted.</string>
     <string name="password_error">Password is too short. It must be at least 6 characters long.</string>
     <string name="generic_error">Error occurred.</string>
@@ -107,7 +114,6 @@
     <string name="github_sign_in">Sign in with GitHub</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
-    <string name="display_name_error">Display name is too long or empty. It must be at most 50 characters long.</string>
 
     //Login fields labels
     <string name="email">Email</string>

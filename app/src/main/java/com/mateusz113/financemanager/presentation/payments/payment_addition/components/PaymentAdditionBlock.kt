@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.presentation.common.components.InputTextField
-import com.mateusz113.financemanager.util.PaymentInfoValidator
+import com.mateusz113.financemanager.domain.validator.PaymentInfoValidator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

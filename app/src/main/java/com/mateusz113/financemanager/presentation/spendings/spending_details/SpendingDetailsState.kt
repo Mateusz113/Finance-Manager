@@ -5,7 +5,7 @@ import co.yml.charts.ui.piechart.models.PieChartData
 import com.mateusz113.financemanager.domain.model.Category
 import com.mateusz113.financemanager.domain.model.FilterSettings
 import com.mateusz113.financemanager.domain.model.PaymentListing
-import com.mateusz113.financemanager.util.Currency
+import com.mateusz113.financemanager.domain.enumeration.Currency
 
 data class SpendingDetailsState(
     val listingsMap: Map<Category, List<PaymentListing>> = emptyMap(),

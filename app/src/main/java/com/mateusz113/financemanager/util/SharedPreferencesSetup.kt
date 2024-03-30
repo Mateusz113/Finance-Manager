@@ -2,6 +2,9 @@ package com.mateusz113.financemanager.util
 
 import android.content.SharedPreferences
 import android.util.Log
+import com.mateusz113.financemanager.domain.enumeration.AuthMethod
+import com.mateusz113.financemanager.domain.enumeration.Currency
+import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
 import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

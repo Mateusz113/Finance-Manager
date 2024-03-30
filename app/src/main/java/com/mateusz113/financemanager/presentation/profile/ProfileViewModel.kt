@@ -126,8 +126,8 @@ class ProfileViewModel @Inject constructor(
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     sharedPreferences.edit().apply {
-                        this.remove("${_state.value.userId}JoinDate")
-                        this.remove("${_state.value.userId}PaymentsNum")
+                        this.remove("${FirebaseAuth.getInstance().currentUser?.uid}JoinDate")
+                        this.remove("${FirebaseAuth.getInstance().currentUser?.uid}PaymentsNum")
                     }.apply()
                     viewModelScope.launch {
                         async { signOut(user.uid) }.await()
@@ -146,7 +146,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == "${_state.value.userId}PaymentsNum") {
+        if (key == "${FirebaseAuth.getInstance().currentUser?.uid}PaymentsNum") {
             updatePaymentNumber()
         }
     }

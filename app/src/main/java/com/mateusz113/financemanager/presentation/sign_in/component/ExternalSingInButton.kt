@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mateusz113.financemanager.R
-import com.mateusz113.financemanager.util.AuthMethod
+import com.mateusz113.financemanager.domain.enumeration.AuthMethod
 
 @Composable
 fun ExternalSignInButton(

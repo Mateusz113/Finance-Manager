@@ -146,7 +146,7 @@ class PaymentAdditionViewModel @Inject constructor(
         )
     }
 
-    private fun getPaymentDetails() {
+    fun getPaymentDetails() {
         viewModelScope.launch {
             val paymentId = savedStateHandle.get<String>("paymentId")
             paymentId?.let { id ->
