@@ -2,12 +2,10 @@ package com.mateusz113.financemanager.presentation.spendings.spending_details
 
 import android.content.SharedPreferences
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.auth.FirebaseAuth
-import com.mateusz113.financemanager.MainActivity
 import com.mateusz113.financemanager.di.AppModule
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
@@ -37,9 +35,6 @@ import kotlin.coroutines.CoroutineContext
 class SpendingDetailsViewModelTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 1)
-    val composeRule = createAndroidComposeRule<MainActivity>()
 
     private lateinit var viewModel: SpendingDetailsViewModel
     private lateinit var viewModelCoroutineContext: CoroutineContext
