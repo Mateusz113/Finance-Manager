@@ -2,43 +2,33 @@ package com.mateusz113.financemanager.presentation.payments.payment_details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.presentation.common.components.PullRefreshLazyColumn
 import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.common.dialog.PhotoDisplayDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentAdditionScreenDestination
 import com.mateusz113.financemanager.presentation.payments.payment_details.components.PaymentDetailsInfoBlock
 import com.mateusz113.financemanager.presentation.payments.payment_details.components.PaymentDetailsPhotosRow
-import com.mateusz113.financemanager.util.TestTags
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -78,8 +68,6 @@ fun PaymentDetailsScreen(
     )
 }
 
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PaymentDetailsScreenContent(
     state: PaymentDetailsState<*>,
@@ -90,13 +78,6 @@ fun PaymentDetailsScreenContent(
     onPhotoDialogDismiss: () -> Unit
 ) {
     if (state.error == null) {
-        val pullRefreshState =
-            rememberPullRefreshState(
-                refreshing = state.isLoading,
-                onRefresh = onRefresh,
-                refreshThreshold = 60.dp
-            )
-
         ScaffoldWrapper(
             topAppBar = {
                 TopAppBarWithBack(
@@ -104,25 +85,16 @@ fun PaymentDetailsScreenContent(
                     navController = navController
                 )
             }
-        ) {
-            Box(
-                modifier = Modifier.pullRefresh(pullRefreshState)
+        ) { innerPadding ->
+            PullRefreshLazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                isRefreshing = state.isLoading,
+                onRefresh = onRefresh
             ) {
-                PullRefreshIndicator(
-                    refreshing = state.isLoading,
-                    state = pullRefreshState,
-                    modifier = Modifier
-                        .offset(y = 64.dp)
-                        .testTag(TestTags.SWIPE_REFRESH_INDICATOR)
-                        .align(Alignment.TopCenter)
-                )
                 state.paymentDetails?.let { details ->
-                    Column(
-                        modifier = Modifier
-                            .padding(it)
-                            .testTag(TestTags.SWIPE_REFRESH)
-                            .verticalScroll(rememberScrollState())
-                    ) {
+                    it.item {
                         PaymentDetailsInfoBlock(
                             modifier = Modifier.padding(horizontal = 10.dp),
                             paymentDetails = details,
@@ -130,8 +102,10 @@ fun PaymentDetailsScreenContent(
                             isCurrencyPrefix = state.isCurrencyPrefix
                         )
                         Spacer(modifier = Modifier.height(16.dp))
+                    }
 
-                        if (details.photoUrls.isNotEmpty()) {
+                    if (details.photoUrls.isNotEmpty()) {
+                        it.item {
                             PaymentDetailsPhotosRow(
                                 modifier = Modifier.padding(horizontal = 10.dp),
                                 photos = details.photoUrls,
@@ -139,6 +113,9 @@ fun PaymentDetailsScreenContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }
+                    }
+
+                    it.item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
