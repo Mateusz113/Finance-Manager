@@ -237,7 +237,7 @@ fun PaymentFilterDialog(
                                     .padding(end = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
                                 label = {
-                                    Text(text = "From")
+                                    Text(text = stringResource(id = R.string.from))
                                 },
                                 readOnly = true,
                                 value = formattedStartDate,
@@ -262,7 +262,7 @@ fun PaymentFilterDialog(
                                     .padding(start = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
                                 label = {
-                                    Text(text = "To")
+                                    Text(text = stringResource(id = R.string.to))
                                 },
                                 readOnly = true,
                                 value = formattedEndDate,
