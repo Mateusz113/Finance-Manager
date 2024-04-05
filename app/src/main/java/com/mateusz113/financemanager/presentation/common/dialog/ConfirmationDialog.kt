@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -63,7 +63,7 @@ fun ConfirmationDialog(
                         )
                     )
 
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .constrainAs(titleDivider) {
                                 top.linkTo(title.bottom)
@@ -89,7 +89,7 @@ fun ConfirmationDialog(
                         )
                     )
 
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .constrainAs(textDivider) {
                                 top.linkTo(text.bottom)
