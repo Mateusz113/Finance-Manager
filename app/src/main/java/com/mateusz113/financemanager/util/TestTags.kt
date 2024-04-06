@@ -8,6 +8,5 @@ object TestTags {
     const val PHOTO_WRAPPER = "PHOTO_WRAPPER"
     const val LAZY_COLUMN = "LAZY_COLUMN"
     const val DROPDOWN_MENU = "DROPDOWN_MENU"
-    const val SWIPE_REFRESH = "SWIPE_REFRESH"
     const val SURFACE = "SURFACE"
 }

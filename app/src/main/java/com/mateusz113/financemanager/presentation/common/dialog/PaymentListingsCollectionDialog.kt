@@ -12,7 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,7 +60,9 @@ fun PaymentListingsCollectionDialog(
                 border = BorderStroke(2.dp, MaterialTheme.colorScheme.outlineVariant)
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth().testTag(TestTags.LAZY_COLUMN)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(TestTags.LAZY_COLUMN)
                 ) {
                     item {
                         Text(
@@ -79,7 +81,7 @@ fun PaymentListingsCollectionDialog(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Divider(
+                            HorizontalDivider(
                                 modifier = Modifier
                                     .fillMaxWidth(0.9f)
                                     .padding(top = 15.dp, bottom = 5.dp)
@@ -105,7 +107,7 @@ fun PaymentListingsCollectionDialog(
                             )
 
                             if (index < paymentListings.lastIndex) {
-                                Divider(
+                                HorizontalDivider(
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }

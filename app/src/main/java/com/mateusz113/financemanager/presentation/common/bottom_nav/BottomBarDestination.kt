@@ -2,12 +2,12 @@ package com.mateusz113.financemanager.presentation.common.bottom_nav
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ViewList
+import androidx.compose.material.icons.automirrored.outlined.ViewList
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.ViewList
 import androidx.compose.material.icons.outlined.AccountBox
 import androidx.compose.material.icons.outlined.Analytics
-import androidx.compose.material.icons.outlined.ViewList
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
@@ -23,8 +23,8 @@ enum class BottomBarDestination(
 ) {
     Payments(
         direction = PaymentListingsScreenDestination,
-        filledIcon = Icons.Filled.ViewList,
-        outlinedIcon = Icons.Outlined.ViewList,
+        filledIcon = Icons.AutoMirrored.Filled.ViewList,
+        outlinedIcon = Icons.AutoMirrored.Outlined.ViewList,
         label = R.string.payments
     ),
     Spendings(

@@ -1,7 +1,6 @@
 package com.mateusz113.financemanager.domain.model
 
 import android.net.Uri
-import com.mateusz113.financemanager.domain.model.Category
 import java.time.LocalDate
 
 data class TestPaymentInformation(

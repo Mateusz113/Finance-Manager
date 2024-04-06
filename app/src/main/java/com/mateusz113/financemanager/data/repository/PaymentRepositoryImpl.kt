@@ -86,7 +86,7 @@ class PaymentRepositoryImpl @Inject constructor() : PaymentRepository {
             val paymentsListingsEventListener = paymentListingsRef.addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        var paymentListings = mutableListOf<PaymentListing>()
+                        val paymentListings = mutableListOf<PaymentListing>()
                         snapshot.children.forEach { listingSnapshot ->
                             val paymentListingDto =
                                 listingSnapshot.getValue(PaymentListingDto::class.java)

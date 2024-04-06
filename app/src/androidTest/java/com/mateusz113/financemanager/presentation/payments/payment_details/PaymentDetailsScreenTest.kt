@@ -1,7 +1,6 @@
 package com.mateusz113.financemanager.presentation.payments.payment_details
 
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +26,6 @@ import com.mateusz113.financemanager.util.TestTags
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -117,10 +115,11 @@ class PaymentDetailsScreenTest {
     }
 
     @Test
-    fun swipeRefreshIsTriggered_isLoadingVariableIsUpdated() {
+    fun refresh_isLoadingVariableIsUpdated() {
         assertThat(state.value.isLoading).isFalse()
-        composeRule.onNodeWithTag(TestTags.SWIPE_REFRESH)
+        composeRule.onNodeWithTag(TestTags.LAZY_COLUMN)
             .performTouchInput { swipeDown() }
+        composeRule.waitForIdle()
         assertThat(state.value.isLoading).isTrue()
     }
 

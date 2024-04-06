@@ -1,15 +1,14 @@
 package com.mateusz113.financemanager.presentation.payments.payment_details
 
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.mateusz113.financemanager.domain.repository.PaymentRepository
 import com.mateusz113.financemanager.domain.enumeration.Currency
-import com.mateusz113.financemanager.util.Resource
 import com.mateusz113.financemanager.domain.enumeration.SymbolPlacement
+import com.mateusz113.financemanager.domain.repository.PaymentRepository
+import com.mateusz113.financemanager.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -119,7 +118,8 @@ class PaymentDetailsViewModel @Inject constructor(
 
     private fun updateCurrencyDetails() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
-        val currentCurrency = Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
+        val currentCurrency =
+            Currency.valueOf(sharedPreferences.getString("${uid}Currency", Currency.PLN.name)!!)
         _state.value = _state.value.copy(
             currency = currentCurrency,
         )

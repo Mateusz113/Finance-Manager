@@ -68,6 +68,8 @@
     <string name="pick_date">Pick date</string>
     <string name="search_for_payment">Search for payment...</string>
     <string name="external_licenses">External Licenses</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
 
     //Settings
     <string name="currency">Currency</string>

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,7 +49,7 @@ fun ClickableItemRow(
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
             )
-            if (bottomText.isNotEmpty()){
+            if (bottomText.isNotEmpty()) {
                 Text(
                     text = bottomText,
                     style = TextStyle(
@@ -61,7 +61,7 @@ fun ClickableItemRow(
         }
 
         Icon(
-            imageVector = Icons.Filled.ArrowForwardIos,
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
             contentDescription = stringResource(id = R.string.arrow),
             modifier = Modifier
                 .constrainAs(icon) {

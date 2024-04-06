@@ -16,7 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -94,7 +94,9 @@ fun PaymentFilterDialog(
         val maxValueInputIsValid by remember {
             derivedStateOf {
                 val maxIsBiggerIfBothNumbers = if (
-                    isValidDoubleInput(filterSettingsState.minValue) && isValidDoubleInput(filterSettingsState.maxValue)
+                    isValidDoubleInput(filterSettingsState.minValue) && isValidDoubleInput(
+                        filterSettingsState.maxValue
+                    )
                 ) {
                     filterSettingsState.minValue.toDouble() < filterSettingsState.maxValue.toDouble()
                 } else {
@@ -147,7 +149,7 @@ fun PaymentFilterDialog(
                         )
                     )
 
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .constrainAs(labelDivider) {
                                 top.linkTo(label.bottom)
@@ -176,13 +178,16 @@ fun PaymentFilterDialog(
                             onOptionSelect = { category ->
                                 val newCategoriesList: MutableList<Category?>
                                 if (filterSettingsState.categories.contains(category)) {
-                                    newCategoriesList = filterSettingsState.categories.toMutableList()
+                                    newCategoriesList =
+                                        filterSettingsState.categories.toMutableList()
                                     newCategoriesList.remove(category)
                                 } else {
-                                    newCategoriesList = filterSettingsState.categories.toMutableList()
+                                    newCategoriesList =
+                                        filterSettingsState.categories.toMutableList()
                                     newCategoriesList.add(category)
                                 }
-                                filterSettingsState = filterSettingsState.copy(categories = newCategoriesList)
+                                filterSettingsState =
+                                    filterSettingsState.copy(categories = newCategoriesList)
                             },
                             menuOffset = DpOffset(0.dp, 8.dp),
                             noSelectionLabel = stringResource(id = R.string.select_categories)
@@ -237,7 +242,7 @@ fun PaymentFilterDialog(
                                     .padding(end = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
                                 label = {
-                                    Text(text = "From")
+                                    Text(text = stringResource(id = R.string.from))
                                 },
                                 readOnly = true,
                                 value = formattedStartDate,
@@ -262,7 +267,7 @@ fun PaymentFilterDialog(
                                     .padding(start = 2.dp),
                                 shape = RoundedCornerShape(5.dp),
                                 label = {
-                                    Text(text = "To")
+                                    Text(text = stringResource(id = R.string.to))
                                 },
                                 readOnly = true,
                                 value = formattedEndDate,
@@ -284,7 +289,7 @@ fun PaymentFilterDialog(
                         }
                     }
 
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier
                             .constrainAs(buttonDivider) {
                                 top.linkTo(settings.bottom)

@@ -120,7 +120,9 @@ class SpendingDetailsScreenTest {
 
     @Test
     fun refresh_stateIsUpdated() {
-        composeRule.onNodeWithTag(TestTags.SCROLLABLE_COLUMN).performTouchInput { swipeDown() }
+        assertThat(state.value.isLoading).isFalse()
+        composeRule.onNodeWithTag(TestTags.LAZY_COLUMN).performTouchInput { swipeDown() }
+        composeRule.waitForIdle()
         assertThat(state.value.isLoading).isTrue()
     }
 

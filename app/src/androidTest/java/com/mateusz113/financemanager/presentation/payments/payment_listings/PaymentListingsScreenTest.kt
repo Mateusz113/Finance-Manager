@@ -149,9 +149,11 @@ class PaymentListingsScreenTest {
 
     @Test
     fun refresh_isLoadingInStateIsUpdated() {
-        composeRule.onNodeWithTag(TestTags.SWIPE_REFRESH).performTouchInput {
+        assertThat(state.value.isLoading).isFalse()
+        composeRule.onNodeWithTag(TestTags.LAZY_COLUMN).performTouchInput {
             swipeDown()
         }
+        composeRule.waitForIdle()
         assertThat(state.value.isLoading).isTrue()
     }
 
