@@ -40,6 +40,7 @@ import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.payments.payment_addition.components.PaymentAdditionBlock
 import com.mateusz113.financemanager.domain.validator.PaymentInfoValidator
+import com.mateusz113.financemanager.domain.validator.PaymentPhotoSizeValidator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate
@@ -67,10 +68,19 @@ fun PaymentAdditionScreen(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
                 uri?.let {
-                    viewModel.onEvent(PaymentAdditionEvent.AddNewPhoto(uri))
+                    if (PaymentPhotoSizeValidator.validatePhotoSize(context, it)) {
+                        viewModel.onEvent(PaymentAdditionEvent.AddNewPhoto(it))
+                    } else {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.photo_too_big),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         )
+
         PaymentAdditionScreenContent(
             state = state,
             topBarLabel = topBarLabel,
