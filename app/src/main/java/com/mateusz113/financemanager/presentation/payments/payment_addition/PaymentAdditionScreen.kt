@@ -32,22 +32,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.mateusz113.financemanager.R
+import com.mateusz113.financemanager.domain.compressor.PhotoCompressor
 import com.mateusz113.financemanager.domain.model.Category
+import com.mateusz113.financemanager.domain.validator.PaymentInfoValidator
+import com.mateusz113.financemanager.domain.validator.PaymentPhotoSizeValidator
 import com.mateusz113.financemanager.presentation.NavGraphs
 import com.mateusz113.financemanager.presentation.common.components.TopAppBarWithBack
 import com.mateusz113.financemanager.presentation.common.dialog.PhotoDisplayDialog
 import com.mateusz113.financemanager.presentation.common.wrapper.ScaffoldWrapper
 import com.mateusz113.financemanager.presentation.destinations.PaymentListingsScreenDestination
 import com.mateusz113.financemanager.presentation.payments.payment_addition.components.PaymentAdditionBlock
-import com.mateusz113.financemanager.domain.validator.PaymentInfoValidator
-import com.mateusz113.financemanager.domain.validator.PaymentPhotoSizeValidator
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.navigate
 import com.ramcosta.composedestinations.navigation.popUpTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.File
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @RootNavGraph
 @Destination
@@ -69,7 +72,29 @@ fun PaymentAdditionScreen(
             onResult = { uri ->
                 uri?.let {
                     if (PaymentPhotoSizeValidator.validatePhotoSize(context, it)) {
-                        viewModel.onEvent(PaymentAdditionEvent.AddNewPhoto(it))
+                        coroutineScope.launch {
+                            val outputFile = File(
+                                context.cacheDir, "compressed_photo_${LocalDateTime.now()}.jpg"
+                            )
+                            val compressedImageUri = PhotoCompressor.compressImage(
+                                context = context,
+                                initialPhotoUri = it,
+                                outputFile = outputFile
+                            )
+                            compressedImageUri?.let {
+                                viewModel.onEvent(
+                                    PaymentAdditionEvent.AddNewPhoto(
+                                        compressedImageUri
+                                    )
+                                )
+                            } ?: Toast.makeText(
+                                context,
+                                context.getString(R.string.photo_compression_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+
                     } else {
                         Toast.makeText(
                             context,
