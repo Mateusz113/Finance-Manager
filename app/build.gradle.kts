@@ -118,6 +118,9 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+    //Image compression
+    implementation("id.zelory:compressor:3.0.1")
+
     //YCharts
     implementation("co.yml:ycharts:2.1.0")
 
