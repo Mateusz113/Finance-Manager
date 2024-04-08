@@ -6,8 +6,8 @@ import java.io.File
 
 class PaymentPhotoSizeValidator {
     companion object {
-        //Maximum upload size in 2 MB
-        private const val MAXIMUM_FILE_SIZE_IN_BYTES: Long = 2_097_152
+        //Maximum upload size in 4 MB
+        private const val MAXIMUM_FILE_SIZE_IN_BYTES: Long = 4_194_304
         fun validatePhotoSize(
             context: Context,
             uri: Uri
