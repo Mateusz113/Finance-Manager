@@ -297,8 +297,22 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    private fun clearCache() {
+        try {
+            val cacheDir = applicationContext.cacheDir
+            if (cacheDir.exists()) {
+                cacheDir.listFiles()?.forEach { file ->
+                    file.delete()
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     override fun onDestroy() {
         facebookAuthUiClient.unregisterCallback()
+        clearCache()
         super.onDestroy()
     }
 }
