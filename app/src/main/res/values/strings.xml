@@ -134,6 +134,68 @@
     //External licenses labels
     <string name="ycharts_label">YCharts</string>
 
-    //External licenses texts
-    <string name="ycharts_license_text">Copyright 2022 YCharts\n\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License.\n\nYou may obtain a copy of the License at\n\n\thttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and limitations under the License.</string>
+    //External licenses labels
+    <string name="androidx_core_ktx">AndroidX Core KTX</string>
+    <string name="androidx_lifecycle_runtime_ktx">AndroidX Lifecycle Runtime KTX</string>
+    <string name="androidx_activity_compose">AndroidX Activity Compose</string>
+    <string name="androidx_lifecycle_runtime_compose">AndroidX Lifecycle Runtime Compose</string>
+    <string name="androidx_constraint_layout_compose">AndroidX ConstraintLayout Compose</string>
+    <string name="androidx_compose_material">AndroidX Compose Material</string>
+    <string name="androidx_compose_ui">AndroidX Compose UI</string>
+    <string name="androidx_compose_ui_graphics">AndroidX Compose UI Graphics</string>
+    <string name="androidx_compose_ui_tooling_preview">AndroidX Compose UI Tooling Preview</string>
+    <string name="androidx_compose_material3">AndroidX Compose Material3</string>
+    <string name="androidx_compose_ui_tooling">AndroidX Compose UI Tooling</string>
+    <string name="androidx_compose_ui_test_manifest">AndroidX Compose UI Test Manifest</string>
+    <string name="androidx_compose_ui_test_junit4">AndroidX Compose UI Test JUnit4</string>
+    <string name="firebase_auth">Firebase Auth</string>
+    <string name="firebase_database">Firebase Database</string>
+    <string name="firebase_storage">Firebase Storage</string>
+    <string name="play_services_auth">Google Play Services Auth</string>
+    <string name="facebook_android_sdk">Facebook Android SDK</string>
+    <string name="dagger_hilt_android">Dagger Hilt Android</string>
+    <string name="androidx_hilt_compiler">AndroidX Hilt Compiler</string>
+    <string name="androidx_hilt_navigation_compose">AndroidX Hilt Navigation Compose</string>
+    <string name="androidx_lifecycle_viewmodel_compose">AndroidX Lifecycle ViewModel Compose</string>
+    <string name="androidx_compose_material_icons_extended">AndroidX Compose Material Icons Extended</string>
+    <string name="compose_destinations_core">Compose Destinations Core</string>
+    <string name="compose_destinations_ksp">Compose Destinations KSP</string>
+    <string name="compose_material_dialogs_datetime">Compose Material Dialogs Datetime</string>
+    <string name="retrofit">Retrofit</string>
+    <string name="retrofit_converter_moshi">Retrofit Converter Moshi</string>
+    <string name="okhttp">OkHttp</string>
+    <string name="okhttp_logging_interceptor">OkHttp Logging Interceptor</string>
+    <string name="coil_compose">Coil Compose</string>
+    <string name="compressor">Compressor</string>
+    <string name="ycharts">YCharts</string>
+    <string name="androidx_test_core">AndroidX Test Core</string>
+    <string name="junit">JUnit</string>
+    <string name="androidx_arch_core_testing">AndroidX Arch Core Testing</string>
+    <string name="kotlinx_coroutines_test">Kotlinx Coroutines Test</string>
+    <string name="truth">Truth</string>
+    <string name="mockk">Mockk</string>
+    <string name="dagger_hilt_android_testing">Dagger Hilt Android Testing</string>
+    <string name="espresso_core">Espresso Core</string>
+    <string name="mockk_android">Mockk Android</string>
+    <string name="androidx_test_core_ktx">AndroidX Test Core KTX</string>
+    <string name="androidx_test_runner">AndroidX Test Runner</string>
+
+    //Copyrights
+    <string name="copyright_android_open_source_14">Copyright 2014 The Android Open Source Project</string>
+    <string name="copyright_android_open_source_21">Copyright 2021 The Android Open Source Project</string>
+    <string name="copyright_android_open_source_20">" Copyright 2020 The Android Open Source Project"</string>
+    <string name="copyright_android_open_source_22">Copyright 2022 The Android Open Source Project</string>
+    <string name="copyright_google_22">Copyright 2022 Google</string>
+    <string name="copyright_dagger_authors_16">Copyright 2016 The Dagger Authors</string>
+    <string name="copyright_rafael_costa_21">Copyright 2021 Rafael Costa</string>
+    <string name="copyright_henri_van_pra_22">Copyright 2022 Henri Van Pra</string>
+    <string name="copyright_square_20">Copyright 2020 Square</string>
+    <string name="copyright_coil_22">Copyright 2022 Coil</string>
+    <string name="copyright_edward_paul_2015">Copyright 2015 Edward Paul</string>
+    <string name="copyright_ycharts_19">Copyright 2019 YCharts</string>
+    <string name="copyright_imb_and_others_20">Copyright IBM Corp. and others 2001, 2020</string>
+    <string name="copyright_jetbrains_17">Copyright 2017 JetBrains s.r.o.</string>
+    <string name="copyright_google_llc_20">Copyright 2020 Google LLC</string>
+    <string name="copyright_oleksiy_pylypenko_15_20">Copyright 2015–2020 Oleksiy Pylypenko</string>
+    <string name="copyright_facebook">Facebook, Inc.</string>
 </resources>
