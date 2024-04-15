@@ -9,8 +9,11 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.text.AnnotatedString
 import androidx.test.espresso.Espresso.pressBack
 import com.google.common.truth.Truth.assertThat
 import com.mateusz113.financemanager.MainActivity
@@ -18,6 +21,8 @@ import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
 import com.mateusz113.financemanager.domain.enumeration.ExternalLicense
+import com.mateusz113.financemanager.domain.enumeration.LicenseType
+import com.mateusz113.financemanager.util.TestTags
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -41,17 +46,26 @@ class ExternalLicensesScreenTest {
     fun setUp() {
         hiltRule.inject()
         context = composeRule.activity.applicationContext
-        state = mutableStateOf(ExternalLicensesState())
+        state = mutableStateOf(
+            ExternalLicensesState(
+                externalLicensesMap = LicenseType.values().associateWith { licenseType ->
+                    ExternalLicense.values().filter { it.licenseType == licenseType }
+                }
+            )
+        )
 
         composeRule.activity.runOnUiThread {
             composeRule.activity.setContent {
                 ExternalLicensesScreenContent(
                     state = state.value,
                     topBarLabel = R.string.external_licenses_notice,
-                    licensesList = ExternalLicense.values().toList(),
-                    onItemClick = {
+                    onItemClick = { textIds ->
+                        var licenseText = ""
+                        textIds.forEach { id ->
+                            licenseText += context.getString(id)
+                        }
                         state.value = state.value.copy(
-                            licenseText = context.getString(it),
+                            licenseText = licenseText,
                             isLicenseDialogOpen = true
                         )
                     },
@@ -64,18 +78,48 @@ class ExternalLicensesScreenTest {
     }
 
     @Test
-    fun clickOnExternalLicense_dialogVisible() {
-        composeRule.onNodeWithText(context.getString(R.string.ycharts_label))
-            .performClick()
-        composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
-            .assertIsDisplayed()
+    fun clickOnLicenses_dialogsAreVisibleWithCorrectTexts() {
+        val lazyColumn = composeRule.onNodeWithTag(TestTags.LAZY_COLUMN)
+        LicenseType.values().forEach { license ->
+            val licenseLabel = context.getString(license.label)
+            lazyColumn.performScrollToNode(
+                SemanticsMatcher.expectValue(
+                    SemanticsProperties.Text, listOf(
+                        AnnotatedString(licenseLabel)
+                    )
+                )
+            )
+            composeRule.onNodeWithText(licenseLabel).performClick()
+            composeRule.onNode(SemanticsMatcher.expectValue(SemanticsProperties.IsDialog, Unit))
+                .assertIsDisplayed()
+
+            val licenseText = buildString {
+                license.licenseTextParts.forEach { id ->
+                    append(context.getString(id))
+                }
+            }
+            composeRule.onNodeWithText(licenseText).assertIsDisplayed()
+        }
     }
 
     @Test
-    fun clickOnExternalLicense_licenseTextIsCorrectlyUpdated() {
-        composeRule.onNodeWithText(context.getString(R.string.ycharts_label))
-            .performClick()
-        assertThat(state.value.licenseText).contains(context.getString(R.string.ycharts_license_text))
+    fun loadTheExternalLicensesScreen_allTheExternalLicensesAreVisible() {
+        val lazyColumn = composeRule.onNodeWithTag(TestTags.LAZY_COLUMN)
+        ExternalLicense.values().forEach { externalLicense ->
+            lazyColumn.performScrollToNode(
+                SemanticsMatcher.expectValue(
+                    SemanticsProperties.Text, listOf(
+                        AnnotatedString(
+                            context.getString(
+                                R.string.external_license_template,
+                                context.getString(externalLicense.label),
+                                context.getString(externalLicense.copyright)
+                            )
+                        )
+                    )
+                )
+            ).assertIsDisplayed()
+        }
     }
 
     @Test
