@@ -3,6 +3,8 @@ package com.mateusz113.financemanager.presentation.external_licenses
 import com.google.common.truth.Truth.assertThat
 import com.mateusz113.financemanager.di.RepositoryModule
 import com.mateusz113.financemanager.di.SharedPreferencesModule
+import com.mateusz113.financemanager.domain.enumeration.ExternalLicense
+import com.mateusz113.financemanager.domain.enumeration.LicenseType
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -22,6 +24,15 @@ class ExternalLicensesViewModelTest {
     fun setUp() {
         hiltRule.inject()
         viewModel = ExternalLicensesViewModel()
+    }
+
+    @Test
+    fun initializeViewModel_initWorksProperly() {
+        assertThat(viewModel.state.value.externalLicensesMap).isEqualTo(
+            LicenseType.values().associateWith { licenseType ->
+                ExternalLicense.values().filter { it.licenseType == licenseType }
+            }
+        )
     }
 
     @Test
