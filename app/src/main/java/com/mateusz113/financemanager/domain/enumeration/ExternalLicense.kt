@@ -86,7 +86,7 @@ enum class ExternalLicense(
         R.string.play_services_auth, R.string.copyright_google_22, LicenseType.APACHE2
     ),
     FACEBOOK_ANDROID_SDK(
-        R.string.facebook_android_sdk, R.string.copyright_facebook, LicenseType.FACEBOOK_LICENSE
+        R.string.facebook_android_sdk, R.string.copyright_meta, LicenseType.META_LICENSE
     ),
     DAGGER_HILT_ANDROID(
         R.string.dagger_hilt_android, R.string.copyright_dagger_authors_16, LicenseType.APACHE2
