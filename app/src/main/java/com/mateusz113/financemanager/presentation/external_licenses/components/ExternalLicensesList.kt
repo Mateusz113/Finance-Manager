@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.mateusz113.financemanager.R
 import com.mateusz113.financemanager.domain.enumeration.ExternalLicense
 import com.mateusz113.financemanager.domain.enumeration.LicenseType
 import com.mateusz113.financemanager.presentation.common.components.ClickableItemRow
@@ -19,7 +19,7 @@ import com.mateusz113.financemanager.presentation.common.components.ClickableIte
 fun LazyListScope.externalLicensesList(
     license: LicenseType,
     externalLicensesMap: Map<LicenseType, List<ExternalLicense>>,
-    onLicenseClick: (Int) -> Unit,
+    onLicenseClick: (List<Int>) -> Unit,
 ) {
     this.stickyHeader {
         Box(
@@ -30,7 +30,7 @@ fun LazyListScope.externalLicensesList(
             ClickableItemRow(
                 label = stringResource(id = license.label),
                 onClick = {
-                    onLicenseClick(license.licenseText)
+                    onLicenseClick(license.licenseTextParts)
                 }
             )
         }
@@ -39,7 +39,11 @@ fun LazyListScope.externalLicensesList(
         this.item {
             Text(
                 modifier = Modifier.fillMaxWidth(0.95f),
-                text = "• ${stringResource(id = it.label)} - ${stringResource(id = it.copyright)}",
+                text = stringResource(
+                    R.string.external_license_template,
+                    stringResource(id = it.label),
+                    stringResource(id = it.copyright)
+                ),
                 textAlign = TextAlign.Start
             )
         }
