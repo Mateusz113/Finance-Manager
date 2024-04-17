@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FinanceManager</string>
+    <string name="app_name">Finance\nManager</string>
 
     //Web client reference for sing in method
     <string name="web_client_id">424578956737-i79r01mig9g2h1grp498auhbm59brdb1.apps.googleusercontent.com</string>
